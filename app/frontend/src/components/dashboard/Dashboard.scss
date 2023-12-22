@@ -1,53 +1,40 @@
 .dashboard {
 
-    .grid {
-        display: grid;
-        grid-template-columns: 200px;
-        grid-template-rows: auto;
-        gap: 10px 6px;
-        grid-template-areas:
-            'stat-1 stat-2 stat-3 stat-4'
-            'detailed-stats detailed-stats detailed-stats .'
-            'notifications notifications activity activity'
+    .title {
+        margin: 0 0 20px;
+        font-size: $title;
     }
 
-    .main-stats {
-        background-color: $white;
-        padding: 10px;
-        border: 1px solid #EBEBEB;
-        border-radius: 6px;
+    .stats {
+        display: flex;
+        gap: 10px;
+
+        .stat-box {
+            padding: 10px;
+            background-color: $white;
+            border: 1px solid $light-grey;
+            border-radius: 12px;
+        }
+
+        .primary {
+            flex: 3;
+        }
+
+        .secondary {
+            flex: 2;
+        }
     }
 
-    .stat-1 { grid-area: stat-1; }
-    .stat-2 { grid-area: stat-2; }
-    .stat-3 { grid-area: stat-3; }
-    .stat-4 { grid-area: stat-4; }
+    .activity-subtitle {
+        margin: 20px 0;
+        font-size: $subtitle;
 
-    .detailed-stats {
-        grid-area: detailed-stats;
-        
-        background-color: $white;
-        padding: 10px;
-        border: 1px solid #EBEBEB;
-        border-radius: 6px;   
-    }
-
-    .notifications {
-        grid-area: notifications;
-        
-        background-color: $white;
-        padding: 10px;
-        border: 1px solid #EBEBEB;
-        border-radius: 6px;
-    }
-
-    .activity {
-        grid-area: activity;
-        
-        background-color: $white;
-        padding: 10px;
-        border: 1px solid #EBEBEB;
-        border-radius: 6px;
+        .filter {
+            margin: 0 10px;
+            padding: 10px;
+            background: none;
+            border: 1px solid $grey;
+        }
     }
 
 }

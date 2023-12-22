@@ -1,15 +1,22 @@
 function Dashboard() {
     return (
         <div className='dashboard'>
-            
-            <div className='grid'>
-                <div className='main-stats stat-1'>Main Stats</div>
-                <div className='main-stats stat-2'>Main Stats</div>
-                <div className='main-stats stat-3'>Main Stats</div>
-                <div className='main-stats stat-4'>Main Stats</div>
-                <div className='detailed-stats'>Detailed Stats</div>
-                <div className='notifications'>Notifications</div>
-                <div className='activity'>Activity</div>
+
+            <p className='title'>Dashboard</p>
+
+            <div className='stats'>
+                <div className = 'secondary stat-box'>Stat Box</div>
+                <div className = 'primary stat-box'>Stat Box</div>
+                <div className = 'secondary stat-box'>Stat Box</div>
+            </div>
+
+            <div className='activity-subtitle'>
+                Activity
+                <button className='filter'>Hello</button>
+            </div>
+
+            <div className='activity'>
+
             </div>
 
         </div>

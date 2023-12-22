@@ -2,15 +2,17 @@
 $text: #0f0f0f;
 $background: #f3f1f4;
 $white: #fff;
+$light-grey: #e2e2e2;
+$grey: #d1d1d1;
 $primary: #a10900;
-$secondary: #f85e56;
+$secondary: #fc2b20;
 $accent: #6c0600;
 $light-accent: #fa6860;
 $primary-shade: #edcddc;
 
 // Font Sizes
 $title: 20px;
-$subtitle: 16px;
+$subtitle: 17px;
 $paragraph: 14px;
 
 @import './components/App.scss';
