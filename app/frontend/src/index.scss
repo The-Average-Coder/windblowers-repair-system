@@ -1,7 +1,27 @@
+// Colours
 $text: #0f0f0f;
-$background: #ffffff;
+$background: #f3f1f4;
+$white: #fff;
 $primary: #a10900;
-$secondary: #dbdbdb;
+$secondary: #f85e56;
 $accent: #6c0600;
-$primaryshade: #edcddc;
-$secondaryShade: #f8f8f8;
+$light-accent: #fa6860;
+$primary-shade: #edcddc;
+
+// Font Sizes
+$title: 20px;
+$subtitle: 16px;
+$paragraph: 14px;
+
+@import './components/App.scss';
+@import './components/Main.scss';
+@import './components/header/Header.scss';
+@import './components/navbar/Navbar.scss';
+@import './components/navbar/GradientButton.scss';
+@import './components/dashboard/Dashboard.scss';
+
+html {
+    font-family: 'Poppins';
+    background-color: $background;
+    font-size: $paragraph;
+}
