@@ -10,6 +10,14 @@
         font-weight: bold;
     }
 
+    button:hover {
+        background: linear-gradient(90deg, $secondary-tint 0%, $primary-tint 100%);
+    }
+
+    button:active {
+        background: linear-gradient(90deg, $secondary-click 0%, $primary-click 100%);
+    }
+
     .fa-icon {
         font-size: $title;
         vertical-align: -5px;

@@ -1,29 +1,60 @@
-// Colours
+// COLOURS
+
 $text: #0f0f0f;
 $background: #f3f1f4;
+
+// Primary (Light Mode: White, Dark Mode: Black
 $white: #fff;
-$light-grey: #e2e2e2;
+$lighter-grey: #e7e7e7;
+$light-grey: #ececec;
+$click-grey: #e0e0e0;
 $grey: #d1d1d1;
+$dark-grey: #b3b3b3;
+
+// Accent (Shades Of Red)
 $primary: #a10900;
+$primary-tint: #7e0600;
+$primary-click: #6b0500;
+$primary-shade: #ecd5e0;
+$primary-shade-tint: #ecc6d8;
+
 $secondary: #fc2b20;
+$secondary-tint: #e2281e;
+$secondary-click: #c5241b;
 $accent: #6c0600;
 $light-accent: #fa6860;
-$primary-shade: #edcddc;
 
 // Font Sizes
 $title: 20px;
 $subtitle: 17px;
 $paragraph: 14px;
+$subtext: 13px;
 
 @import './components/App.scss';
 @import './components/Main.scss';
+@import './components/common/PageTitle.scss';
+@import './components/common/FilterButton.scss';
+@import './components/common/FilterSearch.scss';
 @import './components/header/Header.scss';
+@import './components/header/SearchBar.scss';
 @import './components/navbar/Navbar.scss';
 @import './components/navbar/GradientButton.scss';
+@import './components/navbar/NavbarMenu.scss';
+@import './components/navbar/NavbarMenuButton.scss';
 @import './components/dashboard/Dashboard.scss';
+@import './components/dashboard/Activity.scss';
+@import './components/dashboard/ActivityElement.scss';
+@import './components/repairs/Repairs.scss';
+@import './components/repairs/RepairList.scss';
+@import './components/repairs/RepairListRepair.scss';
+@import './components/calendar/Calendar.scss';
+@import './components/customers/Customers.scss';
+@import './components/customers/CustomerListCustomer.scss';
+@import './components/settings/Settings.scss';
 
 html {
     font-family: 'Poppins';
     background-color: $background;
+    color: $text;
     font-size: $paragraph;
 }

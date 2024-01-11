@@ -1,0 +1,37 @@
+.customer-list-customer {
+
+    display: flex;
+    padding: 18px 10px;
+    border-bottom: 1px solid $light-grey;
+
+    p {
+        margin: 0;
+    }
+
+    .status {
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    .name { flex: 1; }
+    .phone-number { flex: 1; }
+    .email { flex: 2; }
+    .address { flex: 2; }
+
+    transition: 0.2s;
+
+}
+
+.customer-list-customer:hover {
+
+    background-color: $light-grey;
+    cursor: pointer;
+    margin: 0 -10px;
+    padding: 18px 20px;
+    box-shadow: 0 -1px 0 $light-grey;
+
+
+}

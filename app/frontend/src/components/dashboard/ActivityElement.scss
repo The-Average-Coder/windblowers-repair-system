@@ -1,0 +1,24 @@
+.activity-element {
+
+    display: flex;
+    padding: 18px 10px;
+    border-bottom: 1px solid $light-grey;
+
+    p {
+        margin: 0;
+    }
+
+    .title { flex: 1; }
+
+    transition: 0.2s;
+}
+
+.activity-element:hover {
+
+    background-color: $light-grey;
+    cursor: pointer;
+    margin: 0 -10px;
+    padding: 18px 20px;
+    box-shadow: 0 -1px 0 $light-grey;
+
+}

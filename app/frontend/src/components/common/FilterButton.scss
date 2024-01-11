@@ -1,0 +1,31 @@
+.filter {
+
+    display: inline;
+    margin: 0 6px;
+
+    button {
+        min-width: 50px;
+        padding: 7px 12px;
+        background: none;
+        border: 1px solid $grey;
+        border-radius: 20px;
+    }
+
+    button:hover {
+        background-color: $lighter-grey;
+    }
+
+    button:active {
+        background-color: $click-grey;
+    }
+
+    .active {
+        background-color: $primary-shade;
+        border: 2px solid $primary;
+    }
+
+    .active:hover {
+        background-color: $primary-shade-tint;
+    }
+
+}

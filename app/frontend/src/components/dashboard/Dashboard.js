@@ -1,8 +1,12 @@
+import PageTitle from '../common/PageTitle';
+
+import Activity from './Activity';
+
 function Dashboard() {
     return (
         <div className='dashboard'>
 
-            <p className='title'>Dashboard</p>
+            <PageTitle title='Dashboard' />
 
             <div className='stats'>
                 <div className = 'secondary stat-box'>Stat Box</div>
@@ -10,14 +14,7 @@ function Dashboard() {
                 <div className = 'secondary stat-box'>Stat Box</div>
             </div>
 
-            <div className='activity-subtitle'>
-                Activity
-                <button className='filter'>Hello</button>
-            </div>
-
-            <div className='activity'>
-
-            </div>
+            <Activity />
 
         </div>
     );

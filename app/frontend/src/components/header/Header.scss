@@ -9,27 +9,4 @@
         height: 40px;
     }
 
-    .search {
-        flex: 1;
-
-        .search-bar {
-            width: 400px;
-            margin: auto;
-
-            input {
-                width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #e2e2e2;
-                border-radius: 30px;
-                font-size: 15px;
-            }
-
-            input:hover, input:focus {
-                outline: none;
-                box-shadow: 0 1px 10px #e2e2e2;
-            }
-        }
-
-    }
-
 }

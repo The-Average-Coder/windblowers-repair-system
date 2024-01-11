@@ -1,16 +1,13 @@
 .dashboard {
 
-    .title {
-        margin: 0 0 20px;
-        font-size: $title;
-    }
-
     .stats {
+        margin-top: 20px;
         display: flex;
         gap: 10px;
 
         .stat-box {
             padding: 10px;
+            height: 240px;
             background-color: $white;
             border: 1px solid $light-grey;
             border-radius: 12px;
@@ -22,18 +19,6 @@
 
         .secondary {
             flex: 2;
-        }
-    }
-
-    .activity-subtitle {
-        margin: 20px 0;
-        font-size: $subtitle;
-
-        .filter {
-            margin: 0 10px;
-            padding: 10px;
-            background: none;
-            border: 1px solid $grey;
         }
     }
 
