@@ -19,7 +19,7 @@ function Activity() {
             <div className='activity-subtitle'>
                 <p>Activity</p>
                 <FilterButton contents='All' onClick={() => setActiveFilter(0)} active={activeFilter === 0 ? 'true' : 'false'} />
-                <FilterButton contents='Filter' onClick={() => setActiveFilter(1)} active={activeFilter === 1 ? 'true' : 'false'} />
+                <FilterButton contents='Filter' onClick={() => activeFilter !== 1 ? setActiveFilter(1) : setActiveFilter(0)} active={activeFilter === 1 ? 'true' : 'false'} />
             </div>
 
             <div className='activity-box'>

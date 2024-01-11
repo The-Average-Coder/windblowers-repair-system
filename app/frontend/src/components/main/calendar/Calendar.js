@@ -3,8 +3,10 @@ import PageTitle from '../../common/PageTitle';
 function Calendar() {
     return (
         <div className='calendar'>
-
-            <PageTitle title='Calendar' />
+            
+            <div className='title'>
+                <PageTitle title='Calendar' />
+            </div>
 
             <div className='calendar-box'>
 

@@ -20,6 +20,8 @@
     }
 
     .active {
+        min-width: 52px;
+        margin: 0 -1px 0 -1px;
         background-color: $primary-shade;
         border: 2px solid $primary;
     }

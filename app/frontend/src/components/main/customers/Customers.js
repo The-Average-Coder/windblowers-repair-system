@@ -4,8 +4,10 @@ import CustomerListCustomer from './CustomerListCustomer';
 function Customers() {
     return (
         <div className='customers'>
-
-            <PageTitle title='Customers' />
+            
+            <div className='title'>
+                <PageTitle title='Customers' />
+            </div>
 
             <div className='customer-list'>
                 

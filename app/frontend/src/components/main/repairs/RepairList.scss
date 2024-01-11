@@ -1,12 +1,13 @@
 .repair-list {
-    margin-top: 20px;
+    margin-top: 50px;
 
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
     background-color: $white;
     border: 1px solid $light-grey;
-    border-radius: 0 12px 12px 12px;
+    border-radius: 12px;
+    //border-radius: 0 12px 12px 12px;
 
     .column-header {
         display: flex;
@@ -26,8 +27,8 @@
             font-size: 16px;
         }
 
-        .instrument { flex: 15; }
-        .repair-info { flex: 17; }
+        .instrument { flex: 14; }
+        .repair-info { flex: 18; }
         .customer { flex: 8; }
     }
 }

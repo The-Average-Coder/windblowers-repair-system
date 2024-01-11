@@ -10,11 +10,11 @@ function NavbarMenu() {
     const [activeModifierPosition, setActiveModifierPosition] = useState();
 
     const updateActiveModifier = () => {
-        if (currentPage.startsWith('/repairs')) setActiveModifierPosition(236);
-        else if (currentPage.startsWith('/calendar')) setActiveModifierPosition(280);
-        else if (currentPage.startsWith('/customers')) setActiveModifierPosition(324);
-        else if (currentPage.startsWith('/settings')) setActiveModifierPosition(368);
-        else setActiveModifierPosition(192);
+        if (currentPage.startsWith('/repairs')) setActiveModifierPosition(176);
+        else if (currentPage.startsWith('/calendar')) setActiveModifierPosition(220);
+        else if (currentPage.startsWith('/customers')) setActiveModifierPosition(264);
+        else if (currentPage.startsWith('/settings')) setActiveModifierPosition(308);
+        else setActiveModifierPosition(132);
     }    
 
     useEffect(updateActiveModifier, [currentPage]);

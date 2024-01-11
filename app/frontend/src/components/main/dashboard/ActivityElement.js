@@ -4,8 +4,16 @@ import { useSelector } from 'react-redux';
 function ActivityElement(props) {
     const navigate = useNavigate();
 
-    const repair = useSelector(state => state.activeRepairs.find(repair => repair.id === props.activity.repair_id))
-    const instrument = useSelector(state => state.activeInstruments.find(instrument => instrument.id === repair.instrument_id))
+    const repair = useSelector(state => {
+        if (!state.activeRepairs.find(repair => repair.id === props.activity.repair_id))
+            return null
+        return state.activeRepairs.find(repair => repair.id === props.activity.repair_id)
+    })
+    const instrument = useSelector(state => {
+        if (!repair || !state.activeInstruments.find(instrument => instrument.id === repair.instrument_id))
+            return null
+        return state.activeInstruments.find(instrument => instrument.id === repair.instrument_id)
+    });
 
     const navigateToRepair = () => {
         navigate(`/repairs/repair/${repair.id}`)
@@ -14,8 +22,14 @@ function ActivityElement(props) {
     return (
         <div className='activity-element' onClick={navigateToRepair}>
 
-            <p className='job-number'>{repair.id}</p>
-            <p className='instrument'>{instrument.type}</p>
+            {repair === null ?
+            <p className='no-repair-message'>No Repair Found</p>
+            :
+            <>
+            <p className='job-number'>{repair.id !== null ? repair.id : 'No ID'}</p>
+            <p className='instrument'>{instrument.type !== null ? instrument.type : 'No Type' }</p>
+            </>
+            }
             <p className='info'>{props.activity.type}</p>
 
         </div>

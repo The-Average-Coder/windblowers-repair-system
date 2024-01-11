@@ -58,3 +58,16 @@ html {
     color: $text;
     font-size: $paragraph;
 }
+
+body::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  body::-webkit-scrollbar-track {
+    background: $background;
+  }
+  
+  body::-webkit-scrollbar-thumb {
+    background-color: $dark-grey;
+    border-radius: 20px;
+  }
