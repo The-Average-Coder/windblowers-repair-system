@@ -2,7 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const blankState = [];
 
-const initialState = blankState;
+const initialState = [
+    {
+        repair_id: '0101001',
+        type: 'Repair has been assessed and is awaiting confirmation'
+    }
+];
 
 function nextActivityId(activityList) {
     const maxId = activityList.reduce((maxId, activity) => Math.max(activity.id, maxId), -1);

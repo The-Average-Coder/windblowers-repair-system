@@ -15,10 +15,13 @@
         margin-right: 12px;
     }
 
-    .instrument-type { flex: 2; }
-    .date-created { flex: 1; }
-    .deadline { flex: 1; }
-    .customer-name { flex: 1; }
+    .instrument-type { flex: 4; }
+    .instrument-model { flex: 5; }
+    .instrument-serial { flex: 6; }
+    .job-number { flex: 3; font-weight: bold; }
+    .date-created { flex: 6; }
+    .deadline { flex: 8; }
+    .customer-name { flex: 8; }
 
     transition: 0.2s;
 

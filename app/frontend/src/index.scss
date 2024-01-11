@@ -31,7 +31,6 @@ $paragraph: 14px;
 $subtext: 13px;
 
 @import './components/App.scss';
-@import './components/Main.scss';
 @import './components/common/PageTitle.scss';
 @import './components/common/FilterButton.scss';
 @import './components/common/FilterSearch.scss';
@@ -41,16 +40,17 @@ $subtext: 13px;
 @import './components/navbar/GradientButton.scss';
 @import './components/navbar/NavbarMenu.scss';
 @import './components/navbar/NavbarMenuButton.scss';
-@import './components/dashboard/Dashboard.scss';
-@import './components/dashboard/Activity.scss';
-@import './components/dashboard/ActivityElement.scss';
-@import './components/repairs/Repairs.scss';
-@import './components/repairs/RepairList.scss';
-@import './components/repairs/RepairListRepair.scss';
-@import './components/calendar/Calendar.scss';
-@import './components/customers/Customers.scss';
-@import './components/customers/CustomerListCustomer.scss';
-@import './components/settings/Settings.scss';
+@import './components/main/Main.scss';
+@import './components/main/dashboard/Dashboard.scss';
+@import './components/main/dashboard/Activity.scss';
+@import './components/main/dashboard/ActivityElement.scss';
+@import './components/main/repairs/Repairs.scss';
+@import './components/main/repairs/RepairList.scss';
+@import './components/main/repairs/RepairListRepair.scss';
+@import './components/main/calendar/Calendar.scss';
+@import './components/main/customers/Customers.scss';
+@import './components/main/customers/CustomerListCustomer.scss';
+@import './components/main/settings/Settings.scss';
 
 html {
     font-family: 'Poppins';

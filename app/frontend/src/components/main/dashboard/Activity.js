@@ -1,10 +1,17 @@
+import { useSelector } from 'react-redux';
 import { useState } from 'react';
 
-import FilterButton from '../common/FilterButton';
+import FilterButton from '../../common/FilterButton';
 import ActivityElement from './ActivityElement';
 
 function Activity() {
+    const activity = useSelector(state => state.activity);
+
     const [activeFilter, setActiveFilter] = useState(0)
+
+    const renderedActivity = activity.map(activity => {
+        return <ActivityElement activity={activity} />
+    })
 
     return (
         <div className='activity'>
@@ -18,12 +25,11 @@ function Activity() {
             <div className='activity-box'>
 
                 <div className='column-header'>
-                    <p className='name'>Name</p>
-                    <p className='info'>Info</p>
+                    <p className='name'>Repair</p>
+                    <p className='info'>Activity</p>
                 </div>
 
-                <ActivityElement />
-                <ActivityElement />
+                {renderedActivity}
 
             </div>
 

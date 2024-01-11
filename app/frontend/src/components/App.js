@@ -3,7 +3,7 @@ import { faPlus, faHouse, faTasks, faUsers, faGear, faList, faCalendar, faCircle
 
 import Header from './header/Header';
 import Navbar from './navbar/Navbar';
-import Main from './Main';
+import Main from './main/Main';
 
 library.add(faPlus, faHouse, faTasks, faUsers, faGear, faList, faCalendar, faCircleCheck);
 

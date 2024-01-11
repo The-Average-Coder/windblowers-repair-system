@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import PageTitle from '../common/PageTitle';
+import PageTitle from '../../common/PageTitle';
 import RepairList from './RepairList';
 
 function Repairs() {

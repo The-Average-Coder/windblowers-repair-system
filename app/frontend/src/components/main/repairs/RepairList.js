@@ -3,16 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import RepairListRepair from './RepairListRepair';
 
-const selectRepairs = state => state.activeRepairs;
-const selectCustomers = state => state.activeCustomers;
-
 function RepairList() {
-    const activeRepairs = useSelector(selectRepairs);
-    const activeCustomers = useSelector(selectCustomers);
+    const activeRepairs = useSelector(state => state.activeRepairs);
+    const activeCustomers = useSelector(state => state.activeCustomers);
+    const activeInstruments = useSelector(state => state.activeInstruments);
 
     const renderedRepairs = activeRepairs.map(repair => {
         const customer = activeCustomers.find(customer => customer.id === repair.customer_id);
-        const instrument = [];
+        const instrument = activeInstruments.find(instrument => instrument.id === repair.instrument_id);
         return <RepairListRepair repair={repair} customer={customer} instrument={instrument} />
     })
 

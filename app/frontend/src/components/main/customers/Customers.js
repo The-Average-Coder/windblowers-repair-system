@@ -1,4 +1,4 @@
-import PageTitle from '../common/PageTitle';
+import PageTitle from '../../common/PageTitle';
 import CustomerListCustomer from './CustomerListCustomer';
 
 function Customers() {
