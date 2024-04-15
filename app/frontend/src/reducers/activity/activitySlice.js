@@ -1,32 +1,55 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-const blankState = [];
+const initialState = { activityLoading: false, activity: [] };
 
-const initialState = [
-    {
-        repair_id: '0101001',
-        type: 'Repair has been assessed and is awaiting confirmation'
-    }
-];
+export const fetchActivity = createAsyncThunk('activity/fetchActivity', async () => {
+    return axios.get('/api/activity/getActivity').then((resp) => resp.data).catch((err) => console.log(err));
 
-function nextActivityId(activityList) {
-    const maxId = activityList.reduce((maxId, activity) => Math.max(activity.id, maxId), -1);
-    return maxId + 1;
-}
+});
+
+export const createActivity = createAsyncThunk('activity/createActivity', async (activityObject, { dispatch }) => {
+    axios.post('/api/activity/createActivity', activityObject).then(resp => {
+        dispatch({ type: 'activity/activityAdded', payload: { id: resp.data.insertId, ...activityObject } });
+    });
+})
+
+export const deleteActivity = createAsyncThunk('activity/deleteActivity', async (id, { dispatch }) => {
+    dispatch({ type: 'activity/activityRemoved', payload: id });
+    axios.delete(`/api/activity/deleteActivity/${id}`);
+})
+
+export const deleteActivityOfRepair = createAsyncThunk('activity/deleteActivityOfRepair', async (repair_id, { dispatch }) => {
+    dispatch({ type: 'activity/activityRemoved', payload: repair_id });
+    axios.delete(`/api/activity/deleteActivityOfRepair/${repair_id}`);
+})
 
 const activitySlice = createSlice({
     name: 'activity',
     initialState,
     reducers: {
         activityAdded(state, action) {
-            state.push({
-                ...action.payload,
-                id: nextActivityId()
-            })
+            state.activity.push(action.payload);
         },
         activityRemoved(state, action) {
-            delete state[action.payload];
+            return { activityLoading: state.activityLoading, activity: state.activity.filter(activity => activity.id !== action.payload) };
+        },
+        repairDeleted(state, action) {
+            return { activityLoading: state.activityLoading, activity: state.activity.filter(activity => activity.repair_id !== action.payload) };
         }
+    },
+    extraReducers: builder => {
+        builder
+            .addCase(fetchActivity.pending, (state) => {
+                state.activityLoading = true;
+            })
+            .addCase(fetchActivity.fulfilled, (state, action) => {
+                state.activityLoading = false;
+                state.activity = action.payload;
+            })
+            .addCase(fetchActivity.rejected, (state) => {
+                state.activityLoading = false;
+            })
     }
 })
 

@@ -5,7 +5,7 @@ import FilterButton from '../../common/FilterButton';
 import ActivityElement from './ActivityElement';
 
 function Activity() {
-    const activity = useSelector(state => state.activity);
+    const { activityLoading, activity } = useSelector(state => state.activity);
 
     const [activeFilter, setActiveFilter] = useState(0)
 
@@ -29,7 +29,9 @@ function Activity() {
                     <p className='info'>Activity</p>
                 </div>
 
-                {renderedActivity}
+                {activityLoading ? <p className='no-activity-message'>Loading...</p> :
+                
+                renderedActivity.length > 0 ? renderedActivity : <p className='no-activity-message'>All Done!</p>}
 
             </div>
 

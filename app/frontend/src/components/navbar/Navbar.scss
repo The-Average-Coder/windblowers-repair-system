@@ -47,6 +47,10 @@
             padding: 12px 20px;
             width: 120%;
         }
+
+        button:active {
+            background-color: $click-grey;
+        }
     }
 
     /*@media screen and (max-width: 768px) {

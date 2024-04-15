@@ -1,0 +1,58 @@
+.repair-open-details {
+
+    margin-top: 10px;
+    padding: 10px 14px;
+    background-color: $white;
+    border: 1px solid $light-grey;
+    border-radius: 12px;
+
+    .open-details {
+
+        display: flex;
+        height: 300px;
+
+        .details {
+
+            position: relative;
+            flex: 1;
+
+            p {
+                display: inline-block;
+                vertical-align: top;
+                margin: 0;
+                margin-top: 10px;
+            }
+    
+            .repair-deadline-title { margin-right: 51px; }
+    
+            .repair-dates-title { margin-right: 24px; }
+    
+            .repairer-title { margin-right: 55px; }
+
+            select, input {
+                font-family: inherit;
+                margin-top: 10px;
+                margin-right: 5px;
+                padding: 6px;
+                border: 1px solid $grey;
+                border-radius: 6px;
+                outline: none;
+                font-size: 14px;
+            }
+
+            .edit-details-button, .cancel-edit-button {
+                position: absolute;
+                width: 100%;
+                bottom: 42px;
+            }
+
+            .finish-job-button, .save-details-button {
+                position: absolute;
+                width: 100%;
+                bottom: 2px;
+            }
+        }
+
+    }
+
+}

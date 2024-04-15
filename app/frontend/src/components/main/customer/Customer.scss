@@ -1,0 +1,252 @@
+.customer-page {
+
+    margin-top: 50px;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    min-height: 300px;
+
+    .title {
+
+        .action-buttons {
+            position: absolute;
+            right: 20px;
+
+            transition: 0.2s;
+
+            div {
+                display: inline-block;
+                margin-left: 10px;
+            }
+
+            .delete-customer { 
+
+                button {
+                    border-color: red;
+                    color: red;
+                }
+
+                button:hover { background-color: rgb(252, 216, 216); }
+                button:active { background-color: rgb(250, 193, 193); }
+
+            }
+            
+        }
+
+    }
+
+    .customer-info {
+
+        flex: 1;
+        padding: 10px 14px;
+        background-color: $white;
+        border: 1px solid $light-grey;
+        border-radius: 12px;
+
+        .customer-info-box {
+        
+            position: relative;
+            box-sizing: border-box;
+            height: 100%;
+            padding-bottom: 60px;
+    
+    
+            .customer-title {
+                margin: 0 -4px;
+                padding: 0 4px 10px;
+                font-size: 17px;
+                font-weight: bold;
+                text-align: center;
+                border-bottom: 1px solid $light-grey;
+            }
+    
+            .customer-name {
+                margin: 0;
+                margin-top: 10px;
+                font-size: 17px;
+            }
+    
+            .customer-detail {
+                margin: 0;
+                margin-top: 10px;
+                white-space: pre-wrap;
+            }
+    
+            .buttons-holder {
+                position: absolute;
+                bottom: 2px;
+                width: 100%;
+                height: 40px;
+                display: flex;
+                gap: 10px;
+    
+                div { flex: 1; }
+            }
+    
+            .customer-error-message {
+                margin: 0;
+                margin-top: 10px;
+            }
+    
+            .no-customer-buttons {
+                height: 102%;
+                margin-top: 16px;
+                display: flex;
+                gap: 10px;
+    
+                div { flex: 1; }
+                button { padding: 0 20%; font-size: 16px; color: rgb(46, 46, 46); }
+                button:hover { color: rgb(46, 46, 46); }
+                .fa-icon { font-size: 32px; padding: 0 40px 10px; }
+            }
+    
+            .customer-search {
+                width: calc(100% - 15px);
+                margin-top: 16px;
+                font-size: 15px;
+            }
+            
+            .search-results {
+                height: 124px;
+                margin: 0 -10px 0 -15px;
+                padding: 0 15px;
+                margin-top: 5px;
+                overflow-y: scroll;
+                overflow-x: hidden;
+    
+                .customer-result {
+                    display: flex;
+                    padding: 4px 10px;
+                    transition: 0.1s;
+    
+                    .name { flex: 9 }
+                    .email { flex: 16 }
+                }
+    
+                .customer-result:hover, .selected {
+                    cursor: pointer;
+                    margin: 0 -15px;
+                    padding: 4px 25px;
+                    box-shadow: 0 -1px 0 $light-grey;
+                }
+    
+                .customer-result:hover {
+                    background-color: $light-grey;
+                }
+    
+                .selected, .selected:hover {
+                    background-color: $click-grey;
+                }
+            }
+    
+            .search-results::-webkit-scrollbar {
+                width: 8px;
+            }
+              
+            .search-results::-webkit-scrollbar-track {
+                background: $white;
+            }
+              
+            .search-results::-webkit-scrollbar-thumb {
+                background-color: $dark-grey;
+                border-radius: 20px;
+            }
+    
+            input {
+                width: 200px;
+                margin-top: 10px;
+                padding: 6px;
+                border: 1px solid $grey;
+                border-radius: 6px;
+                outline: none;
+                font-size: 14px;
+            }
+    
+            .wide {
+                width: 300px;
+            }
+    
+            textarea {
+                width: 300px;
+                height: 100px;
+                vertical-align: middle;
+                margin-top: 10px;
+                border: 1px solid $grey;
+                border-radius: 6px;
+                outline: none;
+                resize: none;
+                font-size: 14px;
+                font-family: inherit;
+                padding: 4px 6px;
+            }
+    
+            .firstname-label {
+                margin-right: 15px;
+            }
+    
+            .surname-label {
+                margin-right: 20px;
+            }
+    
+            .email-label {
+                margin-right: 46px;
+            }
+    
+            .telephone-label {
+                margin-right: 11px;
+            }
+    
+            .address-label {
+                margin-right: 27px;
+            }
+    
+        }
+    }
+
+    .customer-repairs-history {
+
+        flex: 2;
+        padding: 10px 14px;
+        background-color: $white;
+        border: 1px solid $light-grey;
+        border-radius: 12px;
+
+        .history-list-repair {
+            display: flex;
+            padding: 18px 10px;
+            border-bottom: 1px solid $light-grey;
+
+            p {
+                margin: 0;
+            }
+        
+            .status {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                margin-right: 12px;
+            }
+        
+            .instrument-type { flex: 4; }
+            .instrument-model { flex: 4; }
+            .instrument-serial { flex: 4; }
+            .job-number { flex: 4; font-weight: bold; }
+            .date-created { flex: 8; }
+            .deadline { flex: 9; }
+        
+            transition: 0.2s;
+        }
+
+        .history-list-repair:hover {
+
+            background-color: $light-grey;
+            cursor: pointer;
+            margin: 0 -15px;
+            padding: 18px 25px;
+            box-shadow: 0 -1px 0 $light-grey;
+        
+        }
+
+    }
+
+}

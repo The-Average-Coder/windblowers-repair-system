@@ -1,7 +1,6 @@
 export default Object.freeze({
     CREATED: 0,
-    ASSESSED: 1,
-    OPEN: 2,
-    COMPLETED: 3,
-    COLLECTED: 4
+    OPEN: 1,
+    COMPLETED: 2,
+    COLLECTED: 3
 });

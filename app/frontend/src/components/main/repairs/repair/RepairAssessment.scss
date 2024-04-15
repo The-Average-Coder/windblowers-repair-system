@@ -1,0 +1,144 @@
+.repair-assessment {
+
+    position: relative;
+    border-bottom: 1px solid $light-grey;
+    margin: 0 -4px;
+    padding: 0 4px;
+    min-height: 240px;
+    overflow: hidden;
+
+    .assessment-title {
+        margin: 0;
+        padding: 10px 0;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .assessment-title:hover {
+        cursor: pointer;
+    }
+
+    .assessment-details {
+        display: flex;
+        gap: 20px;
+        padding-bottom: 110px;
+
+        p {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        .detail {
+            width: 200px;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .notes {
+            width: 300px;
+        }
+
+        .time-column {
+            flex: 5;
+
+            .time-title { margin-right: 60px; }
+            
+            .time-cost-title { margin-right: 24px; }
+        }
+
+        .materials-column {
+            flex: 6;
+
+            .materials-title { margin-right: 158px; }
+            
+            .material-cost-title { margin-right: 122px; }
+
+            .material-cost-customer-title { margin-right: 24px; }
+        }
+
+        .notes-column {
+            flex: 6;
+
+            .notes-title { margin-right: 24px; }
+        }
+
+    }
+
+    .delete-assessment-button {
+        position: absolute;
+        right: 4px;
+        bottom: 10px;
+        width: 200px;
+        
+        button {
+            border-color: red;
+            color: red;
+        }
+
+        button:hover { background-color: rgb(252, 216, 216); }
+        button:active { background-color: rgb(250, 193, 193); }
+        
+    }
+
+    .edit-assessment-button, .cancel-edit-button {
+        position: absolute;
+        right: 4px;
+        bottom: 50px;
+        width: 200px;
+    }
+
+    .save-edit-button {
+        position: absolute;
+        right: 4px;
+        bottom: 10px;
+        width: 200px;
+    }
+
+    .edit-assessment-button {
+        position: absolute;
+        right: 4px;
+        bottom: 50px;
+        width: 200px;
+    }
+
+    textarea {
+        width: 200px;
+        height: 100px;
+        vertical-align: middle;
+        margin-top: 10px;
+        border: 1px solid $grey;
+        border-radius: 6px;
+        outline: none;
+        resize: none;
+        font-size: 14px;
+        font-family: inherit;
+        padding: 4px 6px;
+    }
+
+    input {
+        width: 200px;
+        margin-top: 10px;
+        padding: 6px;
+        border: 1px solid $grey;
+        border-radius: 6px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    select {
+        width: 105px;
+        margin-top: 10px;
+        margin-right: 5px;
+        padding: 6px;
+        border: 1px solid $grey;
+        border-radius: 6px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    .notes { width: 300px; }
+
+}

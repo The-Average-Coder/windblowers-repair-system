@@ -8,10 +8,23 @@
         margin: 0;
     }
 
-    .no-repair-message { flex: 8; }
-    .job-number { flex: 3; font-weight: bold; }
-    .instrument { flex: 5; }
-    .info { flex: 32; }
+    .no-repair-message { flex: 14; }
+    .job-number { flex: 7; font-weight: bold; }
+    .instrument { flex: 7; }
+    .info { flex: 45; }
+
+    .remove {
+        margin: -7px 0;
+    }
+
+    .remove button {
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .remove button:hover {
+        background: none;
+    }
 
     transition: 0.2s;
 }

@@ -3,13 +3,14 @@
 $text: #0f0f0f;
 $background: #f3f1f4;
 
-// Primary (Light Mode: White, Dark Mode: Black
+// Primary 
 $white: #fff;
 $lighter-grey: #e7e7e7;
 $light-grey: #ececec;
 $click-grey: #e0e0e0;
 $grey: #d1d1d1;
 $dark-grey: #b3b3b3;
+$darker-grey: rgb(128, 128, 128);
 
 // Accent (Shades Of Red)
 $primary: #a10900;
@@ -32,8 +33,11 @@ $subtext: 13px;
 
 @import './components/App.scss';
 @import './components/common/PageTitle.scss';
+@import './components/common/ActionButton.scss';
 @import './components/common/FilterButton.scss';
 @import './components/common/FilterSearch.scss';
+@import './components/common/BlockTitle.scss';
+@import './components/login/Login.scss';
 @import './components/header/Header.scss';
 @import './components/header/SearchBar.scss';
 @import './components/navbar/Navbar.scss';
@@ -47,9 +51,18 @@ $subtext: 13px;
 @import './components/main/repairs/Repairs.scss';
 @import './components/main/repairs/RepairList.scss';
 @import './components/main/repairs/RepairListRepair.scss';
+@import './components/main/repairs/repair/Repair.scss';
+@import './components/main/repairs/repair/RepairCustomer.scss';
+@import './components/main/repairs/repair/RepairInstrument.scss';
+@import './components/main/repairs/repair/RepairAssessment.scss';
+@import './components/main/repairs/repair/RepairOpenDetails.scss';
+@import './components/main/repairs/repair/RepairTimer.scss';
 @import './components/main/calendar/Calendar.scss';
-@import './components/main/customers/Customers.scss';
-@import './components/main/customers/CustomerListCustomer.scss';
+@import './components/main/customer/Customer.scss';
+@import './components/main/instrument/Instrument.scss';
+@import './components/main/search_results/SearchResults.scss';
+@import './components/main/search_results/CustomerListCustomer.scss';
+@import './components/main/search_results/InstrumentListInstrument.scss';
 @import './components/main/settings/Settings.scss';
 
 html {
@@ -61,13 +74,13 @@ html {
 
 body::-webkit-scrollbar {
     width: 8px;
-  }
+}
   
-  body::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track {
     background: $background;
-  }
+}
   
-  body::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
     background-color: $dark-grey;
     border-radius: 20px;
-  }
+}

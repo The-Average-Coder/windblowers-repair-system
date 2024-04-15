@@ -1,13 +1,38 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import calendarEventsColours from '../../enums/calendarEventColours';
+import axios from 'axios';
 
-const blankState = [];
+const initialState = { calendarEventsLoading: false, recentCalendarEvents: [] }
 
-const initialState = blankState;
+export const fetchRecentCalendarEvents = createAsyncThunk('calendarEvents/fetchRecentCalendarEvents', async () => {
+    return axios.get('/api/calendarEvents/getRecentCalendarEvents').then((resp) => resp.data).catch((err) => console.log(err));
+});
 
-function nextCalendarEventId(calendarEvents) {
-    const maxId = calendarEvents.reduce((maxId, calendarEvent) => Math.max(calendarEvent.id, maxId), -1);
-    return maxId + 1;
-}
+export const moveCalendarEvent = createAsyncThunk('calendarEvents/moveCalendarEvent', async (data, { dispatch }) => {
+    dispatch(calendarEventMoved(data));
+    axios.put('/api/calendarEvents/moveEvent', data);
+});
+
+export const updateEventPriority = createAsyncThunk('calendarEvents/updateEventPriority', async (data, { dispatch }) => {
+    console.log(data)
+    dispatch(calendarEventPriorityUpdated(data));
+    axios.put('/api/calendarEvents/updatePriority', data);
+});
+
+export const updateRepairStatus = createAsyncThunk('calendarEvents/updateRepairStatus', async (data, { dispatch }) => {
+    dispatch(repairStatusUpdated(data));
+    axios.put('/api/calendarEvents/updateRepairStatus', data);
+});
+
+export const deleteCalendarEvent = createAsyncThunk('calendarEvents/deleteCalendarEvent', async (id, { dispatch }) => {
+    dispatch(calendarEventRemoved(id));
+    axios.delete(`/api/calendarEvents/deleteEvent/${id}`);
+});
+
+export const deleteCalendarEventsOfRepair = createAsyncThunk('calendarEvents/deleteCalendarEventsOfRepair', async (id, { dispatch }) => {
+    dispatch(calendarEventsOfRepairDeleted(id));
+    axios.delete(`/api/calendarEvents/deleteEvent/${id}`);
+});
 
 const calendarEventsSlice = createSlice({
     name: 'calendarEvents',
@@ -16,21 +41,45 @@ const calendarEventsSlice = createSlice({
         calendarEventAdded(state, action) {
             state.push({
                 ...action.payload,
-                id: nextCalendarEventId()
+                color: calendarEventsColours.COMPLETED
             })
         },
         calendarEventMoved(state, action) {
-            const calendarEvent = state.find(calendarEvent => calendarEvent.id === action.payload.id);
+            const calendarEvent = state.recentCalendarEvents.find(calendarEvent => calendarEvent.id === action.payload.id);
 
             calendarEvent.start = action.payload.start;
-            calendarEvent.end = action.payload.end;
         },
         calendarEventRemoved(state, action) {
-            delete state[action.payload];
+            return { ...state, recentCalendarEvents: state.recentCalendarEvents.filter(calendarEvent => calendarEvent.id !== action.payload) }
+        },
+        calendarEventPriorityUpdated(state, action) {
+            const calendarEvent = state.recentCalendarEvents.find(calendarEvent => calendarEvent.id === action.payload.id);
+            
+            calendarEvent.priority = action.payload.priority;
+        },
+        repairStatusUpdated(state, action) {
+            const calendarEvents = state.recentCalendarEvents.filter(calendarEvent => calendarEvent.repair_id !== action.payload.repair_id);
+            calendarEvents.forEach(event => event.color = action.payload.color);
+        },
+        calendarEventsOfRepairDeleted(state, action) {
+            return state.filter(event => event.repair_id !== action.payload);
         }
+    },
+    extraReducers: builder => {
+        builder
+            .addCase(fetchRecentCalendarEvents.pending, (state) => {
+                state.calendarEventsLoading = true;
+            })
+            .addCase(fetchRecentCalendarEvents.fulfilled, (state, action) => {
+                state.calendarEventsLoading = false;
+                state.recentCalendarEvents = action.payload;
+            })
+            .addCase(fetchRecentCalendarEvents.rejected, (state) => {
+                state.calendarEventsLoading = false;
+            })
     }
 })
 
-export const { calendarEventAdded, calendarEventMoved, calendarEventRemoved } = calendarEventsSlice.actions;
+export const { calendarEventAdded, calendarEventMoved, calendarEventRemoved, repairStatusUpdated, calendarEventPriorityUpdated, calendarEventsOfRepairDeleted } = calendarEventsSlice.actions;
 
 export default calendarEventsSlice.reducer;

@@ -6,12 +6,12 @@ import repairStatuses from '../../../enums/repairStatuses';
 import RepairListRepair from './RepairListRepair';
 
 function RepairList(props) {
-    const activeRepairs = useSelector(state => state.activeRepairs);
-    const activeCustomers = useSelector(state => state.activeCustomers);
-    const activeInstruments = useSelector(state => state.activeInstruments);
+    const { repairsLoading, assessmentsLoading, activeRepairs } = useSelector(state => state.activeRepairs);
+    const { customersLoading, activeCustomers } = useSelector(state => state.activeCustomers);
+    const { instrumentsLoading, activeInstruments } = useSelector(state => state.activeInstruments);
 
     const filterStatuses = [
-        [repairStatuses.CREATED, repairStatuses.ASSESSED],
+        [repairStatuses.CREATED],
         [repairStatuses.OPEN],
         [repairStatuses.COMPLETED]
     ]
@@ -19,14 +19,14 @@ function RepairList(props) {
     const renderedRepairs = activeRepairs.map(repair => {
         if (props.filter !== 0 && !filterStatuses[props.filter-1].includes(repair.status)) return null;
         if (props.search !== '' && !repair.id.includes(props.search)) return null;
+        if (repair.status >= repairStatuses.COLLECTED) return null;
         const customer = activeCustomers.find(customer => customer.id === repair.customer_id);
         const instrument = activeInstruments.find(instrument => instrument.id === repair.instrument_id);
         return <RepairListRepair repair={repair} customer={customer} instrument={instrument} />
-    })
+    }).filter(repair => repair !== null);
 
     return (
         <div className='repair-list'>
-                
             <div className='column-header'>
                 <FontAwesomeIcon icon='fa-solid fa-circle-check' className='fa-icon' />
                 <p className='instrument'>Instrument</p>
@@ -35,7 +35,7 @@ function RepairList(props) {
             </div>
 
             {renderedRepairs}
-            {renderedRepairs.length === 0  ? 'No more jobs!' : null}
+            {renderedRepairs.length === 0  ? <p className='no-jobs-message'>No more jobs!</p> : null}
 
         </div>
     );

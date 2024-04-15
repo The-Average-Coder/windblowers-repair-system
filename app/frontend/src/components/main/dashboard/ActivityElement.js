@@ -1,22 +1,29 @@
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import ActionButton from '../../common/ActionButton';
+import { deleteActivity } from '../../../reducers/activity/activitySlice';
 
 function ActivityElement(props) {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const repair = useSelector(state => {
-        if (!state.activeRepairs.find(repair => repair.id === props.activity.repair_id))
-            return null
-        return state.activeRepairs.find(repair => repair.id === props.activity.repair_id)
+        const repair = state.activeRepairs.activeRepairs.find(repair => repair.id === props.activity.repair_id);
+        return repair ? repair : null;
     })
     const instrument = useSelector(state => {
-        if (!repair || !state.activeInstruments.find(instrument => instrument.id === repair.instrument_id))
-            return null
-        return state.activeInstruments.find(instrument => instrument.id === repair.instrument_id)
+        if (!repair) return null;
+        const instrument = state.activeInstruments.activeInstruments.find(instrument => instrument.id === repair.instrument_id);
+        return instrument ? instrument : null;
     });
 
     const navigateToRepair = () => {
-        navigate(`/repairs/repair/${repair.id}`)
+        if (repair) navigate(`/repairs/repair/${repair.id}`)
+    }
+
+    const dismissNotification = (e) => {
+        e.stopPropagation();
+        dispatch(deleteActivity(props.activity.id))
     }
 
     return (
@@ -27,10 +34,11 @@ function ActivityElement(props) {
             :
             <>
             <p className='job-number'>{repair.id !== null ? repair.id : 'No ID'}</p>
-            <p className='instrument'>{instrument.type !== null ? instrument.type : 'No Type' }</p>
+            <p className='instrument'>{instrument !== null ? instrument.type : 'No Instrument' }</p>
             </>
             }
             <p className='info'>{props.activity.type}</p>
+            <ActionButton onClick={dismissNotification} className='remove' contents='Dismiss' />
 
         </div>
     );

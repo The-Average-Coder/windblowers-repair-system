@@ -7,7 +7,7 @@ import PageTitle from '../../common/PageTitle';
 import Activity from './Activity';
 
 function Dashboard() {
-    const activeRepairs = useSelector(state => state.activeRepairs)
+    const { repairsLoading, assessmentsLoading, activeRepairs } = useSelector(state => state.activeRepairs)
     const assessmentCount = activeRepairs.filter(repair => repair.status === repairStatuses.CREATED || repair.status === repairStatuses.ASSESSED).length;
     const openCount = activeRepairs.filter(repair => repair.status === repairStatuses.OPEN).length;
     const completeCount = activeRepairs.filter(repair => repair.status === repairStatuses.COMPLETED).length;
@@ -36,9 +36,9 @@ function Dashboard() {
                         <div className='complete' style={{flex: completeCount}} />
                     </div>
                     <div className='distribution-bar-subtext'>
-                        <p className='assessment' style={{flex: assessmentCount}}>{assessmentCount}</p>
-                        <p className='open' style={{flex: openCount}}>{openCount}</p>
-                        <p className='complete' style={{flex: completeCount}}>{completeCount}</p>
+                        {assessmentCount > 0 ? <p className='assessment' style={{flex: assessmentCount}}>{assessmentCount}</p> : null}
+                        {openCount > 0 ? <p className='open' style={{flex: openCount}}>{openCount}</p> : null}
+                        {completeCount > 0 ? <p className='complete' style={{flex: completeCount}}>{completeCount}</p> : null}
                     </div>
                 </div>
                 <div className = 'secondary right stat-box'>

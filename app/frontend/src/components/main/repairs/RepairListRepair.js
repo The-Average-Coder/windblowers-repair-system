@@ -7,19 +7,19 @@ function RepairListRepair(props) {
         navigate(`/repairs/repair/${props.repair.id}`)
     }
 
-    const statusColours = ['red', 'red', 'orange', 'limegreen', 'darkgrey'];
+    const statusColours = ['red', 'orange', 'limegreen', 'darkgrey'];
 
     return (
         <div className='repair-list-repair' onClick={navigateToRepair}>
 
             <div className='status' style={{backgroundColor: statusColours[props.repair.status]}} />
-            <p className='instrument-type'>{props.instrument.type}</p>
-            <p className='instrument-model'>{props.instrument.manufacturer} {props.instrument.model}</p>
-            <p className='instrument-serial'>{props.instrument.serial_number}</p>
+            <p className='instrument-type'>{props.instrument ? props.instrument.type : 'No Instrument'}</p>
+            <p className='instrument-model'>{props.instrument ? props.instrument.manufacturer : null} {props.instrument ? props.instrument.model : null}</p>
+            <p className='instrument-serial'>{props.instrument ? props.instrument.serial_number : null}</p>
             <p className='job-number'>{props.repair.id}</p>
             <p className='date-created'>Created: {props.repair.date_created}</p>
-            <p className='deadline'>Deadline: {props.repair.deadline !== null ? props.repairs.deadline : 'Not Set'}</p>
-            <p className='customer-name'>{props.customer.firstname} {props.customer.surname}</p>
+            <p className='deadline'>Deadline: {props.repair.deadline !== null ? props.repair.deadline : 'Not Set'}</p>
+            <p className='customer-name'>{props.customer ? props.customer.firstname : 'No Customer'} {props.customer ? props.customer.surname : null}</p>
 
         </div>
     );
