@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addCustomer } from '../repairs/repairsSlice';
+import { addCustomer, removeCustomerFromRepairs } from '../repairs/repairsSlice';
 import axios from 'axios';
 
 const initialState = { customersLoading: false, loadingCustomer: false, activeCustomers: [], loadedCustomer: null }
@@ -14,7 +14,6 @@ export const loadCustomer = createAsyncThunk('customers/loadCustomer', async (id
 
 export const createCustomer = createAsyncThunk('customers/createCustomer', async (customerObject, { dispatch }) => {
     const id = await axios.post('/api/customers/createCustomer', customerObject).then(resp => resp.data.insertId);
-    dispatch(customerAdded({ id: id, ...customerObject }));
     return id;
 });
 
@@ -30,6 +29,7 @@ export const addCustomerToActiveCustomers = createAsyncThunk('customers/addCusto
 });
 
 export const editCustomer = createAsyncThunk('customers/editCustomer', async (customerObject, { dispatch }) => {
+    console.log(customerObject)
     dispatch(customerEdited(customerObject));
     axios.put('/api/customers/editCustomer', customerObject);
 });
@@ -37,6 +37,7 @@ export const editCustomer = createAsyncThunk('customers/editCustomer', async (cu
 export const deleteCustomer = createAsyncThunk('customers/deleteCustomer', async (id, { dispatch }) => {
     dispatch(customerDeleted(id));
     axios.delete(`/api/customers/deleteCustomer/${id}`);
+    dispatch(removeCustomerFromRepairs(id));
 });
 
 const customersSlice = createSlice({
@@ -47,9 +48,11 @@ const customersSlice = createSlice({
             state.activeCustomers.push(action.payload);
         },
         customerEdited(state, action) {
-            const customer = state.activeCustomers.find(customer => customer.id === action.payload.id);
+            let customer = state.activeCustomers.find(customer => customer.id === action.payload.id);
 
             if (!customer) customer = state.loadedCustomer;
+
+            
 
             customer.surname = action.payload.surname;
             customer.firstname = action.payload.firstname;

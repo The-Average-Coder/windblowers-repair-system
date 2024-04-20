@@ -45,7 +45,6 @@ router.post('/searchCustomers', (req, res) => {
         }
         else {
             res.send(result);
-            console.log(result)
         }
     });
 });

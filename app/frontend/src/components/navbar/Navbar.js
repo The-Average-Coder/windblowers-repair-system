@@ -62,7 +62,6 @@ function Navbar() {
     const createCustomer = () => {
         dispatch(createCustomerAction({ firstname: '', surname: '', telephone: '', email: '', address: '' })).then((resp) => {
             navigate(`/customer/${resp.payload}`);
-
         });
     }
 

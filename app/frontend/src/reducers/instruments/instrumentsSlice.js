@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addInstrument } from '../repairs/repairsSlice';
+import { addInstrument, removeInstrumentFromRepairs } from '../repairs/repairsSlice';
 import axios from 'axios';
 
 const initialState = { instrumentsLoading: false, loadingInstrument: false, activeInstruments: [], loadedInstrument: null }
@@ -37,6 +37,7 @@ export const editInstrument = createAsyncThunk('customers/editInstrument', async
 export const deleteInstrument = createAsyncThunk('customers/deleteInstrument', async (id, { dispatch }) => {
     dispatch(instrumentDeleted(id));
     axios.delete(`/api/instruments/deleteInstrument/${id}`);
+    dispatch(removeInstrumentFromRepairs(id));
 });
 
 const instrumentsSlice = createSlice({
@@ -58,7 +59,7 @@ const instrumentsSlice = createSlice({
             if (!state.activeInstruments.find(instrument => instrument.id === action.payload.id)) state.activeInstruments.push(action.payload)
         },
         instrumentDeleted(state, action) {
-            delete state.activeInstruments[action.payload];
+            return { ...state, activeInstruments: state.activeInstruments.filter(instrument => instrument.id !== action.payload) };
         },
         unloadInstrument(state) {
             state.loadedInstrument = null;

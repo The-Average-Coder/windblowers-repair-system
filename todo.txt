@@ -1,0 +1,3 @@
+When repair deleted, also delete all activity
+Assign a repair calendar time
+Database migration script

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadCustomer, unloadCustomer, editCustomer } from '../../../reducers/customers/customersSlice';
+import { loadCustomer, unloadCustomer, editCustomer, deleteCustomer as deleteCustomerAction } from '../../../reducers/customers/customersSlice';
 import axios from 'axios';
 
 import PageTitle from '../../common/PageTitle';
@@ -119,7 +119,10 @@ function Customer() {
     };
 
     const deleteCustomer = () => {
-        alert('Not Yet Implemented')
+        if (prompt("Type 'CONFIRM' to confirm.") === 'CONFIRM') {
+            dispatch(deleteCustomerAction(id));
+            navigate('/');
+        }
     }
 
     return (
@@ -172,7 +175,7 @@ function Customer() {
 
             <div className='customer-repairs-history'>
                 <BlockTitle title='Repair History' />
-                {renderedRepairHistory}
+                {renderedRepairHistory.length > 0 ? renderedRepairHistory : <p>No Repair History</p>}
             </div>
 
             <div>

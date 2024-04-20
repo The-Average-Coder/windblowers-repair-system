@@ -96,6 +96,16 @@ export const deleteRepair = createAsyncThunk('repairs/deleteRepair', async (id, 
     axios.delete(`/api/repairs/deleteRepair/${id}`);
 });
 
+export const removeCustomerFromRepairs = createAsyncThunk('repairs/removeCustomerFromRepairs', async (id, { dispatch }) => {
+    dispatch(customerDeleted(parseInt(id)));
+    axios.put(`/api/repairs/deleteCustomer/${id}`);
+});
+
+export const removeInstrumentFromRepairs = createAsyncThunk('repairs/removeInstrumentFromRepairs', async (id, { dispatch }) => {
+    dispatch(instrumentDeleted(parseInt(id)));
+    axios.put(`/api/repairs/deleteInstrument/${id}`);
+});
+
 
 
 function findRepair(state, id) {
@@ -208,6 +218,20 @@ const repairsSlice = createSlice({
             }
             return { ...state, activeRepairs: state.activeRepairs.filter(repair => repair.id !== action.payload)};
         },
+        customerDeleted(state, action) {
+            state.activeRepairs.forEach(repair => {
+                if (repair.customer_id === action.payload) {
+                    repair.customer_id = -1;
+                }
+            })
+        },
+        instrumentDeleted(state, action) {
+            state.activeRepairs.forEach(repair => {
+                if (repair.instrument_id === action.payload) {
+                    repair.instrument_id = -1;
+                }
+            })
+        },
         unloadRepair(state) {
             state.loadedRepair = null;
         }
@@ -270,6 +294,6 @@ const repairsSlice = createSlice({
 })
 
 export const { repairAdded, repairEdited, repairAssessed, assessmentEdited, assessmentDeleted, customerAdded, customerRemoved, instrumentAdded, instrumentRemoved,
-    notesEdited, openJobDetailsEdited, statusIncremented, statusDecremented, archiveToggled, repairDeleted, unloadRepair } = repairsSlice.actions;
+    notesEdited, openJobDetailsEdited, statusIncremented, statusDecremented, archiveToggled, repairDeleted, customerDeleted, instrumentDeleted, unloadRepair } = repairsSlice.actions;
 
 export default repairsSlice.reducer;

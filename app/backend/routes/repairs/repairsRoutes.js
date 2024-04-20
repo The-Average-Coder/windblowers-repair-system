@@ -206,8 +206,33 @@ router.put('/decrementStatus/:id', (req, res) => {
 });
 
 router.put('/toggleArchive/:id', (req, res) => {
-    console.log('Hello')
     const sqlUpdate = 'UPDATE repairs SET archived = 1 - archived WHERE id = ?';
+
+    db.query(sqlUpdate, req.params.id, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/deleteCustomer/:id', (req, res) => {
+    const sqlUpdate = 'UPDATE repairs SET customer_id = -1 WHERE customer_id = ?';
+
+    db.query(sqlUpdate, req.params.id, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/deleteInstrument/:id', (req, res) => {
+    const sqlUpdate = 'UPDATE repairs SET instrument_id = -1 WHERE instrument_id = ?';
 
     db.query(sqlUpdate, req.params.id, (err, result) => {
         if (err) {

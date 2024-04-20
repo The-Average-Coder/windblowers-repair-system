@@ -46,7 +46,6 @@ router.post('/searchInstruments', (req, res) => {
         }
         else {
             res.send(result);
-            console.log(result)
         }
     });
 });

@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadInstrument, unloadInstrument, editInstrument } from '../../../reducers/instruments/instrumentsSlice';
+import { loadInstrument, unloadInstrument, editInstrument, deleteInstrument as deleteInstrumentAction } from '../../../reducers/instruments/instrumentsSlice';
 import axios from 'axios';
 
 import PageTitle from '../../common/PageTitle';
 import ActionButton from '../../common/ActionButton';
 import BlockTitle from '../../common/BlockTitle';
-import { deleteInstrument } from '../../../reducers/instruments/instrumentsSlice';
 
 function Instrument(props) {
     const { id } = useParams()
@@ -112,8 +111,11 @@ function Instrument(props) {
         toggleEditInstrument();
     }
 
-    const deleteCustomer = () => {
-        alert('Not Yet Implemented')
+    const deleteInstrument = () => {
+        if (prompt("Type 'CONFIRM' to confirm.") === 'CONFIRM') {
+            dispatch(deleteInstrumentAction(id));
+            navigate('/');
+        }
     }
 
     return (
