@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { editOpenJobDetails } from '../../../../reducers/repairs/repairsSlice';
 
@@ -6,12 +6,14 @@ import repairStatuses from '../../../../enums/repairStatuses';
 import ActionButton from '../../../common/ActionButton';
 import BlockTitle from '../../../common/BlockTitle';
 import RepairTimer from './RepairTimer';
+import RepairCalendarView from './RepairCalendarView';
 
 function RepairOpenDetails(props) {
     const [beginEditing, setBeginEditing] = useState(props.editing);
     const [editMode, setEditMode] = useState(false);
     const [deadline, setDeadline] = useState('');
     const [editingRepairer, setEditingRepairer] = useState('');
+    const [timeAllocated, setTimeAllocated] = useState(0);
 
     const dispatch = useDispatch();
 
@@ -43,6 +45,30 @@ function RepairOpenDetails(props) {
         toggleEdit();
     }
 
+    const events = useSelector(state => {
+        const rawData = state.recentCalendarEvents.recentCalendarEvents;
+        return rawData.map(event => {
+            if (event.repair_id === parseInt(props.repair.id)) {
+                return {
+                    ...event,
+                    color: 'limegreen',
+                    title: `${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                }
+            }
+            return {
+                ...event,
+                title: `${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+            }
+        })
+    })
+
+    useEffect(() => {
+        if (!events) return
+        const newTimeAllocated = events.filter(event => event.repair_id === parseInt(props.repair.id)).reduce((a, b) => a + b.time, 0)
+        if (newTimeAllocated === timeAllocated) return
+        setTimeAllocated(events.filter(event => event.repair_id === parseInt(props.repair.id)).reduce((a, b) => a + b.time, 0))
+    }, [events])
+
     return (
         <div className='repair-open-details'>
 
@@ -64,8 +90,8 @@ function RepairOpenDetails(props) {
                         <input type='date' className='repair-deadline-input' value={deadline} onChange={(e) => {setDeadline(e.target.value)}} />
                     </div>
                     <div>
-                        <p className='repair-dates-title'>Repair Dates:</p>
-                        <p>Not Set</p>
+                        <p className='repair-dates-title'>Time Allocated:</p>
+                        <p>{`${Math.floor(timeAllocated / 60)} Hrs ${timeAllocated % 60} Mins`}</p>
                     </div>
                     {beginEditing ? null : <ActionButton onClick={toggleEdit} className='cancel-edit-button' contents='Cancel' />}
                     <ActionButton onClick={saveEdit} className='save-details-button' contents='Save' />
@@ -79,8 +105,8 @@ function RepairOpenDetails(props) {
                         <p>{props.repair.deadline !== null ? props.repair.deadline : 'Not Set'}</p>
                     </div>
                     <div>
-                        <p className='repair-dates-title'>Repair Dates:</p>
-                        <p>Not Set</p>
+                        <p className='repair-dates-title'>Time Allocated:</p>
+                        <p>{`${Math.floor(timeAllocated / 60)} Hrs ${timeAllocated % 60} Mins`}</p>
                     </div>
                     {props.repair.status === repairStatuses.OPEN ? <>
                     <ActionButton onClick={toggleEdit} className='edit-details-button' contents='Edit Details' />
@@ -95,7 +121,12 @@ function RepairOpenDetails(props) {
                     
                 </div>
 
-                <RepairTimer />
+                {
+                //<RepairTimer />
+                }
+                <RepairCalendarView repair={props.repair} events={events} />
+
+
 
             </div>
 

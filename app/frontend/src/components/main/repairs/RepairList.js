@@ -9,17 +9,25 @@ function RepairList(props) {
     const { repairsLoading, assessmentsLoading, activeRepairs } = useSelector(state => state.activeRepairs);
     const { customersLoading, activeCustomers } = useSelector(state => state.activeCustomers);
     const { instrumentsLoading, activeInstruments } = useSelector(state => state.activeInstruments);
+    const { calendarEventsLoading, recentCalendarEvents } = useSelector(state => state.recentCalendarEvents);
 
     const filterStatuses = [
         [repairStatuses.CREATED],
         [repairStatuses.OPEN],
-        [repairStatuses.COMPLETED]
+        [repairStatuses.COMPLETED],
     ]
 
     const renderedRepairs = activeRepairs.map(repair => {
-        if (props.filter !== 0 && !filterStatuses[props.filter-1].includes(repair.status)) return null;
         if (props.search !== '' && !repair.id.includes(props.search)) return null;
         if (repair.status >= repairStatuses.COLLECTED) return null;
+        if (props.filter !== 0) {
+            if (props.filter <= 3 && !filterStatuses[props.filter-1].includes(repair.status)) return null;
+            if (props.filter === 4) {
+                const timeAllocated = recentCalendarEvents.filter(event => event.repair_id === parseInt(repair.id)).reduce((a, b) => a + b.time, 0);
+                const timeRequired = repair.assessments[repair.assessments.length - 1].time;
+                if (timeAllocated >= timeRequired) return null;
+            }
+        }
         const customer = activeCustomers.find(customer => customer.id === repair.customer_id);
         const instrument = activeInstruments.find(instrument => instrument.id === repair.instrument_id);
         return <RepairListRepair repair={repair} customer={customer} instrument={instrument} />

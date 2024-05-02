@@ -24,6 +24,11 @@ export const updateRepairStatus = createAsyncThunk('calendarEvents/updateRepairS
     axios.put('/api/calendarEvents/updateRepairStatus', data);
 });
 
+export const createCalendarEvent = createAsyncThunk('calendarEvents/createCalendarEvent', async (eventObject, { dispatch }) => {
+    const id = await axios.post('/api/calendarEvents/createEvent', eventObject).then(resp => resp.data.insertId);
+    dispatch(calendarEventAdded({ id: id, ...eventObject }));
+})
+
 export const deleteCalendarEvent = createAsyncThunk('calendarEvents/deleteCalendarEvent', async (id, { dispatch }) => {
     dispatch(calendarEventRemoved(id));
     axios.delete(`/api/calendarEvents/deleteEvent/${id}`);
@@ -39,10 +44,7 @@ const calendarEventsSlice = createSlice({
     initialState,
     reducers: {
         calendarEventAdded(state, action) {
-            state.push({
-                ...action.payload,
-                color: calendarEventsColours.COMPLETED
-            })
+            state.recentCalendarEvents.push(action.payload)
         },
         calendarEventMoved(state, action) {
             const calendarEvent = state.recentCalendarEvents.find(calendarEvent => calendarEvent.id === action.payload.id);

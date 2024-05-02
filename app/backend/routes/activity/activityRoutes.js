@@ -42,10 +42,10 @@ router.delete('/deleteActivity/:id', (req, res) => {
     });
 });
 
-router.delete('/deleteActivityOfRepair/:repair_id', (req, res) => {
+router.delete('/deleteActivityOfRepair/:id', (req, res) => {
     const sqlDelete = 'DELETE FROM activity WHERE repair_id = ?';
 
-    db.query(sqlDelete, req.params.repair_id, (err, result) => {
+    db.query(sqlDelete, req.params.id, (err, result) => {
         if (err) {
             console.log(err);
         }

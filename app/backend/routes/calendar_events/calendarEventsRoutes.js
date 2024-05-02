@@ -57,6 +57,19 @@ router.put('/updateRepairStatus', (req, res) => {
     });
 });
 
+router.post('/createEvent', (req, res) => {
+    const sqlInsert = 'INSERT INTO calendar_events (repair_id, color, time, start, priority) VALUES (?, ?, ?, ?, ?);';
+
+    db.query(sqlInsert, [req.body.repair_id, req.body.color, req.body.time, req.body.start, req.body.priority], (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(result);
+        }
+    });
+})
+
 router.delete('/deleteEvent/:id', (req, res) => {
     const sqlDelete = 'DELETE FROM calendar_events WHERE id = ?;';
 

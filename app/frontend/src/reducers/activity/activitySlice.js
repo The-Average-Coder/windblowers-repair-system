@@ -10,17 +10,17 @@ export const fetchActivity = createAsyncThunk('activity/fetchActivity', async ()
 
 export const createActivity = createAsyncThunk('activity/createActivity', async (activityObject, { dispatch }) => {
     axios.post('/api/activity/createActivity', activityObject).then(resp => {
-        dispatch({ type: 'activity/activityAdded', payload: { id: resp.data.insertId, ...activityObject } });
+        dispatch(activityAdded({id: resp.data.insertId, ...activityObject }));
     });
 })
 
 export const deleteActivity = createAsyncThunk('activity/deleteActivity', async (id, { dispatch }) => {
-    dispatch({ type: 'activity/activityRemoved', payload: id });
+    dispatch(activityRemoved(id));
     axios.delete(`/api/activity/deleteActivity/${id}`);
 })
 
 export const deleteActivityOfRepair = createAsyncThunk('activity/deleteActivityOfRepair', async (repair_id, { dispatch }) => {
-    dispatch({ type: 'activity/activityRemoved', payload: repair_id });
+    dispatch(repairDeleted(repair_id));
     axios.delete(`/api/activity/deleteActivityOfRepair/${repair_id}`);
 })
 
@@ -35,7 +35,7 @@ const activitySlice = createSlice({
             return { activityLoading: state.activityLoading, activity: state.activity.filter(activity => activity.id !== action.payload) };
         },
         repairDeleted(state, action) {
-            return { activityLoading: state.activityLoading, activity: state.activity.filter(activity => activity.repair_id !== action.payload) };
+            return { ...state, activity: state.activity.filter(activity => activity.repair_id !== action.payload) };
         }
     },
     extraReducers: builder => {
@@ -53,6 +53,6 @@ const activitySlice = createSlice({
     }
 })
 
-export const { activityAdded, activityRemoved } = activitySlice.actions;
+export const { activityAdded, activityRemoved, repairDeleted } = activitySlice.actions;
 
 export default activitySlice.reducer;

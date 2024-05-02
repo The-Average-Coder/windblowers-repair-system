@@ -9,9 +9,12 @@
     .open-details {
 
         display: flex;
-        height: 300px;
+        gap: 20px;
+        height: 600px;
 
         .details {
+
+            padding: 10px 5px;
 
             position: relative;
             flex: 1;
@@ -23,11 +26,11 @@
                 margin-top: 10px;
             }
     
-            .repair-deadline-title { margin-right: 51px; }
+            .repair-deadline-title { margin-right: 66px; }
     
             .repair-dates-title { margin-right: 24px; }
     
-            .repairer-title { margin-right: 55px; }
+            .repairer-title { margin-right: 70px; }
 
             select, input {
                 font-family: inherit;
