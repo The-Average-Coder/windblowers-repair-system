@@ -9,15 +9,15 @@ var db;
 
 function connectDatabase() {
     if (!db) {
-        db = mysql.createConnection(settings);
+        db = mysql.createPool(settings);
 
-        db.connect(function(err){
+        /*db.connect(function(err){
             if(!err) {
                 console.log('Database is connected!');
             } else {
                 console.log('Error connecting database!');
             }
-        });
+        });*/
     }
     return db;
 }
