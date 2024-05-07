@@ -18,7 +18,6 @@ function RepairList(props) {
     ]
 
     const renderedRepairs = activeRepairs.map(repair => {
-        if (props.search !== '' && !repair.id.includes(props.search)) return null;
         if (repair.status >= repairStatuses.COLLECTED) return null;
         if (props.filter !== 0) {
             if (props.filter <= 3 && !filterStatuses[props.filter-1].includes(repair.status)) return null;
@@ -30,6 +29,12 @@ function RepairList(props) {
         }
         const customer = activeCustomers.find(customer => customer.id === repair.customer_id);
         const instrument = activeInstruments.find(instrument => instrument.id === repair.instrument_id);
+        if (props.search !== '') {
+            for (const searchTerm of props.search.split(' ')) {
+                if (!repair.id.concat(customer.surname, customer.firstname, customer.telephone, customer.address, customer.email,
+                    instrument.type, instrument.manufacturer, instrument.model, instrument.serial_number).toLowerCase().includes(searchTerm.toLowerCase())) return null;
+            }
+        }
         return <RepairListRepair repair={repair} customer={customer} instrument={instrument} />
     }).filter(repair => repair !== null);
 

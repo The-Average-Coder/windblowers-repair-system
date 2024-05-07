@@ -4,7 +4,7 @@ var db = require('../../db');
 const router = express.Router();
 
 router.get('/getActiveRepairs', (req, res) => {
-    const sqlSelect = 'SELECT * FROM repairs WHERE status < 3';
+    const sqlSelect = 'SELECT * FROM repairs WHERE status < 3 ORDER BY id DESC';
 
     db.query(sqlSelect, (err, result) => {
         if (err) {
@@ -67,6 +67,32 @@ router.get('/getRepairsOfInstrument/:id', (req, res) => {
         }
     });
 });
+
+router.get('/getRepairsRecievedThisMonth', (req, res) => {
+    const sqlSelect = 'SELECT COUNT(CASE WHEN MONTH(STR_TO_DATE(date_created, "%d-%m-%Y")) = MONTH(CURRENT_DATE()) THEN id END) AS repairCount FROM repairs;';
+
+    db.query(sqlSelect, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(result);
+        }
+    });
+})
+
+router.get('/getRepairsCompleteThisMonth', (req, res) => {
+    const sqlSelect = 'SELECT COUNT(CASE WHEN MONTH(STR_TO_DATE(date_completed, "%d-%m-%Y")) = MONTH(CURRENT_DATE()) THEN id END) AS repairCount FROM repairs;';
+
+    db.query(sqlSelect, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send(result);
+        }
+    });
+})
 
 router.post('/searchRepairs', (req, res) => {
     const searchTerms = JSON.parse(req.body.searchTerms);
@@ -194,6 +220,58 @@ router.put('/incrementStatus/:id', (req, res) => {
 
 router.put('/decrementStatus/:id', (req, res) => {
     const sqlUpdate = 'UPDATE repairs SET status = status - 1 WHERE id = ?';
+
+    db.query(sqlUpdate, req.params.id, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/completeJob', (req, res) => {
+    const sqlUpdate = 'UPDATE repairs SET date_completed = ? WHERE id = ?';
+
+    db.query(sqlUpdate, [req.body.date, req.body.id], (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/uncompleteJob/:id', (req, res) => {
+    const sqlUpdate = 'UPDATE repairs SET date_completed = NULL WHERE id = ?';
+
+    db.query(sqlUpdate, req.params.id, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/collectJob', (req, res) => {
+    const sqlUpdate = 'UPDATE repairs SET date_collected = ? WHERE id = ?';
+
+    db.query(sqlUpdate, [req.body.date, req.body.id], (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/uncollectJob/:id', (req, res) => {
+    const sqlUpdate = 'UPDATE repairs SET date_collected = NULL WHERE id = ?';
 
     db.query(sqlUpdate, req.params.id, (err, result) => {
         if (err) {

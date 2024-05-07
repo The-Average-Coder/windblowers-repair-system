@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import CountUp from 'react-countup';
+import axios from 'axios';
 
 import repairStatuses from '../../../enums/repairStatuses';
 
@@ -12,8 +14,13 @@ function Dashboard() {
     const openCount = activeRepairs.filter(repair => repair.status === repairStatuses.OPEN).length;
     const completeCount = activeRepairs.filter(repair => repair.status === repairStatuses.COMPLETED).length;
     
-    const repairsRecievedMonth = 28;
-    const repairsCompleteMonth = 23;
+    const [repairsRecievedMonth, setRepairsRecievedMonth] = useState(0);
+    const [repairsCompleteMonth, setRepairsCompleteMonth] = useState(0);
+
+    useEffect(() => {
+        axios.get('/api/repairs/getRepairsRecievedThisMonth').then((response) => setRepairsRecievedMonth(response.data[0].repairCount));
+        axios.get('/api/repairs/getRepairsCompleteThisMonth').then((response) => setRepairsCompleteMonth(response.data[0].repairCount));
+    })
 
     return (
         <div className='dashboard'>

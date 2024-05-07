@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { loadRepair, unloadRepair, loadRepairAssessments, editNotes, addAssessment, incrementStatus, decrementStatus, toggleArchive as toggleArchiveAction, deleteRepair } from '../../../../reducers/repairs/repairsSlice';
+import { loadRepair, unloadRepair, loadRepairAssessments, editNotes, addAssessment, incrementStatus, decrementStatus, toggleArchive as toggleArchiveAction, deleteRepair, completeJob, uncompleteJob, collectJob, uncollectJob } from '../../../../reducers/repairs/repairsSlice';
 import { createActivity, deleteActivityOfRepair } from '../../../../reducers/activity/activitySlice';
 import { addCustomerToActiveCustomers, unloadCustomer } from '../../../../reducers/customers/customersSlice';
 import { addInstrumentToActiveInstruments, unloadInstrument } from '../../../../reducers/instruments/instrumentsSlice';
@@ -154,20 +154,24 @@ function Repair() {
 
     const finishJob = () => {
         dispatch(incrementStatus(id));
+        dispatch(completeJob(id));
         dispatch(createActivity({ repair_id: id, type: activityTypes.COMPLETED }));
         dispatch(updateRepairStatus({ repair_id: id, color: calendarEventColours.COMPLETED }));
     }
 
     const reOpenJob = () => {
         dispatch(decrementStatus(id));
+        dispatch(uncompleteJob(id));
         dispatch(updateRepairStatus({ repair_id: id, color: calendarEventColours.OPEN }));
     }
 
     const instrumentCollected = () => {
+        dispatch(collectJob(id));
         dispatch(incrementStatus(id));
     }
 
     const instrumentUncollected = () => {
+        dispatch(uncollectJob(id));
         dispatch(decrementStatus(id));
         dispatch(addCustomerToActiveCustomers(repair.customer_id));
         dispatch(addInstrumentToActiveInstruments(repair.instrument_id));

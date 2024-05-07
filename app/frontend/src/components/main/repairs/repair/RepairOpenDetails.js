@@ -112,9 +112,21 @@ function RepairOpenDetails(props) {
                     <ActionButton onClick={toggleEdit} className='edit-details-button' contents='Edit Details' />
                     <ActionButton onClick={props.finishJob} className='finish-job-button' contents='Finish Job' />
                     </> : props.repair.status === repairStatuses.COMPLETED ? <>
+                    <div>
+                        <p className='date-completed-title'>Date Completed:</p>
+                        <p>{props.repair.date_completed !== null ? props.repair.date_completed : 'Not Set'}</p>
+                    </div>
                     <ActionButton onClick={props.reOpenJob} className='edit-details-button' contents='Re-Open Job' />
                     <ActionButton onClick={props.instrumentCollected} className='finish-job-button' contents='Instrument Collected' />
                     </> : <>
+                    <div>
+                        <p className='date-completed-title'>Date Completed:</p>
+                        <p>{props.repair.date_completed !== null ? props.repair.date_completed : 'Not Set'}</p>
+                    </div>
+                    <div>
+                        <p className='date-collected-title'>Date Collected:</p>
+                        <p>{props.repair.date_collected !== null ? props.repair.date_collected : 'Not Set'}</p>
+                    </div>
                     <ActionButton onClick={props.instrumentUncollected} className='finish-job-button' contents='Undo Instrument Collected' />
                     </>}
                     </>}

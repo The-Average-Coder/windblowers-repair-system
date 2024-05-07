@@ -86,6 +86,26 @@ export const decrementStatus = createAsyncThunk('repairs/decrementStatus', async
     axios.put(`/api/repairs/decrementStatus/${id}`);
 });
 
+export const completeJob = createAsyncThunk('repairs/completeJob', async (id, { dispatch }) => {
+    dispatch(jobCompleted(id));
+    axios.put('/api/repairs/completeJob/', { id: id, date: getDate() });
+});
+
+export const uncompleteJob = createAsyncThunk('repairs/ucompleteJob', async (id, { dispatch }) => {
+    dispatch(jobUncompleted(id));
+    axios.put(`/api/repairs/uncompleteJob/${id}`);
+});
+
+export const collectJob = createAsyncThunk('repairs/collectJob', async (id, { dispatch }) => {
+    dispatch(jobCollected(id));
+    axios.put('/api/repairs/collectJob/', { id: id, date: getDate() });
+});
+
+export const uncollectJob = createAsyncThunk('repairs/ucollectJob', async (id, { dispatch }) => {
+    dispatch(jobUncollected(id));
+    axios.put(`/api/repairs/uncollectJob/${id}`);
+});
+
 export const toggleArchive = createAsyncThunk('repairs/toggleArchive', async (id, { dispatch }) => {
     dispatch(archiveToggled(id));
     axios.put(`/api/repairs/toggleArchive/${id}`);
@@ -114,6 +134,11 @@ function findRepair(state, id) {
     if (!state.loadedRepair) return null;
     if (state.loadedRepair.id === id) return state.loadedRepair;
     return null
+}
+
+const getDate = () => {
+    const date = new Date();
+    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
 }
 
 const repairsSlice = createSlice({
@@ -207,6 +232,26 @@ const repairsSlice = createSlice({
 
             repair.status--;
         },
+        jobCompleted(state, action) {
+            const repair = findRepair(state, action.payload);
+
+            repair.date_completed = getDate();
+        },
+        jobUncompleted(state, action) {
+            const repair = findRepair(state, action.payload);
+
+            repair.date_completed = null;
+        },
+        jobCollected(state, action) {
+            const repair = findRepair(state, action.payload);
+            
+            repair.date_collected = getDate();
+        },
+        jobUncollected(state, action) {
+            const repair = findRepair(state, action.payload);
+
+            repair.date_collected = null;
+        },
         archiveToggled(state, action) {
             const repair = findRepair(state, action.payload);
 
@@ -293,7 +338,8 @@ const repairsSlice = createSlice({
     }
 })
 
-export const { repairAdded, repairEdited, repairAssessed, assessmentEdited, assessmentDeleted, customerAdded, customerRemoved, instrumentAdded, instrumentRemoved,
-    notesEdited, openJobDetailsEdited, statusIncremented, statusDecremented, archiveToggled, repairDeleted, customerDeleted, instrumentDeleted, unloadRepair } = repairsSlice.actions;
+export const { repairAdded, repairEdited, repairAssessed, assessmentEdited, assessmentDeleted, customerAdded, customerRemoved,
+    instrumentAdded, instrumentRemoved, notesEdited, openJobDetailsEdited, statusIncremented, statusDecremented,
+    jobCompleted, jobUncompleted, jobCollected, jobUncollected, archiveToggled, repairDeleted, customerDeleted, instrumentDeleted, unloadRepair } = repairsSlice.actions;
 
 export default repairsSlice.reducer;

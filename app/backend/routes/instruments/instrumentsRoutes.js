@@ -38,7 +38,6 @@ router.post('/searchInstruments', (req, res) => {
         sqlSelect += ' AND CONCAT(type,manufacturer,model,serial_number) LIKE CONCAT("%",?,"%")';
     });
     sqlSelect += ';';
-    console.log(sqlSelect)
 
     db.query(sqlSelect, searchTerms, (err, result) => {
         if (err) {
