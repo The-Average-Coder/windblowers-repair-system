@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a3c55dee.css",
+    "main.js": "/static/js/main.6aae74ea.js",
+    "static/media/brand-red.png": "/static/media/brand-red.67e29e6d2d2174e5d63d.png",
+    "index.html": "/index.html",
+    "main.a3c55dee.css.map": "/static/css/main.a3c55dee.css.map",
+    "main.6aae74ea.js.map": "/static/js/main.6aae74ea.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a3c55dee.css",
+    "static/js/main.6aae74ea.js"
+  ]
+}
