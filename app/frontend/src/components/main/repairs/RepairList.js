@@ -22,6 +22,7 @@ function RepairList(props) {
         if (props.filter !== 0) {
             if (props.filter <= 3 && !filterStatuses[props.filter-1].includes(repair.status)) return null;
             if (props.filter === 4) {
+                if (repair.assessments.length === 0) return null;
                 const timeAllocated = recentCalendarEvents.filter(event => event.repair_id === parseInt(repair.id)).reduce((a, b) => a + b.time, 0);
                 const timeRequired = repair.assessments[repair.assessments.length - 1].time;
                 if (timeAllocated >= timeRequired) return null;
@@ -31,8 +32,8 @@ function RepairList(props) {
         const instrument = activeInstruments.find(instrument => instrument.id === repair.instrument_id);
         if (props.search !== '') {
             for (const searchTerm of props.search.split(' ')) {
-                if (!repair.id.concat(customer.surname, customer.firstname, customer.telephone, customer.address, customer.email,
-                    instrument.type, instrument.manufacturer, instrument.model, instrument.serial_number).toLowerCase().includes(searchTerm.toLowerCase())) return null;
+                if (![customer.surname, customer.firstname, customer.telephone, customer.address, customer.email,
+                    instrument.type, instrument.manufacturer, instrument.model, instrument.serial_number].join('').toLowerCase().includes(searchTerm.toLowerCase())) return null;
             }
         }
         return <RepairListRepair repair={repair} customer={customer} instrument={instrument} />
