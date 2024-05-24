@@ -46,7 +46,7 @@ function RepairAssessment(props) {
     const updateTime = (hours, minutes) => {
         const newTime = hours * 60 + minutes
         setTime(newTime)
-        setTimeCost(newTime * 2 / 3)
+        setTimeCost(newTime * 3 / 4)
     }
 
     const deleteAssessment = () => {
