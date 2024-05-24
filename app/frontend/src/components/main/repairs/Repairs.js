@@ -29,15 +29,7 @@ function Repairs() {
                 <FilterSearch value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} />
             </div>
 
-            { currentView === 0 ? <RepairList filter={activeFilter} search={searchFilter} /> : 
-            
-            <div className ='calendar-box'>
-
-
-                
-            </div>
-
-            }
+            <RepairList filter={activeFilter} search={searchFilter} />
 
         </div>
     );

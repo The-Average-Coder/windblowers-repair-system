@@ -68,10 +68,10 @@ function App() {
   <div className='app'>
     {loggedIn ? <>
       <Header />
-    <div className='body'>
-      <Navbar />
-      <Main logout={logout} />
-    </div>
+      <div className='body'>
+        <Navbar />
+        <Main logout={logout} />
+      </div>
     </> :
     <Login login={login} />
     }

@@ -77,32 +77,32 @@ app.get('/clear-cookie', (req, res) => {
     res.clearCookie('name').end();
 });
 
-app.use(checkAuthentication);
+//app.use(checkAuthentication);
 
-app.get('/api', (req, res) => {
+app.get('/api', checkAuthentication, (req, res) => {
     res.send('Hello from the API!')
 })
 
 const customersRoutes = require('./routes/customers/customersRoutes');
-app.use('/api/customers', customersRoutes);
+app.use('/api/customers', checkAuthentication, customersRoutes);
 
 const instrumentsRoutes = require('./routes/instruments/instrumentsRoutes');
-app.use('/api/instruments', instrumentsRoutes);
+app.use('/api/instruments', checkAuthentication, instrumentsRoutes);
 
 const activityRoutes = require('./routes/activity/activityRoutes');
-app.use('/api/activity', activityRoutes);
+app.use('/api/activity', checkAuthentication, activityRoutes);
 
 const repairersRoutes = require('./routes/repairers/repairersRoutes');
-app.use('/api/repairers', repairersRoutes);
+app.use('/api/repairers', checkAuthentication, repairersRoutes);
 
 const repairsRoutes = require('./routes/repairs/repairsRoutes');
-app.use('/api/repairs', repairsRoutes);
+app.use('/api/repairs', checkAuthentication, repairsRoutes);
 
 const assessmentsRoutes = require('./routes/assessments/assessmentsRoutes');
-app.use('/api/assessments', assessmentsRoutes);
+app.use('/api/assessments', checkAuthentication, assessmentsRoutes);
 
 const calendarEventsRoutes = require('./routes/calendar_events/calendarEventsRoutes');
-app.use('/api/calendarEvents', calendarEventsRoutes);
+app.use('/api/calendarEvents', checkAuthentication, calendarEventsRoutes);
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(frontEndPath, 'index.html'));
