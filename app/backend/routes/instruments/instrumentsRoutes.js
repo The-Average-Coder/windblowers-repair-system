@@ -63,9 +63,22 @@ router.post('/createInstrument', (req, res) => {
 });
 
 router.put('/editInstrument', (req, res) => {
-    const sqlUpdate = 'UPDATE instruments SET type = ?, manufacturer = ?, model = ?, serial_number = ? WHERE id = ?';
+    const sqlUpdate = 'UPDATE instruments SET type = ?, manufacturer = ?, model = ?, serial_number = ?, in_workshop = ? WHERE id = ?';
 
-    db.query(sqlUpdate, [req.body.type, req.body.manufacturer, req.body.model, req.body.serial_number, req.body.id], (err, result) => {
+    db.query(sqlUpdate, [req.body.type, req.body.manufacturer, req.body.model, req.body.serial_number, req.body.in_workshop, req.body.id], (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.send('Success!');
+        }
+    });
+});
+
+router.put('/editInstrumentInWorkshop', (req, res) => {
+    const sqlUpdate = 'UPDATE instruments SET in_workshop = ? WHERE id = ?';
+    
+    db.query(sqlUpdate, [req.body.in_workshop, req.body.id], (err, result) => {
         if (err) {
             console.log(err);
         }

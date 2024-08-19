@@ -15,6 +15,13 @@
         margin-right: 12px;
     }
 
+    .not-in-workshop {
+        color: red;
+        font-size: 18px;
+        margin-right: 8px;
+        margin-top: 1px;
+    }
+
     .instrument-type { flex: 5; }
     .instrument-model { flex: 6; }
     .instrument-serial { flex: 4; }

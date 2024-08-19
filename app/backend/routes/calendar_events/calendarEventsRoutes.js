@@ -58,9 +58,9 @@ router.put('/updateRepairStatus', (req, res) => {
 });
 
 router.post('/createEvent', (req, res) => {
-    const sqlInsert = 'INSERT INTO calendar_events (repair_id, color, time, start, priority) VALUES (?, ?, ?, ?, ?);';
+    const sqlInsert = 'INSERT INTO calendar_events (repair_id, instrument_type, color, time, start, priority) VALUES (?, ?, ?, ?, ?, ?);';
 
-    db.query(sqlInsert, [req.body.repair_id, req.body.color, req.body.time, req.body.start, req.body.priority], (err, result) => {
+    db.query(sqlInsert, [req.body.repair_id, req.body.instrument_type, req.body.color, req.body.time, req.body.start, req.body.priority], (err, result) => {
         if (err) {
             console.log(err);
         }

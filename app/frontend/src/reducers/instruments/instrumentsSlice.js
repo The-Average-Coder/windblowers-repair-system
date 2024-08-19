@@ -12,29 +12,34 @@ export const loadInstrument = createAsyncThunk('instruments/loadInstrument', asy
     return axios.get(`/api/instruments/getInstrument/${id}`).then((resp) => resp.data[0]).catch((err) => console.log(err));
 });
 
-export const createInstrument = createAsyncThunk('customers/createInstrument', async (instrumentObject, { dispatch }) => {
+export const createInstrument = createAsyncThunk('instruments/createInstrument', async (instrumentObject, { dispatch }) => {
     const id = await axios.post('/api/instruments/createInstrument', instrumentObject).then(resp => resp.data.insertId);
     dispatch(instrumentAdded({ id: id, ...instrumentObject }));
     return id;
 });
 
-export const createInstrumentOnRepair = createAsyncThunk('customers/createInstrumentOnRepair', async (data, { dispatch }) => {
+export const createInstrumentOnRepair = createAsyncThunk('instruments/createInstrumentOnRepair', async (data, { dispatch }) => {
     axios.post('/api/instruments/createInstrument', data.instrument).then(resp => {
         dispatch(instrumentAdded({ id: resp.data.insertId, ...data.instrument }));
         dispatch(addInstrument({ id: data.repair_id, instrument_id: resp.data.insertId }));
     });
 });
 
-export const addInstrumentToActiveInstruments = createAsyncThunk('customers/addInstrumentToActiveInstruments', async (id, { dispatch }) => {
+export const addInstrumentToActiveInstruments = createAsyncThunk('instruments/addInstrumentToActiveInstruments', async (id, { dispatch }) => {
     return axios.get(`/api/instruments/getInstrument/${id}`).then(resp => {dispatch(instrumentAddedToRepair(resp.data[0]));})
 });
 
-export const editInstrument = createAsyncThunk('customers/editInstrument', async (instrumentObject, { dispatch }) => {
+export const editInstrument = createAsyncThunk('instruments/editInstrument', async (instrumentObject, { dispatch }) => {
     dispatch(instrumentEdited(instrumentObject));
     axios.put('/api/instruments/editInstrument', instrumentObject);
 });
 
-export const deleteInstrument = createAsyncThunk('customers/deleteInstrument', async (id, { dispatch }) => {
+export const editInstrumentInWorkshop = createAsyncThunk('instruments/editInstrumentInWorkshop', async (payloadObject, { dispatch }) => {
+    dispatch(instrumentInWorkshopEdited(payloadObject));
+    axios.put('/api/instruments/editInstrumentInWorkshop/', payloadObject);
+})
+
+export const deleteInstrument = createAsyncThunk('instruments/deleteInstrument', async (id, { dispatch }) => {
     dispatch(instrumentDeleted(id));
     axios.delete(`/api/instruments/deleteInstrument/${id}`);
     dispatch(removeInstrumentFromRepairs(id));
@@ -48,12 +53,20 @@ const instrumentsSlice = createSlice({
             state.activeInstruments.push(action.payload);
         },
         instrumentEdited(state, action) {
-            const instrument = state.activeInstruments.find(instrument => instrument.id === action.payload.id);
+            let instrument = state.activeInstruments.find(instrument => instrument.id === action.payload.id);
+            if (instrument === undefined && state.loadedInstrument.id === action.payload.id) instrument = state.loadedInstrument;
 
             instrument.type = action.payload.type;
             instrument.manufacturer = action.payload.manufacturer;
             instrument.model = action.payload.model;
             instrument.serial_number = action.payload.serial_number;
+            instrument.in_workshop = action.payload.in_workshop;
+        },
+        instrumentInWorkshopEdited(state, action) {
+            let instrument = state.activeInstruments.find(instrument => instrument.id === action.payload.id);
+            if (instrument === undefined && state.loadedInstrument.id === action.payload.id) instrument = state.loadedInstrument;
+
+            instrument.in_workshop = action.payload.in_workshop;
         },
         instrumentAddedToRepair(state, action) {
             if (!state.activeInstruments.find(instrument => instrument.id === action.payload.id)) state.activeInstruments.push(action.payload)
@@ -99,6 +112,6 @@ const instrumentsSlice = createSlice({
     }
 })
 
-export const { instrumentAdded, instrumentEdited, instrumentAddedToRepair, instrumentDeleted, unloadInstrument } = instrumentsSlice.actions; 
+export const { instrumentAdded, instrumentEdited, instrumentInWorkshopEdited, instrumentAddedToRepair, instrumentDeleted, unloadInstrument } = instrumentsSlice.actions; 
 
 export default instrumentsSlice.reducer;

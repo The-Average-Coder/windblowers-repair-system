@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { loadRepair, unloadRepair, loadRepairAssessments, editNotes, addAssessment, incrementStatus, decrementStatus, toggleArchive as toggleArchiveAction, deleteRepair, completeJob, uncompleteJob, collectJob, uncollectJob } from '../../../../reducers/repairs/repairsSlice';
 import { createActivity, deleteActivityOfRepair } from '../../../../reducers/activity/activitySlice';
 import { addCustomerToActiveCustomers, unloadCustomer } from '../../../../reducers/customers/customersSlice';
-import { addInstrumentToActiveInstruments, unloadInstrument } from '../../../../reducers/instruments/instrumentsSlice';
+import { addInstrumentToActiveInstruments, unloadInstrument, editInstrumentInWorkshop } from '../../../../reducers/instruments/instrumentsSlice';
 
 import repairStatuses from '../../../../enums/repairStatuses';
 import activityTypes from '../../../../enums/activityTypes';
@@ -166,11 +166,13 @@ function Repair() {
     }
 
     const instrumentCollected = () => {
+        dispatch(editInstrumentInWorkshop({id: repair.instrument_id, in_workshop: false}))
         dispatch(collectJob(id));
         dispatch(incrementStatus(id));
     }
 
     const instrumentUncollected = () => {
+        dispatch(editInstrumentInWorkshop({id: repair.instrument_id, in_workshop: true}))
         dispatch(uncollectJob(id));
         dispatch(decrementStatus(id));
         dispatch(addCustomerToActiveCustomers(repair.customer_id));

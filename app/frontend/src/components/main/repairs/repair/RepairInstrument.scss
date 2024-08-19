@@ -24,6 +24,16 @@
             margin-top: 10px;
         }
 
+        .in-workshop-indicator {
+            background-color: red;
+            width: 120px;
+            text-align: center;
+            padding: 3px;
+            color: white;
+            border-radius: 6px;
+            font-size: 13.5px;
+        }
+
         .expand-button {
             position: absolute;
             top: 52px;
@@ -147,6 +157,16 @@
 
         .serial-label {
             margin-right: 11px;
+        }
+
+        .in-workshop {
+            width: auto;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .in-workshop-label {
+            margin-right: 10px;
         }
 
     }

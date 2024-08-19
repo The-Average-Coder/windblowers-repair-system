@@ -1,7 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPlus, faHouse, faTasks, faUsers, faGear, faList, faCalendar, faCircleCheck,
   faCirclePlay, faCirclePause, faRotateLeft, faUserCircle, faPlusCircle, faExpandAlt,
-  faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+  faCaretUp, faCaretDown, faExclamation } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 import Header from './header/Header';
@@ -22,7 +22,7 @@ import { fetchRecentCalendarEvents } from '../reducers/calendar_events/calendarE
 
 library.add(faPlus, faHouse, faTasks, faUsers, faGear, faList, faCalendar, faCircleCheck,
   faCirclePlay, faCirclePause, faRotateLeft, faUserCircle, faPlusCircle, faExpandAlt,
-  faCaretUp, faCaretDown);
+  faCaretUp, faCaretDown, faExclamation);
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);

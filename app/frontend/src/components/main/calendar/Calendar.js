@@ -23,6 +23,17 @@ function Calendar() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const instrumentTypeAbbreviations = {
+        'Contrabass Clarinet': 'Contra Clarinet',
+        'Soprano Saxophone': 'Soprano Sax',
+        'Alto Saxophone': 'Alto Sax',
+        'Tenor Saxophone': 'Tenor Sax',
+        'Baritone Saxophone': 'Baritone Sax',
+        'Bass Saxophone': 'Bass Sax',
+        'Saxophone (Other)': 'Sax (Other)',
+        'Soprano Recorder': 'Sop Recorder',
+    }
+
     const popUpRef = useRef(null);
 
     const events = useSelector(state => {
@@ -30,7 +41,7 @@ function Calendar() {
         return rawData.map(event => {
             return {
                 ...event,
-                title: `${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                title: `${event.instrument_type ? event.instrument_type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.instrument_type] : event.instrument_type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
             }
         })
     })

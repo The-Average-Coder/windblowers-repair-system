@@ -18,6 +18,7 @@ function RepairInstrument(props) {
     const [manufacturer, setManufacturer] = useState('');
     const [model, setModel] = useState('');
     const [serialNumber, setSerialNumber] = useState('');
+    const [inWorkshop, setInWorkshop] = useState();
 
     const [searchMode, setSearchMode] = useState(false);
 
@@ -69,12 +70,14 @@ function RepairInstrument(props) {
             setManufacturer('');
             setModel('');
             setSerialNumber('');
+            setInWorkshop(false);
         }
         else {
             setType(instrument.type);
             setManufacturer(instrument.manufacturer);
             setModel(instrument.model);
             setSerialNumber(instrument.serial_number);
+            setInWorkshop(instrument.in_workshop);
         }
         setEditMode(!editMode)
     }
@@ -82,10 +85,10 @@ function RepairInstrument(props) {
     const saveEdit = () => {
         if (props.id === -1) {
             dispatch(createInstrumentOnRepair({ repair_id: props.repairId, instrument:
-                { type: type, manufacturer: manufacturer, model: model, serial_number: serialNumber }  }));
+                { type: type, manufacturer: manufacturer, model: model, serial_number: serialNumber, in_workshop: inWorkshop }  }));
         }
         else {
-            dispatch(editInstrument({ id: props.id, type: type, manufacturer: manufacturer, model: model, serial_number: serialNumber }))
+            dispatch(editInstrument({ id: props.id, type: type, manufacturer: manufacturer, model: model, serial_number: serialNumber, in_workshop: inWorkshop }))
         }
         toggleEditInstrument();
     }
@@ -194,6 +197,12 @@ function RepairInstrument(props) {
                     <option value='Bass Recorder'>Bass Recorder</option>
                     <option value='Recorder (Other)'>Recorder (Other)</option>
                     </optgroup>
+                    <optgroup label='Brass Family'>
+                    <option value='Trumpet'>Trumpet</option>
+                    <option value='Cornet'>Cornet</option>
+                    <option value='Trombone'>Trombone</option>
+                    <option value='French Horn'>French Horn</option>
+                    </optgroup>
                     <optgroup label='Other'>
                     <option value='Other'>Other</option>
                     </optgroup>
@@ -202,6 +211,7 @@ function RepairInstrument(props) {
                 <label className='manufacturer-label'>Manufacturer: </label><input type='text' value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} /><br />
                 <label className='model-label'>Model: </label><input className='wide' type='text' value={model} onChange={(e) => setModel(e.target.value)} /><br />
                 <label className='serial-label'>Serial Number: </label><input className='wide' type='text' value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} /><br />
+                <label className='in-workshop-label'>Instrument In Workshop? </label><input className='in-workshop' type='checkbox' checked={inWorkshop} onChange={(e) => setInWorkshop(e.target.checked)} />
 
                 <div className='buttons-holder'>
                     <ActionButton contents={'Cancel'} onClick={toggleEditInstrument} />
@@ -225,6 +235,7 @@ function RepairInstrument(props) {
                 <p className='instrument-type'>{instrument.type}</p>
                 <p className='instrument-detail'>{instrument.manufacturer} {instrument.model}</p>
                 <p className='instrument-detail'>{instrument.serial_number}</p>
+                {!instrument.in_workshop ? <p className='in-workshop-indicator'>Not In Workshop</p> : null}
 
                 <div className='buttons-holder'>
                     <ActionButton contents={'Edit Instrument'} onClick={toggleEditInstrument} />

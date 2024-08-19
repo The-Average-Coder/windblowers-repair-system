@@ -19,6 +19,7 @@ function Instrument(props) {
     const [manufacturer, setManufacturer] = useState('');
     const [model, setModel] = useState('');
     const [serialNumber, setSerialNumber] = useState('');
+    const [inWorkshop, setInWorkshop] = useState();
 
     const [repairHistory, setRepairHistory] = useState([]);
 
@@ -34,7 +35,7 @@ function Instrument(props) {
     })
 
     const activeInstrument = useSelector(state => {
-        const instrument = state.activeInstruments.activeInstruments.find(instrument => instrument.id === props.id);
+        const instrument = state.activeInstruments.activeInstruments.find(instrument => instrument.id === parseInt(id));
         return instrument ? instrument : null;
     });
 
@@ -49,7 +50,7 @@ function Instrument(props) {
 
     useEffect(() => {
         if (!instrumentsLoading && activeInstrument === null) {
-            dispatch(loadInstrument(id))
+            dispatch(loadInstrument(parseInt(id)))
         }
         else {
             setInstrument(activeInstrument);
@@ -57,14 +58,13 @@ function Instrument(props) {
     }, [instrumentsLoading])
 
     useEffect(() => {
-        if (loadedInstrument) setInstrument(loadedInstrument);
+        if (loadedInstrument && activeInstrument === null) setInstrument(loadedInstrument);
     }, [loadingInstrument, loadedInstrument])
 
     useEffect(() => {
         if (instrument === null) return;
         axios.get(`/api/repairs/getRepairsOfInstrument/${instrument.id}`).then(resp => {
             setRepairHistory(resp.data);
-            console.log(resp.data)
         })
     }, [instrument])
 
@@ -96,18 +96,20 @@ function Instrument(props) {
             setManufacturer('');
             setModel('');
             setSerialNumber('');
+            setInWorkshop(false);
         }
         else {
             setType(instrument.type);
             setManufacturer(instrument.manufacturer);
             setModel(instrument.model);
             setSerialNumber(instrument.serial_number);
+            setInWorkshop(instrument.in_workshop);
         }
         setEditMode(!editMode)
     }
 
     const saveEdit = () => {
-        dispatch(editInstrument({ id: props.id, type: type, manufacturer: manufacturer, model: model, serial_number: serialNumber }))
+        dispatch(editInstrument({ id: parseInt(id), type: type, manufacturer: manufacturer, model: model, serial_number: serialNumber, in_workshop: inWorkshop }))
         toggleEditInstrument();
     }
 
@@ -177,6 +179,12 @@ function Instrument(props) {
                         <option value='Bass Recorder'>Bass Recorder</option>
                         <option value='Recorder (Other)'>Recorder (Other)</option>
                         </optgroup>
+                        <optgroup label='Brass Family'>
+                        <option value='Trumpet'>Trumpet</option>
+                        <option value='Cornet'>Cornet</option>
+                        <option value='Trombone'>Trombone</option>
+                        <option value='French Horn'>French Horn</option>
+                        </optgroup>
                         <optgroup label='Other'>
                         <option value='Other'>Other</option>
                         </optgroup>
@@ -185,6 +193,7 @@ function Instrument(props) {
                     <label className='manufacturer-label'>Manufacturer: </label><input type='text' value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} /><br />
                     <label className='model-label'>Model: </label><input className='wide' type='text' value={model} onChange={(e) => setModel(e.target.value)} /><br />
                     <label className='serial-label'>Serial Number: </label><input className='wide' type='text' value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} /><br />
+                    <label className='in-workshop-label'>Instrument In Workshop? </label><input className='in-workshop' type='checkbox' checked={inWorkshop} onChange={(e) => setInWorkshop(e.target.checked)} />
 
                     <div className='buttons-holder'>
                         <ActionButton contents={'Cancel'} onClick={toggleEditInstrument} />
@@ -201,6 +210,7 @@ function Instrument(props) {
                     <p className='instrument-type'>{instrument.type}</p>
                     <p className='instrument-detail'>{instrument.manufacturer} {instrument.model}</p>
                     <p className='instrument-detail'>{instrument.serial_number}</p>
+                    {!instrument.in_workshop ? <p className='in-workshop-indicator'>Not In Workshop</p> : null}
 
                     <div className='buttons-holder'>
                         <ActionButton contents={'Edit Instrument'} onClick={toggleEditInstrument} />

@@ -10,8 +10,11 @@ import interactionPlugin from '@fullcalendar/interaction';
 import calendarEventColours from '../../../../enums/calendarEventColours';
 import ActionButton from '../../../common/ActionButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { loadInstrument } from '../../../../reducers/instruments/instrumentsSlice';
 
 function RepairCalendarView(props) {
+    const [instrument, setInstrument] = useState();
+
     const [popUpShowing, setPopUpShowing] = useState(false);
     const [popUpPosition, setPopUpPosition] = useState([]);
     const [popUpWidth, setPopUpWidth] = useState(200);
@@ -30,6 +33,41 @@ function RepairCalendarView(props) {
 
     const popUpRef = useRef(null);
     const createEventPopUpRef = useRef(null);
+
+    const instrumentsLoading = useSelector(state => {
+        return state.activeInstruments.instrumentsLoading;
+    });
+
+    const loadingInstrument = useSelector(state => {
+        return state.activeInstruments.loadingInstrument;
+    })
+
+    const activeInstrument = useSelector(state => {
+        const instrument = state.activeInstruments.activeInstruments.find(instrument => instrument.id === props.repair.instrument_id);
+        return instrument ? instrument : null;
+    });
+
+    const loadedInstrument = useSelector(state => {
+        const loadedInstrument = state.activeInstruments.loadedInstrument;
+        return loadedInstrument ? loadedInstrument : null;
+    })
+
+    useEffect(() => {
+        setInstrument(activeInstrument)
+    }, [activeInstrument])
+
+    useEffect(() => {
+        if (!instrumentsLoading && activeInstrument === null) {
+            dispatch(loadInstrument(props.repair.instrument_id))
+        }
+        else {
+            setInstrument(activeInstrument);
+        }
+    }, [instrumentsLoading])
+
+    useEffect(() => {
+        if (loadedInstrument) setInstrument(loadedInstrument);
+    }, [loadingInstrument, loadedInstrument])
 
     useEffect(() => {
         document.addEventListener("mousedown", handleOutsideClick);
@@ -74,7 +112,7 @@ function RepairCalendarView(props) {
     }
 
     const submitCreateEvent = () => {
-        dispatch(createCalendarEvent({ repair_id: parseInt(props.repair.id), color: calendarEventColours.OPEN,
+        dispatch(createCalendarEvent({ repair_id: parseInt(props.repair.id), instrument_type: instrument.type, color: calendarEventColours.OPEN,
             time: createPopUpTime, start: createPopUpDate, priority: createPopUpPriority }));
         setCreatePopUpShowing(false);
     }

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function RepairListRepair(props) {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ function RepairListRepair(props) {
         <div className='repair-list-repair' onClick={navigateToRepair}>
 
             <div className='status' style={{backgroundColor: statusColours[props.repair.status]}} />
+            {props.instrument ? props.instrument.in_workshop ? null : <FontAwesomeIcon className='not-in-workshop' icon="fa-solid fa-exclamation" /> : null}
             <p className='instrument-type'>{props.instrument ? props.instrument.type : 'No Instrument'}</p>
             <p className='instrument-model'>{props.instrument ? props.instrument.manufacturer : null} {props.instrument ? props.instrument.model : null}</p>
             <p className='instrument-serial'>{props.instrument ? props.instrument.serial_number : null}</p>

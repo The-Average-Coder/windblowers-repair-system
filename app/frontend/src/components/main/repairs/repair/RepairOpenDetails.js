@@ -17,6 +17,17 @@ function RepairOpenDetails(props) {
 
     const dispatch = useDispatch();
 
+    const instrumentTypeAbbreviations = {
+        'Contrabass Clarinet': 'Contra Clarinet',
+        'Soprano Saxophone': 'Soprano Sax',
+        'Alto Saxophone': 'Alto Sax',
+        'Tenor Saxophone': 'Tenor Sax',
+        'Baritone Saxophone': 'Baritone Sax',
+        'Bass Saxophone': 'Bass Sax',
+        'Saxophone (Other)': 'Sax (Other)',
+        'Soprano Recorder': 'Sop Recorder',
+    }
+
     const repairers = useSelector(state => {
         return state.repairers.repairers;
     })
@@ -52,12 +63,12 @@ function RepairOpenDetails(props) {
                 return {
                     ...event,
                     color: 'limegreen',
-                    title: `${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                    title: `${event.instrument_type ? event.instrument_type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.instrument_type] : event.instrument_type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
                 }
             }
             return {
                 ...event,
-                title: `${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                title: `${event.instrument_type ? event.instrument_type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.instrument_type] : event.instrument_type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
             }
         })
     })
@@ -136,7 +147,7 @@ function RepairOpenDetails(props) {
                 {
                 //<RepairTimer />
                 }
-                <RepairCalendarView repair={props.repair} events={events} />
+                <RepairCalendarView repair={props.repair} instrument={props.instrument} events={events} />
 
 
 

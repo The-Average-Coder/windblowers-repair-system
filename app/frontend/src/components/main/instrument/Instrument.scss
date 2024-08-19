@@ -71,6 +71,16 @@
                 margin-top: 10px;
                 white-space: pre-wrap;
             }
+
+            .in-workshop-indicator {
+                background-color: red;
+                width: 120px;
+                text-align: center;
+                padding: 3px;
+                color: white;
+                border-radius: 6px;
+                font-size: 13.5px;
+            }    
     
             .buttons-holder {
                 position: absolute;
@@ -180,6 +190,16 @@
     
             .serial-label {
                 margin-right: 11px;
+            }
+
+            .in-workshop {
+                width: auto;
+                font-size: 16px;
+                margin-top: 20px;
+            }
+    
+            .in-workshop-label {
+                margin-right: 10px;
             }
     
         }
