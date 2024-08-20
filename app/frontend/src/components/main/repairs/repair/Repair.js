@@ -16,7 +16,7 @@ import RepairCustomer from './RepairCustomer';
 import RepairInstrument from './RepairInstrument';
 import RepairAssessment from './RepairAssessment';
 import RepairOpenDetails from './RepairOpenDetails';
-import { deleteCalendarEventsOfRepair, updateRepairStatus } from '../../../../reducers/calendar_events/calendarEventsSlice';
+import { deleteCalendarEventsOfRepair, statusUpdated } from '../../../../reducers/calendar_events/calendarEventsSlice';
 import calendarEventColours from '../../../../enums/calendarEventColours';
 
 function Repair() {
@@ -148,30 +148,33 @@ function Repair() {
     }
 
     const openJob = () => {
+        dispatch(statusUpdated({repair_id: id, status: repair.status + 1}));
         dispatch(incrementStatus(id));
         setOpenedJob(true);
     }
 
     const finishJob = () => {
+        dispatch(statusUpdated({repair_id: id, status: repair.status + 1}));
         dispatch(incrementStatus(id));
         dispatch(completeJob(id));
         dispatch(createActivity({ repair_id: id, type: activityTypes.COMPLETED }));
-        dispatch(updateRepairStatus({ repair_id: id, color: calendarEventColours.COMPLETED }));
     }
 
     const reOpenJob = () => {
+        dispatch(statusUpdated({repair_id: id, status: repair.status - 1}));
         dispatch(decrementStatus(id));
         dispatch(uncompleteJob(id));
-        dispatch(updateRepairStatus({ repair_id: id, color: calendarEventColours.OPEN }));
     }
 
     const instrumentCollected = () => {
+        dispatch(statusUpdated({repair_id: id, status: repair.status + 1}));
         dispatch(editInstrumentInWorkshop({id: repair.instrument_id, in_workshop: false}))
         dispatch(collectJob(id));
         dispatch(incrementStatus(id));
     }
 
     const instrumentUncollected = () => {
+        dispatch(statusUpdated({repair_id: id, status: repair.status - 1}));
         dispatch(editInstrumentInWorkshop({id: repair.instrument_id, in_workshop: true}))
         dispatch(uncollectJob(id));
         dispatch(decrementStatus(id));

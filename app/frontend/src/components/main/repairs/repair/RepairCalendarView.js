@@ -112,7 +112,7 @@ function RepairCalendarView(props) {
     }
 
     const submitCreateEvent = () => {
-        dispatch(createCalendarEvent({ repair_id: parseInt(props.repair.id), instrument_type: instrument.type, color: calendarEventColours.OPEN,
+        dispatch(createCalendarEvent({ repair_id: parseInt(props.repair.id), color: calendarEventColours.OPEN,
             time: createPopUpTime, start: createPopUpDate, priority: createPopUpPriority }));
         setCreatePopUpShowing(false);
     }
@@ -129,6 +129,14 @@ function RepairCalendarView(props) {
     const updateTime = (hours, minutes) => {
         const newTime = hours * 60 + minutes
         setCreatePopUpTime(newTime)
+    }
+
+    const subtractHexColor = (c1, c2) => {
+        var hexStr = (parseInt(c1.slice(1), 16) - parseInt(c2.slice(1), 16)).toString(16);
+        while (hexStr.length < 6) { hexStr = '0' + hexStr; } // Zero pad.
+        console.log(c1)
+        console.log(hexStr)
+        return '#' + hexStr;
     }
 
     return (
@@ -168,26 +176,14 @@ function RepairCalendarView(props) {
                     <ActionButton className='navigate-button-green' contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
                     </>
                     :
-                    popUpEvent.backgroundColor === calendarEventColours.OPEN ?
                     <>
-                    <div className='priority-input'>
+                    <div className='priority-input' style={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0A0A06')}}>
                         <p>{popUpPriority}</p>
-                        <FontAwesomeIcon icon='fa-solid fa-caret-up' className='upper-spin-button' onClick={() => {dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority+1) }));setPopUpPriority(popUpPriority+1)}} />
-                        <FontAwesomeIcon icon='fa-solid fa-caret-down' className='lower-spin-button' onClick={() => {if (popUpPriority > 1){dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority-1) }));setPopUpPriority(popUpPriority-1)}}} />
+                        <FontAwesomeIcon icon='fa-solid fa-caret-up' className='upper-spin-button' style={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0F0E06')}} onClick={() => {dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority+1) }));setPopUpPriority(popUpPriority+1)}} />
+                        <FontAwesomeIcon icon='fa-solid fa-caret-down' className='lower-spin-button' style={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0F0E06')}} onClick={() => {if (popUpPriority > 1){dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority-1) }));setPopUpPriority(popUpPriority-1)}}} />
                     </div>
-                    <ActionButton className='delete-button' contents='Remove Event' onClick={() => deleteEvent(popUpEvent.id)} />
-                    <ActionButton className='navigate-button' contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
-                    </>
-                    :
-                    <>
-                    <div className='priority-input-grey'>
-                        <p>{popUpPriority}</p>
-                        <FontAwesomeIcon icon='fa-solid fa-caret-up' className='upper-spin-button-grey' onClick={() => {dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority+1) }));setPopUpPriority(popUpPriority+1)}} />
-                        <FontAwesomeIcon icon='fa-solid fa-caret-down' className='lower-spin-button-grey' onClick={() => {if (popUpPriority > 1){dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority-1) }));setPopUpPriority(popUpPriority-1)}}} />
-                    </div>
-                    
-                    <ActionButton className='delete-button-grey' contents='Remove Event' onClick={() => deleteEvent(popUpEvent.id)} />
-                    <ActionButton className='navigate-button-grey' contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
+                    <ActionButton className='delete-button' buttonStyle={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0A0A06')}} contents='Remove Event' onClick={() => deleteEvent(popUpEvent.id)} />
+                    <ActionButton className='navigate-button' buttonStyle={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0A0A06')}} contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
                     </>
                     }
                 </div>

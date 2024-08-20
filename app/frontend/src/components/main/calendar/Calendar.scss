@@ -23,7 +23,7 @@
         z-index: 10;
         overflow: hidden;
         top: 200px;
-        height: 200px;
+        height: 240px;
         box-sizing: border-box;
         padding: 4px 10px;
         border-radius: 3px;
@@ -53,18 +53,8 @@
             }
         }
 
-        .priority-input {
-            background-color: #1f70c0;
-        }
-
-        .priority-input-grey {
-            background-color: #5f5f5f;
-        }
-
         .priority-input::-webkit-inner-spin-button, 
-        .priority-input::-webkit-outer-spin-button,
-        .priority-input-grey::-webkit-inner-spin-button, 
-        .priority-input-grey::-webkit-outer-spin-button {
+        .priority-input::-webkit-outer-spin-button {
             opacity: 0;
         }
 
@@ -100,7 +90,7 @@
             border-radius: 0 0 4px 4px;
         }
 
-        .navigate-button, .navigate-button-grey {
+        .navigate-button {
             position: absolute;
             bottom: 10px;
             width: calc(100% - 20px);
@@ -111,7 +101,7 @@
             }
         }
 
-        .delete-button, .delete-button-grey {
+        .delete-button {
             position: absolute;
             bottom: 45px;
             width: calc(100% - 20px);
@@ -119,26 +109,6 @@
             button {
                 color: white;
                 border: none;
-            }
-        }
-
-        .navigate-button, .delete-button {
-            button {
-                background-color: #1f70c0;
-            }
-
-            button:hover {
-                background-color: #1262b3;
-            }
-        }
-
-        .navigate-button-grey, .delete-button-grey {
-            button {
-                background-color: #5f5f5f;
-            }
-
-            button:hover {
-                background-color: #464646;
             }
         }
     }

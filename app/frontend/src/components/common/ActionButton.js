@@ -1,8 +1,8 @@
 function ActionButton(props) {
     return (
-        <div className={'action-button ' + props.className}>
+        <div className={'action-button ' + props.className} style={props.style}>
 
-            <button onClick={props.onClick}>{props.contents}</button>
+            <button onClick={props.onClick} style={props.buttonStyle}>{props.contents}</button>
 
         </div>
     );

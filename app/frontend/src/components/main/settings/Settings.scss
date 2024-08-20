@@ -1,3 +1,12 @@
+@keyframes open-color-palette-popup {
+    0% { height: 0px; width: 0px; }
+}
+
+@keyframes open-color-palette-grid {
+    0% { opacity: 0; }
+    60% {opacity: 0;}
+}
+
 .settings {
 
     .setting-title {
@@ -32,6 +41,25 @@
             p {
                 margin: 0;
                 flex: 1;
+            }
+
+            .color-palette {
+                border-radius: 50%;
+                border: none;
+                margin: -1px 0 -2px;
+                margin-right: 20px;
+                width: 26px;
+                height: 26px;
+            }
+
+            .color-palette:hover {
+                outline: 2px solid rgb(187, 187, 187);
+                outline-offset: 3px;
+            }
+
+            .color-palette:focus {
+                outline: 2px solid rgb(112, 112, 112);
+                outline-offset: 3px;
             }
 
             .delete {
@@ -69,6 +97,95 @@
             }
         }
 
+    }
+
+    .color-palette-popup {
+        animation: open-color-palette-popup 0.3s;
+
+        position: absolute;
+        background-color: rgb(241, 241, 241);
+        border: 1px solid rgb(228, 228, 228);
+        width: 100px;
+        height: 100px;
+        margin-top: 42px;
+        margin-left: -88px;
+        border-radius: 6px;
+
+        .arrow {
+            background-color: rgb(241, 241, 241);
+            height: 18px;
+            width: 18px;
+            margin-top: -8px;
+            margin-left: 91px;
+            transform:rotate(45deg);
+        }
+
+        .color-grid {
+            animation: open-color-palette-grid 0.4s;
+
+            display: grid;
+            grid-template-columns: auto auto auto auto auto;
+            
+            padding: 8px 15px;
+            gap: 10px;
+
+            button {
+                border-radius: 50%;
+                height: 26px;
+                width: 26px;
+                border: none;
+            }
+
+            button:hover {
+                outline: 2px solid rgb(187, 187, 187);
+                outline-offset: 3px;
+            }
+
+            button:active {
+                outline: 2px solid rgb(112, 112, 112);
+                outline-offset: 3px;
+            }
+
+            .blue {
+                background-color: #3788D8;
+            }
+
+            .red {
+                background-color: #E24646;
+            }
+
+            .green {
+                background-color: #13942B;
+            }
+
+            .gold {
+                background-color: #E69914;
+            }
+
+            .pink {
+                background-color: #E6179A;
+            }
+
+            .purple {
+                background-color: #9414DE;
+            }
+
+            .orange {
+                background-color: #FF7316;
+            }
+
+            .dark-blue {
+                background-color: #0F38A8;
+            }
+
+            .dark-red {
+                background-color: #A80E08;
+            }
+
+            .light-green {
+                background-color: #9BC007;
+            }
+        }
     }
 
     .account-settings {

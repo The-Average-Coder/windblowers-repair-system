@@ -8,7 +8,7 @@
         z-index: 10;
         overflow: hidden;
         top: 200px;
-        height: 200px;
+        height: 250px;
         box-sizing: border-box;
         padding: 4px 10px;
         border-radius: 3px;
@@ -47,20 +47,17 @@
         }
 
         .priority-input-green {
-            background-color: rgb(26, 143, 26);
+            background-color: rgb(28, 179, 28);
         }
 
         .priority-input::-webkit-inner-spin-button, 
         .priority-input::-webkit-outer-spin-button,
-        .priority-input-grey::-webkit-inner-spin-button, 
-        .priority-input-grey::-webkit-outer-spin-button,
         .priority-input-green::-webkit-inner-spin-button, 
         .priority-input-green::-webkit-outer-spin-button {
             opacity: 0;
         }
 
         .upper-spin-button, .lower-spin-button,
-        .upper-spin-button-grey, .lower-spin-button-grey,
         .upper-spin-button-green, .lower-spin-button-green {
             position: absolute;
             margin: 0;
@@ -74,29 +71,21 @@
             background-color: #1262b3;
         }
 
-        .upper-spin-button-grey, .lower-spin-button-grey {
-            background-color: #424242;
-        }
-
         .upper-spin-button-green, .lower-spin-button-green {
-            background-color: rgb(21, 117, 21);
+            background-color: rgb(17, 172, 17);
         }
 
-        .upper-spin-button-grey:hover, .lower-spin-button-grey:hover {
-            background-color: #383838;
-        }
-
-        .upper-spin-button-grey, .upper-spin-button, .upper-spin-button-green {
+        .upper-spin-button, .upper-spin-button-green {
             top: 19px;
             border-radius: 4px 4px 0 0;
         }
 
-        .lower-spin-button-grey, .lower-spin-button, .lower-spin-button-green {
+        .lower-spin-button, .lower-spin-button-green {
             top: 30px;
             border-radius: 0 0 4px 4px;
         }
 
-        .navigate-button, .navigate-button-grey, .navigate-button-green {
+        .navigate-button, .navigate-button-green {
             position: absolute;
             bottom: 10px;
             width: calc(100% - 20px);
@@ -118,33 +107,13 @@
             }
         }
 
-        .navigate-button, .delete-button {
-            button {
-                background-color: #1f70c0;
-            }
-
-            button:hover {
-                background-color: #1262b3;
-            }
-        }
-
-        .navigate-button-grey, .delete-button-grey {
-            button {
-                background-color: #5f5f5f;
-            }
-
-            button:hover {
-                background-color: #464646;
-            }
-        }
-
         .navigate-button-green, .delete-button-green {
             button {
-                background-color: rgb(26, 143, 26);
+                background-color: rgb(28, 179, 28);
             }
 
             button:hover {
-                background-color: rgb(21, 117, 21);
+                background-color: rgb(28, 179, 28);
             }
         }
     }
@@ -171,7 +140,7 @@
             .time-hours, .time-minutes {
                 margin: 5px auto;
                 display: block;
-                background-color: rgb(26, 143, 26);
+                background-color: rgb(28, 179, 28);
                 color: white;
                 border: none;
                 padding: 8px;
@@ -201,7 +170,7 @@
         }
 
         .priority-input {
-            background-color: rgb(26, 143, 26);
+            background-color: rgb(28, 179, 28);
         }
 
         .priority-input::-webkit-inner-spin-button, 
@@ -219,7 +188,7 @@
         }
 
         .upper-spin-button, .lower-spin-button {
-            background-color: rgb(21, 117, 21);
+            background-color: rgb(17, 172, 17);
         }
 
         .upper-spin-button {
@@ -256,11 +225,11 @@
 
         .cancel-button, .submit-button {
             button {
-                background-color: rgb(26, 143, 26);
+                background-color: rgb(28, 179, 28);
             }
 
             button:hover {
-                background-color: rgb(21, 117, 21);
+                background-color: rgb(28, 179, 28);
             }
         }
     }

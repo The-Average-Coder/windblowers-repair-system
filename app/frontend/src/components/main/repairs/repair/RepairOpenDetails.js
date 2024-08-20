@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { editOpenJobDetails } from '../../../../reducers/repairs/repairsSlice';
+import { repairerUpdated } from '../../../../reducers/calendar_events/calendarEventsSlice';
 
 import repairStatuses from '../../../../enums/repairStatuses';
 import ActionButton from '../../../common/ActionButton';
 import BlockTitle from '../../../common/BlockTitle';
-import RepairTimer from './RepairTimer';
 import RepairCalendarView from './RepairCalendarView';
 
 function RepairOpenDetails(props) {
@@ -53,6 +53,7 @@ function RepairOpenDetails(props) {
     const saveEdit = () => {
         const formattedDeadline = deadline ? `${deadline.slice(8, 10)}-${deadline.slice(5, 7)}-${deadline.slice(0, 4)}` : null;
         dispatch(editOpenJobDetails({ id: props.repair.id, repairer_id: editingRepairer, deadline: formattedDeadline }));
+        dispatch(repairerUpdated({repair_id: props.repair.id, repairer_id: editingRepairer, color: repairers.find(repairer => repairer.id == editingRepairer).color}));
         toggleEdit();
     }
 
@@ -63,12 +64,13 @@ function RepairOpenDetails(props) {
                 return {
                     ...event,
                     color: 'limegreen',
-                    title: `${event.instrument_type ? event.instrument_type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.instrument_type] : event.instrument_type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                    title: `${event.type ? event.type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.type] : event.type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
                 }
             }
             return {
                 ...event,
-                title: `${event.instrument_type ? event.instrument_type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.instrument_type] : event.instrument_type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                color: event.status >= 2 ? '#808080' : event.color ? event.color : 'black',
+                title: `${event.type ? event.type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.type] : event.type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
             }
         })
     })

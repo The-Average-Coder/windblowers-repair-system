@@ -11,6 +11,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import PageTitle from '../../common/PageTitle';
 import ActionButton from '../../common/ActionButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 
 
 function Calendar() {
@@ -41,7 +42,8 @@ function Calendar() {
         return rawData.map(event => {
             return {
                 ...event,
-                title: `${event.instrument_type ? event.instrument_type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.instrument_type] : event.instrument_type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
+                color: event.status >= 2 ? '#808080' : event.color ? event.color : 'black',
+                title: `${event.type ? event.type in instrumentTypeAbbreviations ? instrumentTypeAbbreviations[event.type] : event.type : ''} ${event.repair_id} ${Math.floor(event.time / 60)} Hrs ${event.time % 60} Mins`
             }
         })
     })
@@ -81,6 +83,14 @@ function Calendar() {
         setPopUpShowing(false);
     }
 
+    const subtractHexColor = (c1, c2) => {
+        var hexStr = (parseInt(c1.slice(1), 16) - parseInt(c2.slice(1), 16)).toString(16);
+        while (hexStr.length < 6) { hexStr = '0' + hexStr; } // Zero pad.
+        console.log(c1)
+        console.log(hexStr)
+        return '#' + hexStr;
+    }
+
     return (
         <div className='calendar'>
             
@@ -114,29 +124,13 @@ function Calendar() {
             {popUpShowing ?
             <div className='popup' style={{top: popUpPosition[1], left: popUpPosition[0], width: `${popUpWidth}px`, backgroundColor: popUpEvent.backgroundColor}} ref={popUpRef} >
                 <p className='popup-title'>{popUpEvent.title}</p>
-                {
-                popUpEvent.backgroundColor === calendarEventColours.OPEN ?
-                <>
-                <div className='priority-input'>
+                <div className='priority-input' style={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0A0A06')}}>
                     <p>{popUpPriority}</p>
-                    <FontAwesomeIcon icon='fa-solid fa-caret-up' className='upper-spin-button' onClick={() => {dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority+1) }));setPopUpPriority(popUpPriority+1)}} />
-                    <FontAwesomeIcon icon='fa-solid fa-caret-down' className='lower-spin-button' onClick={() => {if (popUpPriority > 1){dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority-1) }));setPopUpPriority(popUpPriority-1)}}} />
+                    <FontAwesomeIcon icon='fa-solid fa-caret-up' className='upper-spin-button' style={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0F0E06')}} onClick={() => {dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority+1) }));setPopUpPriority(popUpPriority+1)}} />
+                    <FontAwesomeIcon icon='fa-solid fa-caret-down' className='lower-spin-button' style={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0F0E06')}} onClick={() => {if (popUpPriority > 1){dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority-1) }));setPopUpPriority(popUpPriority-1)}}} />
                 </div>
-                <ActionButton className='delete-button' contents='Remove Event' onClick={() => deleteEvent(popUpEvent.id)} />
-                <ActionButton className='navigate-button' contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
-                </>
-                :
-                <>
-                <div className='priority-input-grey'>
-                    <p>{popUpPriority}</p>
-                    <FontAwesomeIcon icon='fa-solid fa-caret-up' className='upper-spin-button-grey' onClick={() => {dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority+1) }));setPopUpPriority(popUpPriority+1)}} />
-                    <FontAwesomeIcon icon='fa-solid fa-caret-down' className='lower-spin-button-grey' onClick={() => {if (popUpPriority > 1){dispatch(updateEventPriority({ id: parseInt(popUpEvent.id), priority: parseInt(popUpPriority-1) }));setPopUpPriority(popUpPriority-1)}}} />
-                </div>
-                
-                <ActionButton className='delete-button-grey' contents='Remove Event' onClick={() => deleteEvent(popUpEvent.id)} />
-                <ActionButton className='navigate-button-grey' contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
-                </>
-                }
+                <ActionButton className='delete-button' buttonStyle={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0A0A06')}} contents='Remove Event' onClick={() => deleteEvent(popUpEvent.id)} />
+                <ActionButton className='navigate-button' buttonStyle={{backgroundColor: subtractHexColor(popUpEvent.backgroundColor, '#0A0A06')}} contents='Go To Repair' onClick={() => navigateToRepair(popUpEvent._def.extendedProps.repair_id)} />
             </div>
             : null}
 

@@ -19,11 +19,6 @@ export const updateEventPriority = createAsyncThunk('calendarEvents/updateEventP
     axios.put('/api/calendarEvents/updatePriority', data);
 });
 
-export const updateRepairStatus = createAsyncThunk('calendarEvents/updateRepairStatus', async (data, { dispatch }) => {
-    dispatch(repairStatusUpdated(data));
-    axios.put('/api/calendarEvents/updateRepairStatus', data);
-});
-
 export const createCalendarEvent = createAsyncThunk('calendarEvents/createCalendarEvent', async (eventObject, { dispatch }) => {
     const id = await axios.post('/api/calendarEvents/createEvent', eventObject).then(resp => resp.data.insertId);
     dispatch(calendarEventAdded({ id: id, ...eventObject }));
@@ -59,12 +54,24 @@ const calendarEventsSlice = createSlice({
             
             calendarEvent.priority = action.payload.priority;
         },
-        repairStatusUpdated(state, action) {
-            const calendarEvents = state.recentCalendarEvents.filter(calendarEvent => calendarEvent.repair_id !== action.payload.repair_id);
+        calendarEventsOfRepairDeleted(state, action) {
+            return state.recentCalendarEvents.filter(event => event.repair_id !== action.payload);
+        },
+        statusUpdated(state, action) {
+            const calendarEvents = state.recentCalendarEvents.filter(event => event.repair_id == action.payload.repair_id);
+            
+            calendarEvents.forEach(event => event.status = action.payload.status);
+        },
+        repairerUpdated(state, action) {
+            const calendarEvents = state.recentCalendarEvents.filter(event => event.repair_id == action.payload.repair_id);
+
+            calendarEvents.forEach(event => event.repairer_id = action.payload.repairer_id);
             calendarEvents.forEach(event => event.color = action.payload.color);
         },
-        calendarEventsOfRepairDeleted(state, action) {
-            return state.filter(event => event.repair_id !== action.payload);
+        repairerColorChanged(state, action) {
+            state.recentCalendarEvents.forEach(event => console.log(event.repairer_id));
+            const calendarEvents = state.recentCalendarEvents.filter(event => event.repairer_id == action.payload.repairer_id);
+            calendarEvents.forEach(event => event.color = action.payload.color);
         }
     },
     extraReducers: builder => {
@@ -82,6 +89,6 @@ const calendarEventsSlice = createSlice({
     }
 })
 
-export const { calendarEventAdded, calendarEventMoved, calendarEventRemoved, repairStatusUpdated, calendarEventPriorityUpdated, calendarEventsOfRepairDeleted } = calendarEventsSlice.actions;
+export const { calendarEventAdded, calendarEventMoved, calendarEventRemoved, calendarEventPriorityUpdated, calendarEventsOfRepairDeleted, statusUpdated, repairerUpdated, repairerColorChanged } = calendarEventsSlice.actions;
 
 export default calendarEventsSlice.reducer;

@@ -29,10 +29,10 @@ router.post('/addRepairer', (req, res) => {
     });
 });
 
-router.put('/editRepairer', (req, res) => {
-    const sqlUpdate = 'UPDATE repairers SET name = ? WHERE id = ?';
+router.put('/changeColor', (req, res) => {
+    const sqlUpdate = 'UPDATE repairers SET color = ? WHERE id = ?';
 
-    db.query(sqlUpdate, [req.body.name, req.body.id], (err, result) => {
+    db.query(sqlUpdate, [req.body.color, req.body.id], (err, result) => {
         if (err) {
             console.log(err);
         }
