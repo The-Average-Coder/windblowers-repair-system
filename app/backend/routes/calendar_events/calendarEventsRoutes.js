@@ -4,7 +4,7 @@ var db = require('../../db');
 const router = express.Router();
 
 router.get('/getRecentCalendarEvents', (req, res) => {
-    const sqlSelect = 'SELECT calendar_events.*, repairers.color, repairers.id AS repairer_id, repairs.status, instruments.type FROM calendar_events INNER JOIN repairs ON repairs.id = calendar_events.repair_id LEFT JOIN repairers ON repairers.id = repairs.repairer_id LEFT JOIN instruments ON instruments.id = repairs.instrument_id WHERE EXTRACT(year from calendar_events.start) = EXTRACT(year from CURRENT_TIMESTAMP) or EXTRACT(year from calendar_events.start) = EXTRACT(year from CURRENT_TIMESTAMP) - 1;';
+    const sqlSelect = 'SELECT calendar_events.*, repairers.color, repairers.id AS repairer_id, repairs.status, instruments.type FROM calendar_events INNER JOIN repairs ON repairs.id = calendar_events.repair_id LEFT JOIN repairers ON repairers.id = repairs.repairer_id LEFT JOIN instruments ON instruments.id = repairs.instrument_id WHERE EXTRACT(year from calendar_events.start) = EXTRACT(year from CURRENT_TIMESTAMP) or EXTRACT(year from calendar_events.start) = EXTRACT(year from CURRENT_TIMESTAMP) - 1 or EXTRACT(year from calendar_events.start) = EXTRACT(year from CURRENT_TIMESTAMP) + 1;';
 
     db.query(sqlSelect, (err, result) => {
         if (err) {
