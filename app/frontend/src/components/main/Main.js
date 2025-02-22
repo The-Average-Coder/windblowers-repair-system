@@ -11,6 +11,8 @@ import ModalWindow from '../Common/Containers/ModalWindow';
 
 import './Main.css';
 
+import house_icon_light from '../../images/house_icon_light.png'
+
 function Main() {
     const [modalOpen, setModalOpen] = useState(false)
 

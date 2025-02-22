@@ -1,5 +1,6 @@
 .Sidebar {
     width: 300px;
+    transition: 0.4s;
 }
 
 @media screen and (max-width: 600px) {
