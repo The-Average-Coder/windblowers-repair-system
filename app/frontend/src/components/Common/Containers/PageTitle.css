@@ -1,0 +1,11 @@
+.PageTitle {
+
+    display: flex;
+    position: fixed;
+    font-size: var(--font-title);
+    top: 64px;
+    background-color: var(--background);
+    width: 100%;
+    padding: 12px 0;
+
+}

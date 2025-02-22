@@ -1,0 +1,38 @@
+.ActionButton {
+    border-radius: 6px;
+    font-family: inherit;
+    padding: 5px 10px;
+    font-size: var(--font-standard);
+    transition: 0.1s;
+}
+
+.ActionButton.colored {
+    background-color: var(--highlight-color);
+    color: white;
+    border: 1px solid var(--highlight-border);
+}
+
+.ActionButton.colored:hover {
+    background-color: var(--highlight-hover);
+    cursor: pointer;
+}
+
+.ActionButton.colored:active {
+    background-color: var(--highlight-click);
+}
+
+.ActionButton.transparent {
+    background: none;
+    color: var(--text);
+    border: 1px solid var(--subcontent-border);
+}
+
+.ActionButton.transparent:hover {
+    background: var(--hover-color);
+    border: 1px solid var(--subcontent-border);
+    cursor: pointer;
+}
+
+.ActionButton.transparent:active {
+    background-color: var(--click-color);
+}

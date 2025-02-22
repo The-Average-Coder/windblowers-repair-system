@@ -1,8 +1,11 @@
 .Header {
+    position: fixed;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60px;
+    height: 64px;
+    width: 100%;
+    background-color: var(--background);
 }
 
 .Header img {
@@ -10,4 +13,12 @@
     position: absolute;
     left: 12px;
     top: 12px;
+}
+
+.light-theme .Header img.white {
+    display: none;
+}
+
+.dark-theme .Header img.red {
+    display: none;
 }

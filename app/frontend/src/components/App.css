@@ -2,5 +2,6 @@
 }
 
 .App .content {
+    padding-top: 64px;
     display: flex;
 }

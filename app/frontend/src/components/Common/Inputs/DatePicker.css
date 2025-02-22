@@ -1,0 +1,12 @@
+.DatePicker {
+
+    font-family: inherit;
+    font-size: var(--font-standard);
+    color: var(--text);
+    background-color: var(--content-background);
+    border: 1px solid var(--subcontent-border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    outline: none;
+
+}

@@ -1,6 +1,33 @@
 :root {
     --text: #0f0f0f;
+    --faded-text: #7a7a7a;
     --background: #f3f1f4;
+    --content-background: #ffffff;
+    --content-border: #e2e2e2;
+    --subcontent-border: #e2e2e2;
+
+    --hover-color: #e2e2e2;
+    --click-color: #dadada;
+
+    --highlight-color: rgb(165, 19, 11);
+    --highlight-border: rgb(140, 21, 15);
+    --highlight-hover: rgb(140, 21, 15);
+    --highlight-click: rgb(111, 19, 14);
+
+    --font-standard: 14px;
+    --font-title: 22px;
+}
+
+body.dark-theme {
+    --text: #ffffff;
+    --faded-text: #b8b8b8;
+    --background: rgb(28, 28, 30);
+    --content-background: rgb(36, 36, 36);
+    --content-border: rgb(36, 36, 36);
+    --subcontent-border: rgb(56, 56, 56);
+
+    --hover-color: rgb(56, 56, 56);
+    --click-color: rgb(50, 50, 50);
 }
 
 body {
@@ -8,5 +35,10 @@ body {
     padding: 0;
     font-family: 'Poppins';
     background-color: var(--background);
-    color: var(--text)
+    color: var(--text);
+    font-size: var(--font-standard);
+}
+
+p {
+    margin: 0;
 }
