@@ -1,5 +1,6 @@
 :root {
     --text: #0f0f0f;
+    --slightly-faded-text: #393939;
     --faded-text: #7a7a7a;
     --background: #f3f1f4;
     --content-background: #ffffff;
@@ -14,7 +15,15 @@
     --highlight-hover: rgb(140, 21, 15);
     --highlight-click: rgb(111, 19, 14);
 
+    --red: red;
+    --background-red: rgb(255, 200, 200);
+    --orange: orange;
+    --background-orange: rgb(255, 230, 200);
+    --green: limegreen;
+    --background-green: rgb(210, 255, 210);
+
     --font-standard: 14px;
+    --font-header: 15px;
     --font-title: 22px;
 }
 
