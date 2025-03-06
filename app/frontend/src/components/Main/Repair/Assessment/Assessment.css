@@ -1,0 +1,36 @@
+.Assessment {
+    display: flex;
+    gap: 20px;
+}
+
+.Assessment .cost-estimate {
+    position: relative;
+    flex: 8;
+}
+
+.Assessment .cost-estimate .costs { margin-top: 8px; }
+
+.Assessment .cost-estimate .costs .cost-item {
+    display: flex;
+    margin: 2px 0;
+}
+
+.Assessment .cost-estimate .costs .cost-item .title { flex: 5; }
+.Assessment .cost-estimate .costs .cost-item .value { flex: 4; }
+.Assessment .cost-estimate .costs .cost-item .cost { flex: 1; text-align: right; }
+.Assessment .cost-estimate .costs .cost-item .total { font-weight: bold; color: var(--text); }
+
+.Assessment .cost-estimate .estimate-invoice-message {
+    background-color: var(--background);
+    display: flex;
+    margin-top: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+.Assessment .cost-estimate .estimate-invoice-message p { flex: 1; align-self: center; }
+.Assessment .cost-estimate .estimate-invoice-message .ActionButton {font-size: var(--font-subtext);}
+
+.Assessment .Notes {
+    flex: 7;
+    height: unset;
+}

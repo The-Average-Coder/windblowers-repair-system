@@ -17,8 +17,7 @@
     height: 300px;
 }
 
-.ModalWindow .window .close-button {
-    position: absolute;
+.ModalWindow .BlockTopRightButton {
     top: 12px;
     right: 12px;
 }

@@ -1,0 +1,37 @@
+.BlockTopRightButton {
+    background: none;
+    border-radius: 8px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    transition: 0.1s;
+}
+
+.BlockTopRightButton:hover {
+    background-color: var(--hover-color);
+    cursor: pointer;
+}
+
+.BlockTopRightButton:active {
+    background-color: var(--click-color);
+}
+
+.BlockTopRightButton img {
+    height: 16px;
+    width: 16px;
+    padding: 6px 3px 3px;
+}
+
+/* The following code ensures only one icon is shown, the correct one depending on hover and color theme */
+
+.dark-theme .BlockTopRightButton img.light, .BlockTopRightButton:hover img.light,
+.light-theme .BlockTopRightButton img.dark, .BlockTopRightButton:hover img.dark,
+.BlockTopRightButton img.light-hover, .BlockTopRightButton img.dark-hover {
+    display: none;
+}
+
+.light-theme .BlockTopRightButton:hover img.light-hover,
+.dark-theme .BlockTopRightButton:hover img.dark-hover {
+    display: initial;
+}

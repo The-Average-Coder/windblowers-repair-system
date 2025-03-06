@@ -1,4 +1,5 @@
 .BlockText {
+    color: var(--slightly-faded-text);
     background-position: 0px 3px; 
     background-size: 16px;
     background-repeat: no-repeat;

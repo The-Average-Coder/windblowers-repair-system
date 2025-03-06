@@ -1,0 +1,16 @@
+.TextAreaInput {
+
+    font-family: inherit;
+    font-size: var(--font-standard);
+    color: var(--text);
+    background-color: var(--content-background);
+    background-position: 7px 5px; 
+    background-size: 20px;
+    background-repeat: no-repeat;
+    border: 1px solid var(--subcontent-border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    outline: none;
+    resize: none;
+    
+}

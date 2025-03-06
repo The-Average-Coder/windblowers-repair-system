@@ -23,12 +23,14 @@
     --background-green: rgb(210, 255, 210);
 
     --font-standard: 14px;
+    --font-subtext: 12px;
     --font-header: 15px;
     --font-title: 22px;
 }
 
 body.dark-theme {
     --text: #ffffff;
+    --slightly-faded-text: #dadada;
     --faded-text: #b8b8b8;
     --background: rgb(28, 28, 30);
     --content-background: rgb(36, 36, 36);
@@ -37,6 +39,13 @@ body.dark-theme {
 
     --hover-color: rgb(56, 56, 56);
     --click-color: rgb(50, 50, 50);
+
+    --red: rgb(255, 212, 212);
+    --background-red: red;
+    --orange: rgb(255, 236, 213);
+    --background-orange: orange;
+    --green: rgb(219, 255, 219);
+    --background-green: limegreen;
 }
 
 body {

@@ -2,17 +2,21 @@ import { useState } from 'react';
 
 import PageTitle from '../../Common/Text/PageTitle';
 import ContentBlock from '../../Common/Containers/ContentBlock';
-import BlockTitle from '../../Common/Text/BlockTitle';
-import BlockText from '../../Common/Text/BlockText';
+
+import InstrumentDetails from './BasicDetails/InstrumentDetails';
+import CustomerDetails from './BasicDetails/CustomerDetails';
+import Notes from './Notes';
+import Assessment from './Assessment/Assessment';
 
 import './Repair.css';
 
 import repairStatuses from '../../../enums/repairStatuses';
+import CustomerModal from '../CustomerModal/CustomerModal';
 
 function Repair() {
     const [repair, setRepair] = useState({
         id: 2508004,
-        status: repairStatuses.ASSESSMENT,
+        status: repairStatuses.OPEN,
         customer: {
             firstname: 'Josh',
             surname: 'Cox',
@@ -27,8 +31,21 @@ function Repair() {
             model: '505',
             serial_number: 'ABC123'
         },
-        notes: 'Some assorted notes'
+        notes: 'Some assorted notes',
+        assessment: {
+            notes: 'Some assessment notes'
+        }
     })
+
+    const updateNotes = (value) => {
+        setRepair({...repair, notes: value})
+    }
+
+    const updateAssessment = (value) => {
+        setRepair({...repair, assessment: value})
+    }
+
+    const [customerModalOpen, setCustomerModalOpen] = useState(false);
 
     const statuses = ['Assessment', 'Open', 'Completed', 'Collected']
     const statusColors = ['red', 'orange', 'green', 'black']
@@ -40,37 +57,35 @@ function Repair() {
 
             <div className='basic-details'>
 
-                <ContentBlock className='details'>
-                    <div>
-                        <BlockTitle>Customer</BlockTitle>
-                        <BlockText className='detail'>{repair.customer.firstname} {repair.customer.surname}</BlockText>
-                    </div>
+                <ContentBlock className='customer-and-instrument-details'>
+
+                    <CustomerDetails customer={repair.customer} openModal={() => setCustomerModalOpen(true)} />
 
                     <div className='divider' />
                     
-                    <div>
-                        <BlockTitle>Instrument</BlockTitle>
-                        <BlockText className='detail'>{repair.instrument.manufacturer} {repair.instrument.model} {repair.instrument.type}</BlockText>
-                    </div>
+                    <InstrumentDetails instrument={repair.instrument} />
 
-                    <div>
-                        <BlockTitle>Contact Information</BlockTitle>
-                        <BlockText className='detail'>{repair.customer.email}</BlockText>
-                        <BlockText className='detail'>{repair.customer.phone}</BlockText>
-                    </div>
-                    
-                    <div>
-                        <BlockTitle>Serial Number</BlockTitle>
-                        <BlockText className='detail'>{repair.instrument.serial_number}</BlockText>
-                    </div>
                 </ContentBlock>
 
-                <ContentBlock className='notes'> 
-                    <BlockTitle>Notes</BlockTitle>
-                    Terrible instrument needs work
+                <ContentBlock className='notes-block'>
+
+                    <Notes title='Notes' notes={repair.notes} updateNotes={updateNotes} />
+
                 </ContentBlock>
 
             </div>
+
+            <ContentBlock className='assessment-block'>
+
+                <Assessment assessment={repair.assessment} updateAssessment={updateAssessment} />
+
+            </ContentBlock>
+
+            {
+            customerModalOpen ?
+            <CustomerModal customer={repair.customer} closeFunction={() => setCustomerModalOpen(false)} />
+            : null
+            }
 
         </div>
     );

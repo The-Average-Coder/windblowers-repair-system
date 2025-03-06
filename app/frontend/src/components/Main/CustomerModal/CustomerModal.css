@@ -1,0 +1,27 @@
+.CustomerModal .basic-info {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+}
+
+.CustomerModal .basic-info div:not(.divider) { flex: 1; }
+
+.CustomerModal .basic-info .divider {
+    width: 0.8px;
+    background-color: var(--subcontent-border);
+    grid-column: 2;
+    grid-row: 1 / span 3;
+}
+
+.CustomerModal .basic-info .text-inputs {
+    display: flex;
+    flex-direction: column;
+}
+
+.CustomerModal .repair-history {
+    margin-top: 16px;
+}
+
+.CustomerModal .edit-button {
+    right: 48px;
+}

@@ -1,58 +1,37 @@
-.Repair {
-
-}
-
 .Repair .status {
     font-size: var(--font-standard);
     padding: 4px 8px;
-    border-radius: 8px;
+    border-radius: 6px;
     margin: 2px 12px;
 }
 
-.Repair .status.red {
-    color: var(--red);
-    background-color: var(--background-red);
+.Repair .status.red { color: var(--red); background-color: var(--background-red); }
+.Repair .status.orange { color: var(--orange); background-color: var(--background-orange); }
+.Repair .status.green { color: var(--green); background-color: var(--background-green); }
+.Repair .status.black { color: white; background-color: rgba(0, 0, 0, 0.8); }
+
+.Repair .divider {
+    width: 1px;
+    background-color: var(--subcontent-border);
+    grid-column: 2;
+    grid-row: 1 / span 3;
 }
 
-.Repair .status.orange {
-    color: var(--orange);
-    background-color: var(--background-orange);
-}
-
-.Repair .status.green {
-    color: var(--green);
-    background-color: var(--background-green);
-}
-
-.Repair .status.black {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.8);
-}
+/* BASIC DETAILS */
 
 .Repair .basic-details {
     display: flex;
     gap: 8px;
 }
 
-.Repair .details {
-    flex: 6;
-    display: grid;
-    grid-template-columns: 49% 2% 49%;
-    gap: 10px;
+.Repair .customer-and-instrument-details {
+    flex: 3;
+    display: flex;
+    gap: 20px;
 }
 
-.Repair .details .detail {
-    color: var(--slightly-faded-text);
-}
+.Repair .notes-block { flex: 2; }
 
-.Repair .details .divider {
-    width: 1px;
-    background-color: var(--subcontent-border);
-    grid-column: 2;
-    grid-row: 1 / span 2;
-}
+/* ASSESSMENTS */
 
-.Repair .notes {
-    flex: 4;
-    color: var(--slightly-faded-text);
-}
+.Repair .assessment-block { margin-top: 8px; }
