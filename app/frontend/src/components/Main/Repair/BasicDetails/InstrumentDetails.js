@@ -10,6 +10,10 @@ import expandDark from '../../../../images/expand-icon/expandDark.png';
 import expandHoverDark from '../../../../images/expand-icon/expandHoverDark.png';
 
 function InstrumentDetails(props) {
+    const statuses = [
+        'Not Yet Dropped Off', 'In Workshop'
+    ]
+
     return (
         <div className='InstrumentDetails'>
             <div>
@@ -24,10 +28,10 @@ function InstrumentDetails(props) {
             
             <div>
                 <BlockTitle>Status</BlockTitle>
-                <BlockText className='detail'>In Workshop</BlockText>
+                <BlockText className='detail'>{statuses[props.instrument.status]}</BlockText>
             </div>
 
-            <BlockTopRightButton light={expandLight} lightHover={expandHoverLight} dark={expandDark} darkHover={expandHoverDark} />
+            <BlockTopRightButton onClick={props.openModal} light={expandLight} lightHover={expandHoverLight} dark={expandDark} darkHover={expandHoverDark} />
         </div>
     );
 }

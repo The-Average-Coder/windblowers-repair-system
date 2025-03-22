@@ -1,10 +1,30 @@
+.CustomerModal {
+    width: 600px !important;
+    overflow-y: scroll;
+}
+
+.CustomerModal::-webkit-scrollbar {
+    display: none;
+}
+
+.CustomerModal .name-edit {
+    margin-bottom: 8px;
+}
+
+.CustomerModal .name-edit .TextInput {
+    width: 160px;
+    margin-right: 8px;
+}
+
 .CustomerModal .basic-info {
+    position: relative;
     display: flex;
     gap: 20px;
     margin-top: 8px;
+    padding-bottom: 40px;
 }
 
-.CustomerModal .basic-info div:not(.divider) { flex: 1; }
+.CustomerModal .basic-info span { flex: 1; }
 
 .CustomerModal .basic-info .divider {
     width: 0.8px;
@@ -16,6 +36,20 @@
 .CustomerModal .basic-info .text-inputs {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+}
+
+.CustomerModal .basic-info .text-inputs .TextInput, .TextAreaInput {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.CustomerModal .basic-info .buttons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    gap: 4px;
 }
 
 .CustomerModal .repair-history {
@@ -24,4 +58,19 @@
 
 .CustomerModal .edit-button {
     right: 48px;
+}
+
+@media screen and (max-width: 500px) {
+    .CustomerModal {
+        width: 80% !important;
+        height: 400px !important;
+    }
+
+    .CustomerModal .basic-info {
+        flex-direction: column;
+    }
+
+    .CustomerModal .divider {
+        display: none;
+    }
 }

@@ -1,0 +1,64 @@
+.Calendar {
+}
+
+.Calendar .PageTitle .ActionButton img {
+    height: 20px;
+    vertical-align: -5px;
+    margin-right: 6px;
+}
+
+.Calendar .PageTitle .gap {
+    flex: 1;
+}
+
+.Calendar .calendar-container {
+    background-color: var(--subcontent-border);
+    display: grid;
+    grid-template-columns: 100px calc(20% - 20px ) calc(20% - 20px ) calc(20% - 20px ) calc(20% - 20px ) calc(20% - 20px );
+    gap: 0.8px;
+    min-width: 1000px;
+}
+
+.Calendar .calendar-container .calendar-grid-box {
+    background-color: var(--content-background);
+    min-height: 70px;
+    padding: 4px 5px;
+    box-sizing: border-box;
+}
+
+.Calendar .calendar-container .calendar-grid-box:not(.days-of-the-week, .repairer-name) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.Calendar .calendar-container .days-of-the-week {
+    font-size: 12px;
+    text-align: center;
+    padding: 10px 0;
+    color: var(--faded-text);
+    line-height: 20px;
+}
+
+.Calendar .calendar-container .days-of-the-week span {
+    font-size: 20px;
+    display: block;
+    margin-right: 3px;
+    font-weight: bold;
+    color: var(--text);
+    width: 40px;
+    margin: auto;
+    border-radius: 6px;
+    padding: 2px 0;
+}
+
+.Calendar .calendar-container .days-of-the-week span.current-day {
+    color: var(--content-background); 
+    background-color: var(--text);
+}
+
+.Calendar .calendar-container .repairer-name {
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+}

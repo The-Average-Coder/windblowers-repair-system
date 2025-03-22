@@ -1,9 +1,11 @@
+import { useRef } from 'react';
 import './PageTitle.css';
 
 function PageTitle(props) {
+
     return (
         <div className={`PageTitle ${props.className}`}>
-            {props.children}
+            <p>{props.children}</p>
         </div>
     );
 }

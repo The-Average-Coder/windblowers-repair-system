@@ -12,7 +12,7 @@ function TextAreaInput(props) {
     const textarea = useRef(null)
 
     return (
-        <textarea ref={textarea} className={`TextAreaInput ${props.className}`} value={props.value} onChange={(e) => props.onChange(e.target.value)} />
+        <textarea ref={textarea} className={`TextAreaInput ${props.className}`} value={props.value} onChange={(e) => props.onChange(e.target.value)} style={props.icon ? {backgroundImage: `url(${props.icon})`, paddingLeft: '32px'} : null} />
     );
 }
 

@@ -1,9 +1,22 @@
 .Sidebar {
-    width: 300px;
+    position: fixed;
+    width: 240px;
+    height: calc(100vh - 106px);
     transition: 0.4s;
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+    padding: 12px;
+    gap: 4px;
+    box-sizing: border-box;
+    background-color: var(--background);
 }
 
-@media screen and (max-width: 600px) {
+.Sidebar .gap {
+    flex: 1;
+}
+
+@media screen and (max-width: 1000px) {
     .Sidebar {
         display: none;
     }

@@ -1,0 +1,27 @@
+.AddCalendarEventButton {
+    height: 60px;
+    background: none;
+    border: none;
+    border-radius: 6px;
+}
+
+.AddCalendarEventButton:hover {
+    border: 2px dashed var(--text);
+}
+
+.AddCalendarEventButton:active {
+    background-color: var(--background);
+}
+
+.AddCalendarEventButton img {
+    width: 20px;
+    display: none;
+}
+
+.light-theme .AddCalendarEventButton:hover img.light {
+    display: initial;
+}
+
+.dark-theme .AddCalendarEventButton:hover img.dark {
+    display: initial;
+}

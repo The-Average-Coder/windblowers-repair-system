@@ -22,6 +22,23 @@
     --green: limegreen;
     --background-green: rgb(210, 255, 210);
 
+    --calendar-red: rgb(255, 200, 200);
+    --calendar-red-border: rgb(255, 79, 79);
+    --calendar-orange: rgb(255, 230, 200);
+    --calendar-orange-border: orange;
+    --calendar-yellow: rgb(255, 255, 161);
+    --calendar-yellow-border: rgb(223, 223, 13);
+    --calendar-green: rgb(210, 255, 210);
+    --calendar-green-border: limegreen;
+    --calendar-turquoise: rgb(195, 255, 241);
+    --calendar-turquoise-border: rgb(35, 246, 196);
+    --calendar-blue: rgb(210, 234, 255);
+    --calendar-blue-border: skyblue;
+    --calendar-indigo: rgb(213, 210, 255);
+    --calendar-indigo-border: rgb(101, 91, 255);
+    --calendar-purple: rgb(255, 207, 255);
+    --calendar-purple-border: rgb(255, 77, 255);
+
     --font-standard: 14px;
     --font-subtext: 12px;
     --font-header: 15px;
@@ -30,8 +47,8 @@
 
 body.dark-theme {
     --text: #ffffff;
-    --slightly-faded-text: #dadada;
-    --faded-text: #b8b8b8;
+    --slightly-faded-text: #f0f0f0;
+    --faded-text: #acacac;
     --background: rgb(28, 28, 30);
     --content-background: rgb(36, 36, 36);
     --content-border: rgb(36, 36, 36);
@@ -46,6 +63,23 @@ body.dark-theme {
     --background-orange: orange;
     --green: rgb(219, 255, 219);
     --background-green: limegreen;
+
+    --calendar-red: rgb(121, 0, 0);
+    --calendar-red-border: rgb(186, 0, 0);
+    --calendar-orange: rgb(168, 92, 0);
+    --calendar-orange-border: rgb(224, 145, 0);
+    --calendar-yellow: rgb(160, 160, 11);
+    --calendar-yellow-border: rgb(206, 206, 17);
+    --calendar-green: rgb(0, 105, 0);
+    --calendar-green-border: rgb(0, 160, 0);
+    --calendar-turquoise: rgb(0, 92, 71);
+    --calendar-turquoise-border: rgb(0, 163, 125);
+    --calendar-blue: rgb(0, 63, 118);
+    --calendar-blue-border: rgb(0, 128, 179);
+    --calendar-indigo: rgb(5, 0, 79);
+    --calendar-indigo-border: rgb(10, 0, 150);
+    --calendar-purple: rgb(104, 0, 104);
+    --calendar-purple-border: rgb(167, 0, 167);
 }
 
 body {
@@ -54,9 +88,14 @@ body {
     font-family: 'Poppins';
     background-color: var(--background);
     color: var(--text);
-    font-size: var(--font-standard);
+    font-size: var(--font-standard);    -webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape while allowing user zoom */
+}
+
+body:has(.ModalWindow) {
+    overflow: hidden;
 }
 
 p {
     margin: 0;
+    white-space: pre-wrap;
 }

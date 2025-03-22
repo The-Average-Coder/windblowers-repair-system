@@ -1,5 +1,5 @@
 .ModalWindow {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -9,12 +9,14 @@
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.2);
+    z-index: 2;
 }
 
 .ModalWindow .window {
     position: relative;
     width: 500px;
     height: 300px;
+    padding: 12px 16px;
 }
 
 .ModalWindow .BlockTopRightButton {

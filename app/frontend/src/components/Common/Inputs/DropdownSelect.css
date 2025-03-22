@@ -3,7 +3,7 @@
     font-family: inherit;
     font-size: var(--font-standard);
     color: var(--text);
-    background-color: var(--content-background);
+    background-color: var(--background);
     background-position: 7px 5px; 
     background-size: 20px;
     background-repeat: no-repeat;

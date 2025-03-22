@@ -13,11 +13,12 @@
 .Assessment .cost-estimate .costs .cost-item {
     display: flex;
     margin: 2px 0;
+    gap: 4px;
 }
 
 .Assessment .cost-estimate .costs .cost-item .title { flex: 5; }
 .Assessment .cost-estimate .costs .cost-item .value { flex: 4; }
-.Assessment .cost-estimate .costs .cost-item .cost { flex: 1; text-align: right; }
+.Assessment .cost-estimate .costs .cost-item .cost { flex: 1; text-align: right; align-self: flex-end; }
 .Assessment .cost-estimate .costs .cost-item .total { font-weight: bold; color: var(--text); }
 
 .Assessment .cost-estimate .estimate-invoice-message {
@@ -33,4 +34,31 @@
 .Assessment .Notes {
     flex: 7;
     height: unset;
+}
+
+.Assessment .divider {
+    width: 1px;
+    background-color: var(--subcontent-border);
+}
+
+@media screen and (max-width: 1200px) {
+    .Assessment .Notes { flex: 5 }
+}
+
+@media screen and (max-width: 800px) {
+    .Assessment {
+        flex-direction: column;
+    }
+
+    .Assessment .divider {
+        height: 1px;
+        width: unset !important; 
+    }
+
+    .Assessment .Notes { min-height: 100px; }
+}
+
+@media screen and (max-width: 500px) {
+    .Assessment .cost-estimate .costs .cost-item .title { flex: 4; }
+    .Assessment .cost-estimate .estimate-invoice-message { font-size: var(--font-subtext); }
 }

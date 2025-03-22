@@ -2,13 +2,11 @@
     flex: 1;
     padding: 12px;
     margin-top: 48px;
+    margin-left: 240px;
 }
 
-.Main .sample-content-block {
-    
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: baseline;
+@media screen and (max-width: 1000px) {
+    .Main {
+        margin-left: 0;
+    }
 }

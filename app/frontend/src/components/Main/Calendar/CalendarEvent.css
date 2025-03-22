@@ -1,0 +1,70 @@
+.CalendarEvent {
+    background-color: var(--subcontent-border);
+    border-radius: 6px;
+    padding: 4px 6px;
+    border: 1px solid var(--content-background);
+}
+
+.CalendarEvent:hover {
+    cursor: pointer;
+}
+
+.CalendarEvent.red {
+    background-color: var(--calendar-red);
+}
+.CalendarEvent.red:hover {
+    border: 1px solid var(--calendar-red-border);
+}
+
+.CalendarEvent.orange {
+    background-color: var(--calendar-orange);
+}
+.CalendarEvent.orange:hover {
+    border: 1px solid var(--calendar-orange-border);
+}
+
+.CalendarEvent.yellow {
+    background-color: var(--calendar-yellow);
+}
+.CalendarEvent.yellow:hover {
+    border: 1px solid var(--calendar-yellow-border);
+}
+
+.CalendarEvent.green {
+    background-color: var(--calendar-green);
+}
+.CalendarEvent.green:hover {
+    border: 1px solid var(--calendar-green-border);
+}
+
+.CalendarEvent.turquoise {
+    background-color: var(--calendar-turquoise);
+}
+.CalendarEvent.turquoise:hover {
+    border: 1px solid var(--calendar-turquoise-border);
+}
+
+.CalendarEvent.blue {
+    background-color: var(--calendar-blue);
+}
+.CalendarEvent.blue:hover {
+    border: 1px solid var(--calendar-blue-border);
+}
+
+.CalendarEvent.indigo {
+    background-color: var(--calendar-indigo);
+}
+.CalendarEvent.indigo:hover {
+    border: 1px solid var(--calendar-indigo-border);
+}
+
+.CalendarEvent.purple {
+    background-color: var(--calendar-purple);
+}
+.CalendarEvent.purple:hover {
+    border: 1px solid var(--calendar-purple-border);
+}
+
+.CalendarEvent:active {
+    z-index: 20;
+}

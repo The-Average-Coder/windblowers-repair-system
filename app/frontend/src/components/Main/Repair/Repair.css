@@ -1,8 +1,9 @@
 .Repair .status {
     font-size: var(--font-standard);
     padding: 4px 8px;
+    align-self: center;
     border-radius: 6px;
-    margin: 2px 12px;
+    margin-left: 10px;
 }
 
 .Repair .status.red { color: var(--red); background-color: var(--background-red); }
@@ -13,8 +14,6 @@
 .Repair .divider {
     width: 1px;
     background-color: var(--subcontent-border);
-    grid-column: 2;
-    grid-row: 1 / span 3;
 }
 
 /* BASIC DETAILS */
@@ -35,3 +34,26 @@
 /* ASSESSMENTS */
 
 .Repair .assessment-block { margin-top: 8px; }
+
+@media screen and (max-width: 1200px) {
+    .Repair .notes-block { flex: 1.5 }
+}
+
+@media screen and (max-width: 800px) {
+    .Repair .basic-details {
+        flex-direction: column;
+    }
+
+    .Repair .notes-block { min-height: 100px; }
+}
+
+@media screen and (max-width: 500px) {
+    .Repair .customer-and-instrument-details {
+        flex-direction: column;
+    }
+
+    .Repair .divider {
+        height: 1px;
+        width: unset !important; 
+    }
+}

@@ -5,13 +5,14 @@ import ContentBlock from '../../Common/Containers/ContentBlock';
 
 import InstrumentDetails from './BasicDetails/InstrumentDetails';
 import CustomerDetails from './BasicDetails/CustomerDetails';
+import CustomerModal from '../CustomerModal/CustomerModal';
+import InstrumentModal from '../InstrumentModal/InstrumentModal';
 import Notes from './Notes';
 import Assessment from './Assessment/Assessment';
 
 import './Repair.css';
 
 import repairStatuses from '../../../enums/repairStatuses';
-import CustomerModal from '../CustomerModal/CustomerModal';
 
 function Repair() {
     const [repair, setRepair] = useState({
@@ -22,20 +23,28 @@ function Repair() {
             surname: 'Cox',
             email: 'joshuajosephcox@gmail.com',
             phone: '07796593187',
-            postcode: 'LE12 6UJ',
-            address: '10 Cross Hill Close'
+            address: '10 Cross Hill Close, LE12 6UJ'
         },
         instrument: {
             type: 'Flute',
             manufacturer: 'Pearl',
             model: '505',
-            serial_number: 'ABC123'
+            serial_number: 'ABC123',
+            status: 1,
         },
         notes: 'Some assorted notes',
         assessment: {
             notes: 'Some assessment notes'
         }
     })
+
+    const updateCustomer = (value) => {
+        setRepair({...repair, customer: value})
+    }
+
+    const updateInstrument = (value) => {
+        setRepair({...repair, instrument: value})
+    }
 
     const updateNotes = (value) => {
         setRepair({...repair, notes: value})
@@ -46,6 +55,7 @@ function Repair() {
     }
 
     const [customerModalOpen, setCustomerModalOpen] = useState(false);
+    const [instrumentModalOpen, setInstrumentModalOpen] = useState(false);
 
     const statuses = ['Assessment', 'Open', 'Completed', 'Collected']
     const statusColors = ['red', 'orange', 'green', 'black']
@@ -53,7 +63,7 @@ function Repair() {
     return (
         <div className='Repair'>
             
-            <PageTitle>Repair 0101001 <span className={`status ${statusColors[repair.status]}`}>{statuses[repair.status]}</span></PageTitle>
+            <PageTitle>Repair {repair.id} <span className={`status ${statusColors[repair.status]}`}>{statuses[repair.status]}</span></PageTitle>
 
             <div className='basic-details'>
 
@@ -63,7 +73,7 @@ function Repair() {
 
                     <div className='divider' />
                     
-                    <InstrumentDetails instrument={repair.instrument} />
+                    <InstrumentDetails instrument={repair.instrument} openModal={() => setInstrumentModalOpen(true)} />
 
                 </ContentBlock>
 
@@ -83,7 +93,13 @@ function Repair() {
 
             {
             customerModalOpen ?
-            <CustomerModal customer={repair.customer} closeFunction={() => setCustomerModalOpen(false)} />
+            <CustomerModal customer={repair.customer} updateCustomer={updateCustomer} closeFunction={() => setCustomerModalOpen(false)} />
+            : null
+            }
+
+            {
+            instrumentModalOpen ?
+            <InstrumentModal instrument={repair.instrument} updateInstrument={updateInstrument} closeFunction={() => setInstrumentModalOpen(false)} />
             : null
             }
 

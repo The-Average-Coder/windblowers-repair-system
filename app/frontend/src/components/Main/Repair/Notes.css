@@ -3,10 +3,6 @@
     height: 100%;
 }
 
-.Notes .BlockText {
-    white-space: pre-wrap;
-}
-
 .Notes .TextAreaInput {
     width: 100%;
     box-sizing: border-box;

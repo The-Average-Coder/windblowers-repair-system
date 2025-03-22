@@ -25,7 +25,7 @@ function CustomerDetails(props) {
 
             <div>
                 <BlockTitle>Address</BlockTitle>
-                <BlockText className='detail'>{props.customer.postcode}</BlockText>
+                <BlockText className='detail'>{props.customer.address}</BlockText>
             </div>
 
             <BlockTopRightButton onClick={props.openModal} light={expandLight} lightHover={expandHoverLight} dark={expandDark} darkHover={expandHoverDark} />
