@@ -30,8 +30,8 @@
     top: 64px;
     background-color: var(--background);
     width: calc(100% - 266px);
+    max-width: 1534px;
     padding: 12px 0;
-    z-index: 1;
 
 }
 

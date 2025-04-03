@@ -5,21 +5,48 @@
     align-items: center;
     height: 64px;
     width: 100%;
+    max-width: 1800px;
     background-color: var(--background);
     z-index: 1;
 }
 
-.Header img {
+.Header .brand {
     height: 40px;
     position: absolute;
     left: 12px;
     top: 12px;
 }
 
-.light-theme .Header img.white {
+.light-theme .Header .brand.white {
     display: none;
 }
 
-.dark-theme .Header img.red {
+.dark-theme .Header .brand.red {
     display: none;
+}
+
+.Header .BlockTopRightButton {
+    display: none;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+}
+
+.Header .BlockTopRightButton img {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+}
+
+@media screen and (max-width: 1000px) {
+    .Header .BlockTopRightButton {
+        display: initial;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .Header .BlockTopRightButton img {
+        margin-left: -5px;
+    }
 }

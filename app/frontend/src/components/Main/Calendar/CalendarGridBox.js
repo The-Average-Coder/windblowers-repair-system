@@ -3,6 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 function CalendarGridBox(props) {
     const {setNodeRef} = useDroppable({
         id: props.uniqueId,
+        data: { disabled: false }
     });
     
     return (

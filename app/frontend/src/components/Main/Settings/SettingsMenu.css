@@ -1,0 +1,29 @@
+.SettingsMenu {
+    display: flex;
+    gap: 8px;
+}
+
+.SettingsMenu button {
+    background: none;
+    border: none;
+    color: var(--faded-text);
+    font-family: inherit;
+    transition: 0.1s;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.SettingsMenu button:hover {
+    color: var(--text);
+    background-color: var(--hover-color);
+}
+
+.SettingsMenu button.active {
+    color: var(--text);
+    background-color: var(--hover-color);
+    text-shadow: 0.5px 0px 0px black;
+}
+
+.SettingsMenu button:active {
+    background-color: var(--click-color);
+}

@@ -5,7 +5,7 @@ import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
 function AddCalendarEventButton(props) {
     return (
-        <button className='AddCalendarEventButton'>
+        <button className='AddCalendarEventButton' onClick={props.onClick}>
             <img className='light' src={plusBlack} />
             <img className='dark' src={plusWhite} />
         </button>

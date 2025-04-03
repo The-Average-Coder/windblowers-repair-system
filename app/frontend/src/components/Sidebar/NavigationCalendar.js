@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDroppable } from '@dnd-kit/core';
 
 import eventBus from '../../utils/eventBus';
+
+import NavigationCalendarWeek from './NavigationCalendarWeek';
 
 import './NavigationCalendar.css';
 
@@ -10,7 +13,9 @@ import caretRightLight from '../../images/caret-icons/caretRightLight.png';
 import caretLeftDark from '../../images/caret-icons/caretLeftDark.png';
 import caretRightDark from '../../images/caret-icons/caretRightDark.png';
 
-function NavigationCalendar() {
+function NavigationCalendar(props) {
+
+    const EVENT_DRAG_TO_NAVIGATE_TIMER = 800;
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,6 +27,29 @@ function NavigationCalendar() {
     const [selectedYear, setSelectedYear] = useState();
     const [selectedMonth, setSelectedMonth] = useState();
     const [selectedWeek, setSelectedWeek] = useState();
+    
+    const [hoveredWeek, setHoveredWeek] = useState(null);
+    const [hoveredMonth, setHoveredMonth] = useState(null);
+    const hoverTimeout = useRef(null);
+
+    
+    const {setNodeRef: monthForwardRef} = useDroppable({
+        id: 'month-forward',
+        data: { disabled: true }
+    });
+    const {setNodeRef: monthBackwardRef} = useDroppable({
+        id: 'month-backward',
+        data: { disabled: true }
+    });
+
+    const clearHover = () => {
+        if (hoverTimeout.current) {
+            clearTimeout(hoverTimeout.current);
+            hoverTimeout.current = null;
+        }
+        setHoveredWeek(null);
+        setHoveredMonth(null);
+    };
 
     const handleWeekClick = (week) => {
         navigate('/');
@@ -29,6 +57,8 @@ function NavigationCalendar() {
         setSelectedYear(year);
         setSelectedMonth(month);
         setSelectedWeek(week);
+
+        if (props.closeFunction) props.closeFunction();
 
         eventBus.emit('weekSelected', [year, month, week]);
     }
@@ -50,6 +80,55 @@ function NavigationCalendar() {
 
         eventBus.emit('weekSelected', [currentYear, currentMonth, currentWeek]);
     }, [])
+
+    useEffect(() => {
+        const handleDragOver = (event) => {
+            // Check if the draggable is over a valid calendar week
+            if (event.over && event.over.id.startsWith("week-")) {
+                if (hoveredWeek !== event.over.id) {
+                    setHoveredWeek(event.over.id);
+            
+                    // Clear any existing timeout
+                    clearHover()
+            
+                    hoverTimeout.current = setTimeout(() => {
+                        handleWeekClick(parseInt(event.over.id.split('-')[1]))
+                    }, EVENT_DRAG_TO_NAVIGATE_TIMER);
+                }
+            } else if (event.over && event.over.id.startsWith('month')) {
+                if (hoveredMonth !== event.over.id) {
+                    setHoveredMonth(event.over.id);
+            
+                    // Clear any existing timeout
+                    clearHover()
+            
+                    if (event.over.id === 'month-forward') {
+                        hoverTimeout.current = setTimeout(() => {
+                            nextMonth()
+                        }, EVENT_DRAG_TO_NAVIGATE_TIMER);
+                    }
+                    else {
+                        hoverTimeout.current = setTimeout(() => {
+                            previousMonth()
+                        }, EVENT_DRAG_TO_NAVIGATE_TIMER);
+                    }
+                }
+            } else {
+                clearHover();
+            }
+        };
+    
+        const handleDragEnd = (event) => {
+            clearHover();
+        };
+
+        eventBus.on('handleDragOver', handleDragOver);
+        eventBus.on('handleDragEnd', handleDragEnd);
+        return () => {
+            eventBus.off('handleDragOver', handleDragOver);
+            eventBus.off('handleDragEnd', handleDragEnd);
+        }
+    }, [month, year])
 
     useEffect(() => {
         if (location.pathname !== '/') {
@@ -135,7 +214,7 @@ function NavigationCalendar() {
             if (weekDays.length > 0) {
                 const weekNumber = weeks.length + 1;
                 weeks.push(
-                    <div
+                    <NavigationCalendarWeek
                         className={
                             selectedWeek === weekNumber &&
                             selectedMonth === month &&
@@ -144,9 +223,10 @@ function NavigationCalendar() {
                             : null
                         }
                         onClick={() => handleWeekClick(weekNumber)}
+                        id={`week-${weekNumber}-${month}-${year}`}
                     >
                         {weekDays}
-                    </div>
+                    </NavigationCalendarWeek>
                 );
             }
         }
@@ -158,9 +238,9 @@ function NavigationCalendar() {
         <div className='NavigationCalendar'>
             
             <div className='month-navigation'>
-                <button onClick={previousMonth}><img className='light' src={caretLeftLight} /><img className='dark' src={caretLeftDark} /></button>
+                <button ref={monthBackwardRef} onClick={previousMonth}><img className='light' src={caretLeftLight} /><img className='dark' src={caretLeftDark} /></button>
                 <p>{months[month]} {year}</p>
-                <button onClick={nextMonth}><img className='light' src={caretRightLight} /><img className='dark' src={caretRightDark} /></button>
+                <button ref={monthForwardRef} onClick={nextMonth}><img className='light' src={caretRightLight} /><img className='dark' src={caretRightDark} /></button>
             </div>
 
             <div className='day-navigation'>

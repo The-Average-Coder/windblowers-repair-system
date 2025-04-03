@@ -68,16 +68,16 @@ body.dark-theme {
     --calendar-red-border: rgb(186, 0, 0);
     --calendar-orange: rgb(168, 92, 0);
     --calendar-orange-border: rgb(224, 145, 0);
-    --calendar-yellow: rgb(160, 160, 11);
-    --calendar-yellow-border: rgb(206, 206, 17);
+    --calendar-yellow: rgb(198, 179, 6);
+    --calendar-yellow-border: rgb(255, 230, 0);
     --calendar-green: rgb(0, 105, 0);
     --calendar-green-border: rgb(0, 160, 0);
     --calendar-turquoise: rgb(0, 92, 71);
     --calendar-turquoise-border: rgb(0, 163, 125);
     --calendar-blue: rgb(0, 63, 118);
     --calendar-blue-border: rgb(0, 128, 179);
-    --calendar-indigo: rgb(5, 0, 79);
-    --calendar-indigo-border: rgb(10, 0, 150);
+    --calendar-indigo: rgb(18, 12, 100);
+    --calendar-indigo-border: rgb(13, 0, 199);
     --calendar-purple: rgb(104, 0, 104);
     --calendar-purple-border: rgb(167, 0, 167);
 }

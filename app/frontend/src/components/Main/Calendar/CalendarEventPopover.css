@@ -1,15 +1,63 @@
 .CalendarEventPopover {
     position: absolute;
+    z-index: 50;
     top: 300px;
     left: 500px;
     border: 1px solid var(--subcontent-border);
     padding: 6px 10px;
     border-radius: 6px;
     background-color: var(--content-background);
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 300px;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+
+.CalendarEventPopover .BlockTitle {
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.CalendarEventPopover .event-details {
+    margin-top: 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
+}
+
+.CalendarEventPopover .event-details .time-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.CalendarEventPopover .event-details .time-inputs .DropdownSelect {
+    flex: 1;
+}
+
+.CalendarEventPopover .action-buttons {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    display: flex;
+    width: 100%;
+    padding: 0 10px;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+.CalendarEventPopover .action-buttons .ActionButton {
+    flex: 1;
+}
+
+.CalendarEventPopover .BlockTopRightButton {
+    top: 6px;
+    right: 8px;
+    
+    width: 28px;
+    height: 28px;
+}
+
+.CalendarEventPopover .BlockTopRightButton img {
+    height: 12px;
+    width: 12px;
+    margin-top: 4px;
 }

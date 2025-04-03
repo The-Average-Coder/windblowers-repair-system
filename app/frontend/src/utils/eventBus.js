@@ -10,14 +10,14 @@ const eventBus = {
     this.listeners.get(event).forEach((callback) => callback(payload));
   },
 
-  on(event, callback) {
+  on(event, callback, emitMostRecent = false) {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
     this.listeners.get(event).push(callback);
 
     // Immediately call listener with the last emitted value (if it exists)
-    if (this.lastEmitted.has(event)) {
+    if (this.lastEmitted.has(event) && emitMostRecent) {
       callback(this.lastEmitted.get(event));
     }
   },

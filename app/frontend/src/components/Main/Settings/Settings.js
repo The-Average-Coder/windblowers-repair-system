@@ -1,20 +1,31 @@
+import { useState } from 'react';
+
 import PageTitle from '../../Common/Text/PageTitle';
 import ContentBlock from '../../Common/Containers/ContentBlock';
+import SettingsMenu from './SettingsMenu';
+import RepairersSettings from './RepairersSettings';
 
 import './Settings.css';
 
 function Settings() {
+
+    const pages = ['Repairers', 'Repairs', 'Materials', 'Calendar', 'Appearance', 'Account'];
+
+    const [currentPage, setCurrentPage] = useState(0)
+
     return (
         <div className='Settings'>
 
             <PageTitle>Settings</PageTitle>
 
             <ContentBlock>
-                Some settings here
-                <br />
-                Some settings there
-                <br />
-                Some settings everywhere
+                <SettingsMenu pages={pages} currentPage={currentPage} setCurrentPage={(page) => setCurrentPage(page)} />
+
+                <div className='settings-content'>
+                {pages[currentPage] === 'Repairers' ? <RepairersSettings />
+                : null}
+                </div>
+                
             </ContentBlock>
 
         </div>

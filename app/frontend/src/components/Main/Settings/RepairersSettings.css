@@ -1,0 +1,52 @@
+.RepairersSettings .repairers-title {
+    display: flex;
+    align-items: center;
+}
+
+.RepairersSettings .repairers-title div {
+    flex: 1;
+}
+
+.RepairersSettings .repairers-title .ActionButton img {
+    height: 20px;
+    vertical-align: -5px;
+    margin-right: 6px;
+}
+
+.RepairersSettings .repairers-grid {
+    margin-top: 20px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 120px 100px 100px 100px 100px 100px auto;
+    align-items: center;
+}
+
+.RepairersSettings .repairers-grid .delete-button {
+    text-align: right;
+}
+
+/* ADD MODAL WINDOW */
+
+.RepairersSettings .add-repairer-window {
+    width: 300px;
+    height: 120px;
+}
+
+.RepairersSettings .add-repairer-window .ModalTitle {
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.RepairersSettings .add-repairer-window .details {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.RepairersSettings .add-repairer-window .buttons {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    gap: 8px;
+}

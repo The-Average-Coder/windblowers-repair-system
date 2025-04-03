@@ -1,12 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
-import { 
-    DndContext,
-    KeyboardSensor,
-    MouseSensor,
-    TouchSensor,
-    useSensor,
-    useSensors
-} from '@dnd-kit/core';
+import { useNavigate } from 'react-router-dom';
+
+import { DragOverlay } from '@dnd-kit/core';
 
 import eventBus from '../../../utils/eventBus';
 import repairStatuses from '../../../enums/repairStatuses';
@@ -14,6 +9,8 @@ import repairStatuses from '../../../enums/repairStatuses';
 import PageTitle from '../../Common/Text/PageTitle';
 import ActionButton from '../../Common/Buttons/ActionButton';
 import ContentBlock from '../../Common/Containers/ContentBlock';
+import BlockTitle from '../../Common/Text/BlockTitle';
+import BlockText from '../../Common/Text/BlockText';
 
 import './Calendar.css';
 
@@ -22,6 +19,7 @@ import CalendarEvent from './CalendarEvent';
 import AddCalendarEventButton from './AddCalendarEventButton';
 import CalendarGridBox from './CalendarGridBox';
 import CalendarEventPopover from './CalendarEventPopover';
+import CreateEventPopover from './CreateEventPopover';
 
 function Calendar() {
 
@@ -30,6 +28,7 @@ function Calendar() {
             id: 1,
             type: 'Repair',
             title: '',
+            description: '',
             date: '20-03-2025',
             time: '90',
             color: 'green',
@@ -61,6 +60,7 @@ function Calendar() {
             id: 2,
             type: 'Repair',
             title: '',
+            description: '',
             date: '20-03-2025',
             time: '120',
             color: 'purple',
@@ -92,6 +92,7 @@ function Calendar() {
             id: 3,
             type: 'Repair',
             title: '',
+            description: '',
             date: '21-03-2025',
             time: '60',
             color: 'orange',
@@ -123,6 +124,7 @@ function Calendar() {
             id: 4,
             type: 'Repair',
             title: '',
+            description: '',
             date: '19-03-2025',
             time: '150',
             color: 'blue',
@@ -154,6 +156,7 @@ function Calendar() {
             id: 5,
             type: 'Other Event',
             title: 'Holiday',
+            description: 'A Description',
             date: '21-03-2025',
             time: '480',
             color: 'red',
@@ -163,6 +166,7 @@ function Calendar() {
             id: 6,
             type: 'Other Event',
             title: 'Holiday',
+            description: 'A Description',
             date: '18-03-2025',
             time: '480',
             color: 'yellow',
@@ -172,6 +176,7 @@ function Calendar() {
             id: 7,
             type: 'Other Event',
             title: 'Holiday',
+            description: 'A Description',
             date: '18-03-2025',
             time: '480',
             color: 'indigo',
@@ -181,6 +186,7 @@ function Calendar() {
             id: 8,
             type: 'Repair',
             title: '',
+            description: '',
             date: '19-03-2025',
             time: '300',
             color: 'turquoise',
@@ -212,6 +218,8 @@ function Calendar() {
 
     const calendarRef = useRef(null);
 
+    const navigate = useNavigate();
+
     const [repairers, setRepairers] = useState(['Purple', 'Ryan'])
 
     const [year, setYear] = useState();
@@ -219,31 +227,40 @@ function Calendar() {
     const [week, setWeek] = useState();
     const [weekDates, setWeekDates] = useState(['', '', '', '', '']);
 
+    const [activeEvent, setActiveEvent] = useState(null);
+
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
     const date = new Date();
 
     const [popoverCalendarEvent, setPopoverCalendarEvent] = useState({})
     const [popoverPosition, setPopoverPosition] = useState([0, 0])
-
-    const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 5 }});
-    const touchSensor = useSensor(TouchSensor, { activationConstraint: { distance: 5 }});
-    const keyboardSensor = useSensor(KeyboardSensor);
-    
-    const sensors = useSensors(
-        mouseSensor,
-        touchSensor,
-        keyboardSensor,
-    );
+    const [createCalendarEventPopover, setCreateCalendarEventPopover] = useState({});
 
     const updateCalendarEvent = (updatedCalendarEvent) => {
         setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== updatedCalendarEvent.id).concat(updatedCalendarEvent))
     }
 
-    const openPopover = (e, calendarEvent) => {
+    const deleteCalendarEvent = (id) => {
+        setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== id))
+        setPopoverCalendarEvent({});
+    }
+
+    const createCalendarEvent = (calendarEvent) => {
+        setCalendarEvents(calendarEvents.concat(calendarEvent));
+        setCreateCalendarEventPopover({})
+    }
+
+    const onClickCalendarEvent = (e, calendarEvent) => {
+        if (e.detail === 2 && calendarEvent.repair !== undefined) {
+            navigate(`/repair/${calendarEvent.repair.id}`);
+            return;
+        }
+
         e.stopPropagation();
 
-        setPopoverCalendarEvent(calendarEvent)
+        setCreateCalendarEventPopover({});
+        setPopoverCalendarEvent(calendarEvent);
 
         const calendarEventRect = e.target.closest('.CalendarEvent').getBoundingClientRect();
         const scrollX = e.pageX - e.clientX;
@@ -254,14 +271,14 @@ function Calendar() {
         let popoverX = 0; let popoverY = 0;
 
         if (calendarRect.width - (scrollX + calendarEventRect.x + calendarEventRect.width + 6) < 180) {
-            popoverX = scrollX + calendarEventRect.x - 228
+            popoverX = scrollX + calendarEventRect.x - 268
         }
         else {
             popoverX = scrollX + calendarEventRect.x + calendarEventRect.width + 8
         }
 
-        if (calendarRect.height - (scrollY + calendarEventRect.y) < 100) {
-            popoverY = scrollY + calendarEventRect.y + calendarEventRect.height - 212
+        if (calendarRect.height - (scrollY + calendarEventRect.y) < 20) {
+            popoverY = scrollY + calendarEventRect.y + calendarEventRect.height - 312
         }
         else {
             popoverY = scrollY + calendarEventRect.y
@@ -270,25 +287,45 @@ function Calendar() {
         setPopoverPosition([popoverX, popoverY])
     }
 
-    const handleDragEnd = (event) => {
-        setPopoverCalendarEvent({})
+    const openAddCalendarEventPopover = (e, id, date, repairer) => {
+        e.stopPropagation();
 
-        if (event.over) {
-            const [repairer, day] = event.over.id.split(' ');
-            const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
-            calendarEvent.repairer = repairer;
-            calendarEvent.date = `${day}${calendarEvent.date.slice(2)}`
-            setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
+        setCreateCalendarEventPopover({id: id, date: date, repairer: repairer});
+        setPopoverCalendarEvent({});
+
+        const buttonRect = e.target.closest('.AddCalendarEventButton').getBoundingClientRect();
+        const scrollX = e.pageX - e.clientX;
+        const scrollY = e.pageY - e.clientY;
+
+        const calendarRect = calendarRef.current.getBoundingClientRect();
+
+        let popoverX = 0; let popoverY = 0;
+
+        if (calendarRect.width - (scrollX + buttonRect.x + buttonRect.width + 6) < 180) {
+            popoverX = scrollX + buttonRect.x - 268
         }
+        else {
+            popoverX = scrollX + buttonRect.x + buttonRect.width + 8
+        }
+
+        if (calendarRect.height - (scrollY + buttonRect.y) < 20) {
+            popoverY = scrollY + buttonRect.y + buttonRect.height - 312
+        }
+        else {
+            popoverY = scrollY + buttonRect.y
+        }
+
+        setPopoverPosition([popoverX, popoverY])
     }
 
     useEffect(() => {
         const handleWeekSelected = (data) => {
-            setPopoverCalendarEvent({})
+            setPopoverCalendarEvent({});
+            setCreateCalendarEventPopover(false);
 
-            setYear(data[0])
-            setMonth(data[1])
-            setWeek(data[2])
+            setYear(data[0]);
+            setMonth(data[1]);
+            setWeek(data[2]);
 
             const firstWeekday = new Date(data[0], data[1], 1).getDay();
             const daysInCurrentMonth = new Date(data[0], data[1] + 1, 0).getDate();
@@ -307,9 +344,35 @@ function Calendar() {
             }
         };
 
-        eventBus.on('weekSelected', handleWeekSelected);
-        return () => eventBus.off('weekSelected', handleWeekSelected);
-    }, [])
+        const handleDragStart = (event) => {
+            setActiveEvent(calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id));
+        };
+        
+        const handleDragEnd = (event) => {
+            setPopoverCalendarEvent({});
+            setActiveEvent(null);
+
+            if (event.over) {
+                if (event.over.data.current.disabled === true) {
+                    return;
+                }
+                const [repairer, day] = event.over.id.split(' ');
+                const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
+                calendarEvent.repairer = repairer;
+                calendarEvent.date = `${day}-${month+1}-${year}`
+                setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
+            }
+        };
+
+        eventBus.on('weekSelected', handleWeekSelected, true);
+        eventBus.on('handleDragStart', handleDragStart);
+        eventBus.on('handleDragEnd', handleDragEnd);
+        return () => {
+            eventBus.off('weekSelected', handleWeekSelected);
+            eventBus.off('handleDragStart', handleDragStart);
+            eventBus.off('handleDragEnd', handleDragEnd);
+        }
+    }, [month, year, calendarEvents])
 
     const getPageTitle = () => {
         const firstWeekday = new Date(year, month, 1).getDay();
@@ -354,8 +417,8 @@ function Calendar() {
         <p className='calendar-grid-box repairer-name'>{repairer}</p>
         {
         weekDates.map(weekDate => <CalendarGridBox uniqueId={`${repairer} ${weekDate}`}>
-                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.slice(0, 2)) === weekDate).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => openPopover(e, calendarEvent)} />)}
-                <AddCalendarEventButton />
+                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer)} />
             </CalendarGridBox>
         )
         }
@@ -368,26 +431,40 @@ function Calendar() {
 
             <ContentBlock>
 
-                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                <div className='calendar-container' ref={calendarRef}>
+                    <p className='calendar-grid-box days-of-the-week'></p>
+                    <p className='calendar-grid-box days-of-the-week'>Tue <span className={date.getDate() === weekDates[0] && date.getMonth() === month && date.getFullYear() === year ? 'current-day' : ''}>{weekDates[0]}</span></p>
+                    <p className='calendar-grid-box days-of-the-week'>Wed <span className={date.getDate() === weekDates[1] && date.getMonth() === month && date.getFullYear() === year && date.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[1]}</span></p>
+                    <p className='calendar-grid-box days-of-the-week'>Thu <span className={date.getDate() === weekDates[2] && date.getMonth() === month && date.getFullYear() === year && date.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[2]}</span></p>
+                    <p className='calendar-grid-box days-of-the-week'>Fri <span className={date.getDate() === weekDates[3] && date.getMonth() === month && date.getFullYear() === year && date.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[3]}</span></p>
+                    <p className='calendar-grid-box days-of-the-week'>Sat <span className={date.getDate() === weekDates[4] && date.getMonth() === month && date.getFullYear() === year && date.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[4]}</span></p>
 
-                    <div className='calendar-container' ref={calendarRef} onClick={() => setPopoverCalendarEvent({})}>
-                        <p className='calendar-grid-box days-of-the-week'></p>
-                        <p className='calendar-grid-box days-of-the-week'>Tue <span className={date.getDate() === weekDates[0] ? 'current-day' : ''}>{weekDates[0]}</span></p>
-                        <p className='calendar-grid-box days-of-the-week'>Wed <span className={date.getDate() === weekDates[1] ? 'current-day' : ''}>{weekDates[1]}</span></p>
-                        <p className='calendar-grid-box days-of-the-week'>Thu <span className={date.getDate() === weekDates[2] ? 'current-day' : ''}>{weekDates[2]}</span></p>
-                        <p className='calendar-grid-box days-of-the-week'>Fri <span className={date.getDate() === weekDates[3] ? 'current-day' : ''}>{weekDates[3]}</span></p>
-                        <p className='calendar-grid-box days-of-the-week'>Sat <span className={date.getDate() === weekDates[4] ? 'current-day' : ''}>{weekDates[4]}</span></p>
+                    {renderedCalendarGrid}
 
-                        {renderedCalendarGrid}
+                    {popoverCalendarEvent.id !== undefined ? 
+                    <CalendarEventPopover calendarEvent={popoverCalendarEvent} updateCalendarEvent={updateCalendarEvent} deleteCalendarEvent={() => deleteCalendarEvent(popoverCalendarEvent.id)} position={popoverPosition} closeFunction={() => setPopoverCalendarEvent({})} />
+                    : null}
 
-                        {popoverCalendarEvent.id !== undefined ? 
-                        <CalendarEventPopover calendarEvent={popoverCalendarEvent} updateCalendarEvent={updateCalendarEvent} position={popoverPosition} />
-                        : null}
-                    </div>
-                    
-                </DndContext>
+                    {createCalendarEventPopover.id !== undefined ? 
+                    <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairer={createCalendarEventPopover.repairer} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />
+                    : null}
+                </div>
 
             </ContentBlock>
+
+            {activeEvent && <DragOverlay>
+                <div className={`CalendarEvent ${activeEvent.color}`}>
+                    {activeEvent.type === 'Repair' ?<>
+                    <BlockTitle>{activeEvent.repair ? `Repair ${activeEvent.repair.id}` : ''}</BlockTitle>
+                    <BlockText>{activeEvent.repair ? `${activeEvent.repair.instrument.manufacturer} ${activeEvent.repair.instrument.model} ${activeEvent.repair.instrument.type}` : ''}</BlockText>
+                    <BlockText>{activeEvent.repair ? `${Math.floor(activeEvent.time / 60)} Hrs ${activeEvent.time % 60} Mins` : ''}</BlockText>
+                    </> : <>
+                    <BlockTitle>{activeEvent.title} </BlockTitle>
+                    {activeEvent.description ? <BlockText>{activeEvent.description} </BlockText> : null}
+                    <BlockText>{`${Math.floor(activeEvent.time / 60)} Hrs ${activeEvent.time % 60} Mins`}</BlockText>
+                    </>}
+                </div>
+            </DragOverlay>}
 
         </div>
     );

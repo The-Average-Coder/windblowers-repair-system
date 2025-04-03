@@ -3,6 +3,7 @@
     border-radius: 6px;
     padding: 4px 6px;
     border: 1px solid var(--content-background);
+    user-select: none;
 }
 
 .CalendarEvent:hover {

@@ -5,12 +5,10 @@ import NavigationButton from './NavigationButton';
 
 import './Sidebar.css';
 
-import plusLight from '../../images/plus-icon/plusLight.png';
 import settingsLight from '../../images/settings-icon/settingsLight.png';
 import settingsDark from '../../images/settings-icon/settingsDark.png';
 import logoutLight from '../../images/logout-icon/logoutLight.png';
 import logoutDark from '../../images/logout-icon/logoutDark.png';
-import ActionButton from '../Common/Buttons/ActionButton';
 
 function Sidebar() {
     
