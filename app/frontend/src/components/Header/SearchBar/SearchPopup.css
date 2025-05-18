@@ -1,0 +1,90 @@
+.SearchPopup {
+    position: absolute;
+    top: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    max-height: 300px;
+    background: var(--content-background);
+    border: var(--subcontent-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 4px;
+}
+
+.SearchPopup .search-filters {
+    margin: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.SearchPopup .filter-tag {
+    background: var(--background);
+    border-radius: 32px;
+    padding: 4px 12px;
+    font-size: 13px;
+}
+
+.SearchPopup .filter-tag .remove {
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: var(--faded-text);
+    cursor: pointer;
+}
+
+.SearchPopup .clear-filters {
+    font-family: inherit;
+    margin-left: auto;
+    font-size: 13px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.SearchPopup .section-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 12px 8px 2px;
+}
+
+.result-list,
+.recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 2px;
+}
+
+.result-list li,
+.recent-list li {
+    padding: 8px 6px;
+    margin: 0 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.result-list li:hover,
+.recent-list li:hover,
+.result-list li.focused {
+    background: var(--background);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+}
+
+.create-btn {
+    margin-top: 10px;
+    background: #0077ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+}

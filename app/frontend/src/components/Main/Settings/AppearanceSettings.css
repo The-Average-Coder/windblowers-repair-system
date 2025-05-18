@@ -1,0 +1,21 @@
+.AppearanceSettings .dark-mode {
+    display: flex;
+    margin-top: 16px;
+    align-items: center;
+}
+
+.AppearanceSettings .dark-mode p {
+    min-width: 300px;
+}
+
+.AppearanceSettings .dark-mode div {
+    flex: 1;
+}
+
+@media screen and (max-width: 600px) {
+    
+    .AppearanceSettings .dark-mode p { flex: 1; }
+
+    .AppearanceSettings .dark-mode div { flex: unset; }
+
+}

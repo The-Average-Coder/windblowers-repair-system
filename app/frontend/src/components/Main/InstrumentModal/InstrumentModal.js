@@ -72,7 +72,7 @@ function InstrumentModal(props) {
     ]
 
     const statuses = [
-        'Not Yet Dropped Off', 'In Workshop'
+        'Not Set', 'Not Yet Dropped Off', 'In Workshop'
     ]
 
     const statusOptions = statuses.map((status, index) => {return {name: status, value: index}})

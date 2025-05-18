@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import NavigationCalendar from '../Sidebar/NavigationCalendar';
+import NavigationCalendar from '../Calendar/NavigationCalendar';
 import NavigationButton from '../Sidebar/NavigationButton';
 
 import './HamburgerMenu.css';
@@ -15,15 +15,19 @@ function HamburgerMenu(props) {
     const navigate = useNavigate();
 
     return (<div className='HamburgerMenu'>
+
         <div className='menu'>
+
             <div className='calendar'>
                 <NavigationCalendar closeFunction={props.closeFunction} />
             </div>
+
             <div className='navigation-buttons'>
                 <NavigationButton className={location.pathname === '/settings' ? 'active' : ''} onClick={() => {navigate('/settings');props.closeFunction();}} lightIcon={settingsLight} darkIcon={settingsDark}>Settings</NavigationButton>
                 <NavigationButton lightIcon={logoutLight} darkIcon={logoutDark}>Logout</NavigationButton>
             </div>
         </div>
+
     </div>);
 }
 

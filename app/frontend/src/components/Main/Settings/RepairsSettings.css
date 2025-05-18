@@ -1,0 +1,95 @@
+.RepairsSettings {
+    min-width: 600px;
+}
+
+.RepairsSettings .divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--subcontent-border);
+    margin: 16px 0;
+}
+
+.RepairsSettings .section-title {
+    display: flex;
+    align-items: center;
+}
+
+.RepairsSettings .section-title div{
+    flex: 1;
+}
+
+.RepairsSettings .section-title .ActionButton img {
+    height: 20px;
+    vertical-align: -5px;
+    margin-right: 6px;
+}
+
+.RepairsSettings .common-jobs {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 200px auto 70px 70px;
+    gap: 8px;
+    align-items: start;
+}
+
+.RepairsSettings .instrument-statuses {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: auto 70px 70px;
+    gap: 8px;
+    align-items: start;
+}
+
+.RepairsSettings .hourly-rate {
+    margin-top: 16px;
+}
+
+.RepairsSettings .hourly-rate .TextInput {
+    width: 50px;
+}
+
+.RepairsSettings .hourly-rate p {
+    display: inline;
+    margin-left: 8px;
+}
+
+/* ADD MODAL WINDOW */
+
+.RepairsSettings .add-common-job-window {
+    width: 400px;
+    height: 240px;
+}
+
+.RepairsSettings .add-instrument-status-window {
+    width: 300px;
+    height: 120px;
+}
+
+.RepairsSettings .add-common-job-window .ModalTitle,
+.RepairsSettings .add-instrument-status-window .ModalTitle {
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.RepairsSettings .add-common-job-window .details,
+.RepairsSettings .add-instrument-status-window .details {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.RepairsSettings .add-common-job-window .buttons,
+.RepairsSettings .add-instrument-status-window .buttons {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+@media screen and (max-width: 800px) {
+    .RepairsSettings .common-jobs {
+        grid-template-columns: 100px auto 55px 70px;
+    }
+}

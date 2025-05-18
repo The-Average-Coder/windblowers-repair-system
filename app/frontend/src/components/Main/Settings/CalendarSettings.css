@@ -1,0 +1,22 @@
+.CalendarSettings .details {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.CalendarSettings .details .detail {
+    display: flex;
+}
+
+.CalendarSettings .details .detail p { min-width: 300px; }
+
+.CalendarSettings .details .detail div { flex: 1; }
+
+@media screen and (max-width: 600px) {
+    
+    .CalendarSettings .details .detail p { flex: 1; }
+
+    .CalendarSettings .details .detail div { flex: unset; }
+
+}

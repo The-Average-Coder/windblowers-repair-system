@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import SearchBar from './SearchBar';
+import SearchBar from './SearchBar/SearchBar';
 import BlockTopRightButton from '../Common/Buttons/BlockTopRightButton';
 import HamburgerMenu from './HamburgerMenu';
 
@@ -31,7 +31,8 @@ function Header() {
             dark={hamburgerMenuOpen ? closeDark : hamburgerDark}
             darkHover={hamburgerMenuOpen ? closeDark : hamburgerDark}
             />
-            {hamburgerMenuOpen ? <HamburgerMenu closeFunction={() => setHamburgerMenuOpen(!hamburgerMenuOpen)} /> : null}
+            
+            {hamburgerMenuOpen && <HamburgerMenu closeFunction={() => setHamburgerMenuOpen(!hamburgerMenuOpen)} />}
 
         </div>
     );

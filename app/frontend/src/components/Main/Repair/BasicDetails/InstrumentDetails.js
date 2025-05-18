@@ -11,7 +11,7 @@ import expandHoverDark from '../../../../images/expand-icon/expandHoverDark.png'
 
 function InstrumentDetails(props) {
     const statuses = [
-        'Not Yet Dropped Off', 'In Workshop'
+        'Not Set', 'Not Yet Dropped Off', 'In Workshop'
     ]
 
     return (

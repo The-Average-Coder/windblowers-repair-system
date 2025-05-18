@@ -2,7 +2,6 @@
     position: fixed;
     width: 240px;
     height: calc(100vh - 106px);
-    transition: 0.4s;
     display: flex;
     flex-direction: column;
     margin-top: 40px;

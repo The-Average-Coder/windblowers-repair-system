@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import NavigationCalendar from './NavigationCalendar';
+import NavigationCalendar from '../Calendar/NavigationCalendar';
 import NavigationButton from './NavigationButton';
 
 import './Sidebar.css';

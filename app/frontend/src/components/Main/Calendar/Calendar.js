@@ -11,15 +11,16 @@ import ActionButton from '../../Common/Buttons/ActionButton';
 import ContentBlock from '../../Common/Containers/ContentBlock';
 import BlockTitle from '../../Common/Text/BlockTitle';
 import BlockText from '../../Common/Text/BlockText';
-
-import './Calendar.css';
-
-import plusWhite from '../../../images/plus-icon/plusWhite.png';
 import CalendarEvent from './CalendarEvent';
 import AddCalendarEventButton from './AddCalendarEventButton';
 import CalendarGridBox from './CalendarGridBox';
 import CalendarEventPopover from './CalendarEventPopover';
 import CreateEventPopover from './CreateEventPopover';
+import CreateRepairWindow from './CreateRepairWindow';
+
+import './Calendar.css';
+
+import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
 function Calendar() {
 
@@ -237,6 +238,8 @@ function Calendar() {
     const [popoverPosition, setPopoverPosition] = useState([0, 0])
     const [createCalendarEventPopover, setCreateCalendarEventPopover] = useState({});
 
+    const [createRepairWindowOpen, setCreateRepairWindowOpen] = useState(false);
+
     const updateCalendarEvent = (updatedCalendarEvent) => {
         setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== updatedCalendarEvent.id).concat(updatedCalendarEvent))
     }
@@ -427,7 +430,7 @@ function Calendar() {
     return (
         <div className='Calendar'>
 
-            <PageTitle>{getPageTitle()} <div className='gap' /> <ActionButton colored='true'><img src={plusWhite} />Create Repair</ActionButton></PageTitle>
+            <PageTitle>{getPageTitle()} <div className='gap' /> <ActionButton onClick={() => setCreateRepairWindowOpen(true)} colored='true'><img src={plusWhite} />Create Repair</ActionButton></PageTitle>
 
             <ContentBlock>
 
@@ -465,6 +468,8 @@ function Calendar() {
                     </>}
                 </div>
             </DragOverlay>}
+
+            {createRepairWindowOpen ? <CreateRepairWindow closeFunction={() => setCreateRepairWindowOpen(false)} /> : null}
 
         </div>
     );

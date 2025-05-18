@@ -10,6 +10,7 @@ import './App.css';
 
 function App() {
   
+  // DRAG AND DROP INITIALISATIoN
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 5 }});
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { distance: 5 }});
   const keyboardSensor = useSensor(KeyboardSensor);
@@ -20,6 +21,7 @@ function App() {
       keyboardSensor,
   );
 
+  // DRAG AND DROP EVENTS
   const emitClickEvent = () => {
     eventBus.emit('click');
   }
@@ -35,7 +37,6 @@ function App() {
   const handleDragOver = (event) => {
     eventBus.emit('handleDragOver', event)
   }
-  
 
   return (
     <div className='App' onClick={emitClickEvent}>

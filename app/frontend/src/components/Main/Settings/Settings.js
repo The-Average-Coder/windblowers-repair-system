@@ -4,6 +4,9 @@ import PageTitle from '../../Common/Text/PageTitle';
 import ContentBlock from '../../Common/Containers/ContentBlock';
 import SettingsMenu from './SettingsMenu';
 import RepairersSettings from './RepairersSettings';
+import RepairsSettings from './RepairsSettings';
+import CalendarSettings from './CalendarSettings';
+import AppearanceSettings from './AppearanceSettings';
 
 import './Settings.css';
 
@@ -23,6 +26,9 @@ function Settings() {
 
                 <div className='settings-content'>
                 {pages[currentPage] === 'Repairers' ? <RepairersSettings />
+                : pages[currentPage] === 'Repairs' ? <RepairsSettings />
+                : pages[currentPage] === 'Calendar' ? <CalendarSettings />
+                : pages[currentPage] === 'Appearance' ? <AppearanceSettings />
                 : null}
                 </div>
                 
