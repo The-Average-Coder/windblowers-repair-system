@@ -1,0 +1,8 @@
+.App {
+    max-width: 1800px;
+    margin: auto;
+}
+
+.App .page {
+    padding: 124px 16px 0;
+}
