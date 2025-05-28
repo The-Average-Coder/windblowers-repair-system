@@ -84,7 +84,7 @@ function Assessment(props) {
                 </div>
 
                 <div className='estimate-invoice-message'>
-                    <p>Generate an invoice of the estimate</p>
+                    <p>Generate an estimate</p>
                     <ActionButton colored='true'>Download</ActionButton>
                 </div>
 
