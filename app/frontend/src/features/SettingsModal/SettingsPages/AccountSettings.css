@@ -1,0 +1,11 @@
+.AccountSettings .new-password-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.AccountSettings .logout-button {
+    margin-top: 16px;
+}

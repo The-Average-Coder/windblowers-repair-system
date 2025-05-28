@@ -25,28 +25,12 @@
     text-align: right;
 }
 
-/* ADD MODAL WINDOW */
-
-.RepairersSettings .add-repairer-window {
-    width: 300px;
-    height: 120px;
-}
-
-.RepairersSettings .add-repairer-window .ModalTitle {
-    font-size: 18px;
-    margin-top: 2px;
-}
-
-.RepairersSettings .add-repairer-window .details {
+.RepairersSettings .new-repairer-form {
+    display: flex;
+    gap: 4px;
     margin-top: 16px;
-    display: flex;
-    flex-direction: column;
 }
 
-.RepairersSettings .add-repairer-window .buttons {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    display: flex;
-    gap: 8px;
+.RepairersSettings .new-repairer-form .TextInput {
+    width: 200px;
 }

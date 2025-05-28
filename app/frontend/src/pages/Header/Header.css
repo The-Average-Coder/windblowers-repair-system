@@ -17,6 +17,10 @@
     top: 12px;
 }
 
+.Header .brand:hover {
+    cursor: pointer;
+}
+
 .light-theme .Header .brand.white {
     display: none;
 }
@@ -25,18 +29,14 @@
     display: none;
 }
 
-.Header .BlockTopRightButton {
-    display: none;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
+.Header .settings-button {
+    top: 12px;
+    right: 12px;
 }
 
-.Header .BlockTopRightButton img {
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
+.Header .new-repair-button {
+    top: 12px;
+    right: 52px;
 }
 
 @media screen and (max-width: 1000px) {

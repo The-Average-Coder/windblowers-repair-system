@@ -1,6 +1,6 @@
-import BlockTitle from '../../components/Text/BlockTitle';
-import BlockText from '../../components/Text/BlockText';
-import ToggleSwitch from '../../components/Inputs/ToggleSwitch';
+import BlockTitle from '../../../components/Text/BlockTitle';
+import BlockText from '../../../components/Text/BlockText';
+import ToggleSwitch from '../../../components/Inputs/ToggleSwitch';
 
 import './AppearanceSettings.css';
 

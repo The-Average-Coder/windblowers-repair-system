@@ -11,36 +11,138 @@
     flex: 1;
 }
 
+.Calendar .PageTitle .calendar-mode-toggle {
+    position: absolute;
+    left: calc(50% + 114px);
+    transform: translateX(-50%);
+    background-color: var(--content-background);
+    border: 1px solid var(--content-border);
+    border-radius: 8px;
+    display: flex;
+    padding: 3px;
+    gap: 4px;
+    margin-top: -2px;
+}
+
+.Calendar .PageTitle .calendar-mode-toggle button {
+    background: none;
+    border: none;
+    padding: 5px 12px;
+    font-family: inherit;
+    border-radius: 6px;
+    color: var(--text);
+}
+
+.Calendar .PageTitle .calendar-mode-toggle button:hover {
+    background-color: var(--hover-color);
+}
+
+.Calendar .PageTitle .calendar-mode-toggle button.active {
+    background-color: var(--highlight-color);
+    color: white;
+}
+
+.Calendar .PageTitle .calendar-mode-toggle button.active:hover {
+    background-color: var(--highlight-hover);
+}
+
+.Calendar .PageTitle .calendar-mode-toggle button:active,
+.Calendar .PageTitle .calendar-mode-toggle button.active:active {
+    background-color: var(--highlight-click);
+    color: white
+
+}
+
 .Calendar .calendar-content {
     display: flex;
 }
 
 .Calendar .calendar-box {
     flex: 1;
+    min-height: 400px;
 }
 
-.Calendar .calendar-container {
-    background-color: var(--subcontent-border);
-    display: grid;
-    grid-template-columns: 100px calc(20% - 20px ) calc(20% - 20px ) calc(20% - 20px ) calc(20% - 20px ) calc(20% - 20px );
-    gap: 1px;
+/* #### DAY VIEW */
+.Calendar .day-calendar {
+}
+
+.Calendar .day-calendar .day-title {
+    text-align: center;
+    color: var(--faded-text);
+    font-size: 13px;
+}
+
+.Calendar .day-calendar .day-title span {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--text);
+    border-radius: 6px;
+    margin-left: 4px;
+    vertical-align: -2.5px;
+}
+
+.Calendar .day-calendar .day-title span.current-day {
+    color: var(--content-background);
+    background-color: var(--text);
+    padding: 0px 8px;
+}
+
+.Calendar .day-calendar .calendar-flex-container {
+    display: flex;
     min-width: 1000px;
+    background-color: var(--subcontent-border);
+    gap: 0.85px;
 }
 
-.Calendar .calendar-container .calendar-grid-box {
+.Calendar .day-calendar .calendar-flex-container .repairer-column {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.Calendar .day-calendar .calendar-flex-container .title-row {
+    background-color: var(--content-background);
+    text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 12px 0;
+}
+
+.Calendar .day-calendar .calendar-flex-container .events-row {
+    flex: 1;
+    background-color: var(--content-background);
+    font-size: 15px;
+    margin-top: 1px;
+    padding: 4px 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* #### WEEK VIEW */
+.Calendar .week-calendar {
+    display: grid;
+    min-width: 1000px;
+    background-color: var(--subcontent-border);
+    gap: 0.85px;
+    grid-template-columns: 120px 1fr 1fr 1fr 1fr 1fr;
+}
+
+.Calendar .week-calendar .calendar-grid-box {
     background-color: var(--content-background);
     padding: 4px 5px;
     box-sizing: border-box;
 }
 
-.Calendar .calendar-container .calendar-grid-box:not(.days-of-the-week, .repairer-name) {
+.Calendar .week-calendar .calendar-grid-box:not(.days-of-the-week, .repairer-name) {
     display: flex;
     flex-direction: column;
     gap: 6px;
     min-height: 120px;
 }
 
-.Calendar .calendar-container .days-of-the-week {
+.Calendar .week-calendar .days-of-the-week {
     font-size: 12px;
     text-align: center;
     padding: 10px 0;
@@ -49,7 +151,7 @@
     height: 70px;
 }
 
-.Calendar .calendar-container .days-of-the-week span {
+.Calendar .week-calendar .days-of-the-week span {
     font-size: 20px;
     display: block;
     font-weight: bold;
@@ -58,16 +160,71 @@
     margin: auto;
     border-radius: 6px;
     padding: 2px 0;
-    padding-right: 3px;
+    padding-right: 2px;
 }
 
-.Calendar .calendar-container .days-of-the-week span.current-day {
+.Calendar .week-calendar .days-of-the-week span.current-day {
     color: var(--content-background); 
     background-color: var(--text);
 }
 
-.Calendar .calendar-container .repairer-name {
+.Calendar .week-calendar .repairer-name {
     display: flex;
     font-weight: bold;
     align-items: center;
+}
+
+
+/* #### MONTH VIEW */
+.Calendar .month-calendar {
+    display: grid;
+    min-width: 1000px;
+    gap: 4px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+
+.Calendar .month-calendar .calendar-grid-box {
+    background-color: var(--content-background);
+    padding: 4px 5px;
+    box-sizing: border-box;
+}
+
+
+.Calendar .month-calendar .calendar-grid-box:not(.days-of-the-week, .repairer-name) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 80px;
+}
+
+.Calendar .month-calendar .days-of-the-week {
+    font-size: 15px;
+    text-align: center;
+    padding: 10px 0;
+    line-height: 20px;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.Calendar .month-calendar .calendar-grid-box {
+    border-radius: 4px;
+}
+
+.Calendar .month-calendar .calendar-grid-box.quiet {
+    background-color: var(--calendar-green);
+}
+.Calendar .month-calendar .calendar-grid-box.moderate {
+    background-color: var(--calendar-orange);
+}
+.Calendar .month-calendar .calendar-grid-box.busy {
+    background-color: var(--calendar-red);
+}
+
+.Calendar .month-calendar .calendar-grid-box.faded {
+    opacity: 0.4;
+}
+
+.Calendar .month-calendar .calendar-grid-box.faded .date {
+    color: var(--faded-text);
 }

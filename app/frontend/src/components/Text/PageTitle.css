@@ -29,7 +29,7 @@
     font-size: var(--font-title);
     top: 64px;
     background-color: var(--background);
-    width: calc(100% - 266px);
+    width: calc(100% - 32px);
     max-width: 1534px;
     padding: 12px 0;
 

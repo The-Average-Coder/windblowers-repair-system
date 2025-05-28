@@ -1,0 +1,9 @@
+.SettingsModal {
+    width: 1000px !important;
+    height: 500px !important;
+    overflow: scroll;
+}
+
+.SettingsModal .settings-content {
+    margin-top: 16px;
+}

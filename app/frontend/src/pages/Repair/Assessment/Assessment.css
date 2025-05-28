@@ -31,13 +31,33 @@
 .Assessment .cost-estimate .estimate-invoice-message p { flex: 1; align-self: center; }
 .Assessment .cost-estimate .estimate-invoice-message .ActionButton {font-size: var(--font-subtext);}
 
-.Assessment .Notes {
+.Assessment .assessment-notes {
     flex: 7;
     height: unset;
+    position: relative;
+}
+
+.Assessment .assessment-notes .TextAreaInput {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 4px;
+    margin-bottom: 40px;
+}
+
+.Assessment .assessment-notes .buttons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    gap: 4px;
+}
+
+.Assessment .assessment-notes .assessment-notes-title {
+    margin-top: 4px;
 }
 
 .Assessment .divider {
-    width: 1px;
+    width: 0.9px;
     background-color: var(--subcontent-border);
 }
 

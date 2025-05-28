@@ -6,8 +6,8 @@
     right: 0;
     border: none;
     transition: 0.1s;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
 }
 
 .HeaderButton:hover {
@@ -22,7 +22,7 @@
 .HeaderButton img {
     height: 24px;
     width: 24px;
-    margin-top: 4px;
+    margin-top: 3px;
 }
 
 /* The following code ensures only one icon is shown, the correct one depending on hover and color theme */

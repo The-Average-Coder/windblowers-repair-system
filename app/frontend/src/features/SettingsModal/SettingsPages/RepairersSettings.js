@@ -1,27 +1,30 @@
 import { useState } from 'react';
 
-import BlockTitle from '../../components/Text/BlockTitle';
-import BlockText from '../../components/Text/BlockText';
-import HoursDropdownSelect from '../../components/Inputs/HoursDropdownSelect';
-import ActionButton from '../../components/Buttons/ActionButton';
-import ModalWindow from '../../components/Containers/ModalWindow';
-import ModalTitle from '../../components/Text/ModalTitle';
-import TextInput from '../../components/Inputs/TextInput';
+import BlockTitle from '../../../components/Text/BlockTitle';
+import BlockText from '../../../components/Text/BlockText';
+import HoursDropdownSelect from '../../../components/Inputs/HoursDropdownSelect';
+import ActionButton from '../../../components/Buttons/ActionButton';
+import TextInput from '../../../components/Inputs/TextInput';
 
 import './RepairersSettings.css';
 
-import plusWhite from '../../images/plus-icon/plusWhite.png';
+import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
 function RepairersSettings() {
 
+    // #### RAW TEST DATA
     const [repairers, setRepairers] = useState([
         { id: 1, name: 'Purple', hours: [8, 8, 8, 8, 4] },
-        { id: 2, name: 'Ryan', hours: [0, 0, 8, 8, 0] }
+        { id: 2, name: 'Ryan', hours: [0, 8, 8, 0, 0] }
     ])
 
+
+    // #### STATE VARIABLES
     const [creatingRepairer, setCreatingRepairer] = useState(false);
     const [newRepairerName, setNewRepairerName] = useState('');
 
+
+    // #### REPAIRER MANAGEMENT FUNCTIONS
     const updateHours = (value, index, repairerId) => {
         const newRepairers = [...repairers]
         newRepairers.find(repairer => repairer.id === repairerId).hours[index] = value;
@@ -43,6 +46,8 @@ function RepairersSettings() {
         setNewRepairerName('');
     }
 
+
+    // #### RENDERED SETTINGS CONTENT
     const renderedRepairers = repairers.length !== 0 ? <div className='repairers-grid'>
         <p />
         <p>Tuesday</p>
@@ -63,6 +68,7 @@ function RepairersSettings() {
 
     return (
         <div className='RepairersSettings'>
+
             <div className='repairers-title'>
                 <div>
                     <BlockTitle>Repairers</BlockTitle>
@@ -73,16 +79,12 @@ function RepairersSettings() {
 
             {renderedRepairers}
 
-            {creatingRepairer ? <ModalWindow className='add-repairer-window' closeFunction={cancelNewRepairer}>
-                <ModalTitle>Add Repairer</ModalTitle>
-                <div className='details'>
-                    <TextInput placeholder='Name' value={newRepairerName} onChange={setNewRepairerName} />
-                </div>
-                <div className='buttons'>
-                    <ActionButton onClick={cancelNewRepairer}>Cancel</ActionButton>
-                    <ActionButton colored='true' onClick={addNewRepairer}>Save</ActionButton>
-                </div>
-            </ModalWindow> : null}
+            {creatingRepairer && <div className='new-repairer-form'>
+            <TextInput value={newRepairerName} onChange={(value) => setNewRepairerName(value)} />
+                <ActionButton onClick={cancelNewRepairer}>Cancel</ActionButton>
+                <ActionButton onClick={addNewRepairer}>Save</ActionButton>
+            </div>}
+
         </div>
     );
 }

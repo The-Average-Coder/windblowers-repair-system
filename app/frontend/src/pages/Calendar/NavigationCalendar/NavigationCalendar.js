@@ -81,10 +81,8 @@ function NavigationCalendar(props) {
         props.setMonth(month);
         props.setDay(day);
 
-
-        props.setWeek();
-
-        console.log(year, month, day)
+        if (props.mode === calendarModes.WEEK) props.calculateWeekDates(year, month, day);
+        else if (props.mode === calendarModes.MONTH) props.calculateMonthDates(year, month)
     }
 
     // #### EVENT HOVER NAVIGATION FUNCTIONS
@@ -107,6 +105,8 @@ function NavigationCalendar(props) {
 
     useEffect(() => {
         const handleDragOver = (event) => {
+            if (props.mode !== calendarModes.WEEK) return;
+
             // Check if the draggable is over a valid calendar week
             if (event.over && event.over.id.startsWith("week-")) {
                 if (hoveredWeek !== event.over.id) {
@@ -116,7 +116,7 @@ function NavigationCalendar(props) {
                     clearHover()
             
                     hoverTimeout.current = setTimeout(() => {
-                        handleDayClick(parseInt(event.over.id.split('-')[1]))
+                        handleDayClick(parseInt(event.over.id.split('-')[1]), parseInt(event.over.id.split('-')[2]), parseInt(event.over.id.split('-')[3]))
                     }, EVENT_DRAG_TO_NAVIGATE_TIMER);
                 }
             } else if (event.over && event.over.id.startsWith('month')) {
@@ -152,7 +152,7 @@ function NavigationCalendar(props) {
             eventBus.off('handleDragOver', handleDragOver);
             eventBus.off('handleDragEnd', handleDragEnd);
         }
-    }, [month, year])
+    }, [props.month, props.year, props.day, props.mode])
 
     const renderedDays = () => {
         const firstWeekday = new Date(year, month, 1).getDay();
@@ -269,12 +269,13 @@ function NavigationCalendar(props) {
                     <NavigationCalendarWeek
                         className={
                             props.mode === calendarModes.WEEK &&
-                            props.month === month &&
-                            props.year === year
+                            weekFirstDay === props.day &&
+                            weekMonth === props.month &&
+                            weekYear === props.year
                             ? 'active'
                             : null
                         }
-                        id={`${weekFirstDay}-${weekMonth}-${weekYear}`}
+                        id={`week-${weekFirstDay}-${weekMonth}-${weekYear}`}
                         onClick={() => props.mode === calendarModes.WEEK && handleDayClick(weekFirstDay, weekMonth, weekYear)}
                     >
                         {weekDays}

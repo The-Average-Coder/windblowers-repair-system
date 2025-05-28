@@ -2,19 +2,30 @@ import { useState } from 'react';
 
 import PageTitle from '../../components/Text/PageTitle';
 import ContentBlock from '../../components/Containers/ContentBlock';
+import BlockTitle from '../../components/Text/BlockTitle';
+import BlockText from '../../components/Text/BlockText';
+import TextAreaInput from '../../components/Inputs/TextAreaInput';
+import BlockTopRightButton from '../../components/Buttons/BlockTopRightButton';
+import ActionButton from '../../components/Buttons/ActionButton';
 
 import InstrumentDetails from './BasicDetails/InstrumentDetails';
 import CustomerDetails from './BasicDetails/CustomerDetails';
 import CustomerModal from '../../features/CustomerModal/CustomerModal';
 import InstrumentModal from '../../features/InstrumentModal/InstrumentModal';
-import Notes from './Notes';
 import Assessment from './Assessment/Assessment';
 
 import './Repair.css';
 
 import repairStatuses from '../../enums/repairStatuses';
 
+import editLight from '../../images/edit-icon/editLight.png';
+import editHoverLight from '../../images/edit-icon/editHoverLight.png';
+import editDark from '../../images/edit-icon/editDark.png';
+import editHoverDark from '../../images/edit-icon/editHoverDark.png';
+
 function Repair() {
+
+    // #### RAW TEST DATA
     const [repair, setRepair] = useState({
         id: 2508004,
         status: repairStatuses.OPEN,
@@ -34,10 +45,18 @@ function Repair() {
         },
         notes: 'Some assorted notes',
         assessment: {
-            notes: 'Some assessment notes'
+            job_type_id: 1,
+            notes: 'bla bla bla'
         }
     })
 
+
+    // #### STATE VARIABLES
+    const [editNotesMode, setEditNotesMode] = useState(false);
+    const [tempNotes, setTempNotes] = useState('');
+
+
+    // #### DATA MANAGEMENT FUNCTIONS
     const updateCustomer = (value) => {
         setRepair({...repair, customer: value})
     }
@@ -45,9 +64,15 @@ function Repair() {
     const updateInstrument = (value) => {
         setRepair({...repair, instrument: value})
     }
+    
+    const toggleEditNotesMode = () => {
+        setTempNotes(repair.notes)
+        setEditNotesMode(!editNotesMode);
+    }
 
-    const updateNotes = (value) => {
-        setRepair({...repair, notes: value})
+    const updateNotes = () => {
+        setRepair({...repair, notes: tempNotes})
+        toggleEditNotesMode();
     }
 
     const updateAssessment = (value) => {
@@ -79,7 +104,25 @@ function Repair() {
 
                 <ContentBlock className='notes-block'>
 
-                    <Notes title='Notes' notes={repair.notes} updateNotes={updateNotes} />
+                    <BlockTitle>Notes</BlockTitle>
+
+                    {
+                    editNotesMode ? 
+                    <>
+                    <TextAreaInput value={tempNotes} onChange={setTempNotes} />
+
+                    <div className='buttons'>
+                        <ActionButton onClick={toggleEditNotesMode}>Cancel</ActionButton>
+                        <ActionButton onClick={updateNotes} colored='true'>Save</ActionButton>
+                    </div>
+                    </>
+                    :
+                    <>
+                    <BlockText className='notes'>{repair.notes}</BlockText>
+
+                    <BlockTopRightButton onClick={toggleEditNotesMode} light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
+                    </>
+                    }
 
                 </ContentBlock>
 

@@ -101,8 +101,8 @@
 }
 
 .NavigationCalendar .day-navigation .current-day,
-.NavigationCalendar .day-navigation .current-day:hover,
-.NavigationCalendar .day-navigation .current-day:active { 
+.NavigationCalendar .day-navigation.day-mode .current-day:hover,
+.NavigationCalendar .day-navigation.day-mode .current-day:active { 
     color: var(--content-background); 
     background-color: var(--text);
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 12px 0 rgba(0, 0, 0, 0.19);

@@ -222,7 +222,7 @@ function Calendar() {
 
     // #### CONSTANTS
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
+    const DAYS = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     
     // #### STATE VARIABLES
     const [calendarMode, setCalendarMode] = useState(calendarModes.WEEK);
@@ -233,6 +233,7 @@ function Calendar() {
     const [day, setDay] = useState();
 
     const [weekDates, setWeekDates] = useState(['', '', '', '', '']);
+    const [monthDates, setMonthDates] = useState([]);
 
     const [activeEvent, setActiveEvent] = useState(null);
 
@@ -242,7 +243,6 @@ function Calendar() {
 
 
     // #### DRAG AND DROP INITIALISATION
-
     const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 5 }});
     const touchSensor = useSensor(TouchSensor, { activationConstraint: { distance: 5 }});
     const keyboardSensor = useSensor(KeyboardSensor);
@@ -261,43 +261,196 @@ function Calendar() {
 
 
     // #### DRAG AND DROP EVENTS
-    const handleDragStart = (event) => {
-        eventBus.emit('handleDragStart', event)
-    }
-
-    const handleDragEnd = (event) => {
-        eventBus.emit('handleDragEnd', event)
-    }
-
     const handleDragOver = (event) => {
         eventBus.emit('handleDragOver', event)
     }
 
 
     // #### CALENDAR NAVIGATION FUNCTIONS
-    const calculateWeekDates = (year, month, week) => {
-        const firstWeekday = new Date(year, month, 1).getDay();
-        const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
-        const daysInPreviousMonth = new Date(year, month, 0).getDate();
-        let firstDayOfTheWeek = (week-1) * 7 - firstWeekday + 3
-
-        if (firstDayOfTheWeek <= 0) {
-            firstDayOfTheWeek += daysInPreviousMonth
-            setWeekDates([firstDayOfTheWeek-1 % daysInPreviousMonth + 1, (firstDayOfTheWeek) % daysInPreviousMonth + 1, (firstDayOfTheWeek+1) % daysInPreviousMonth + 1, (firstDayOfTheWeek+2) % daysInPreviousMonth + 1, (firstDayOfTheWeek+3) % daysInPreviousMonth + 1])
-        }
-        else if (firstDayOfTheWeek + 5 >= daysInCurrentMonth) {
-            setWeekDates([firstDayOfTheWeek-1 % daysInCurrentMonth + 1, (firstDayOfTheWeek) % daysInCurrentMonth + 1, (firstDayOfTheWeek+1) % daysInCurrentMonth + 1, (firstDayOfTheWeek+2) % daysInCurrentMonth + 1, (firstDayOfTheWeek+3) % daysInCurrentMonth + 1])
+    const getNextMonthAndYear = () => {
+        if (month >= 11) {
+            return [0, year+1];
         }
         else {
-            setWeekDates([firstDayOfTheWeek, firstDayOfTheWeek+1, firstDayOfTheWeek+2, firstDayOfTheWeek+3, firstDayOfTheWeek+4])
+            return [month+1, year];
         }
+    }
+
+    const getPreviousMonthAndYear = () => {
+        if (month <= 0) {
+            return [11, year-1];
+        }
+        else {
+            return [month-1, year];
+        }
+    }
+
+    const calculateWeekDates = (year, month, day) => {
+
+        const numDaysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstWeekDate = day - new Date(year, month, day).getDay() + 2;
+
+        setWeekDates([
+            firstWeekDate,
+            firstWeekDate % numDaysInMonth + 1,
+            (firstWeekDate + 1) % numDaysInMonth + 1,
+            (firstWeekDate + 2) % numDaysInMonth + 1,
+            (firstWeekDate + 3) % numDaysInMonth + 1,
+        ])
+    }
+
+    const calculateMonthDates = (year, month) => {
+        setMonthDates([]);
+
+        let newMonthDates = [];
+
+        const firstWeekday = new Date(year, month, 1).getDay();
+        const numDaysInCurrentMonth = new Date(year, month+1, 0).getDate();
+        const lastWeekday = new Date(year, month, numDaysInCurrentMonth).getDay();
+        const numDaysInPreviousMonth = new Date(year, month, 0).getDate();
+        
+        let day = 1;
+
+        // Handle previous month's trailing days
+        let prevMonthDays = numDaysInPreviousMonth - firstWeekday + 1;
+
+        while (day <= numDaysInCurrentMonth) {
+            for (let i = 0; i < 7; i++) {
+                if (i === 0 || i === 1) {
+                    if (prevMonthDays <= numDaysInPreviousMonth) {
+                        prevMonthDays++;
+                    }
+                    else {
+                        day++;
+                    }
+                    continue;
+                }; // Skip Sunday and Monday
+
+                if (prevMonthDays <= numDaysInPreviousMonth) {
+                    // Previous month days
+                    newMonthDates.push(prevMonthDays);
+                    prevMonthDays++;
+                } else if (day <= numDaysInCurrentMonth) {
+                    // Current month days
+                    newMonthDates.push(day);
+                    day++;
+                } else if (lastWeekday !== 6 && lastWeekday >= 2) {
+                    // Next month days
+                    const nextMonthDay = day - numDaysInCurrentMonth;
+                    newMonthDates.push(nextMonthDay)
+                    day++;
+                }
+            }
+        }
+
+        setMonthDates(newMonthDates);
+    }
+
+    const updateCalendarMode = (newCalendarMode) => {
+        if (newCalendarMode === calendarMode) return;
+
+        setWeekDates(['', '', '', '', '']);
+        setMonthDates([]);
+
+        if (newCalendarMode === calendarModes.MONTH) {
+            setCalendarMode(newCalendarMode);
+            calculateMonthDates(year, month);
+            return;
+        };
+
+        if (newCalendarMode === calendarModes.DAY) {
+            const currentDay = currentDate.getDate();
+            const currentDayOfTheWeek = currentDate.getDay();
+
+            const nextWorkingDay = currentDay + Math.max(2 - currentDayOfTheWeek, 0);
+
+            setDay(nextWorkingDay);
+            setMonth(new Date(currentDate.getFullYear(), currentDate.getMonth(), nextWorkingDay).getMonth());
+            setYear(new Date(currentDate.getFullYear(), currentDate.getMonth(), nextWorkingDay).getFullYear());
+
+            setCalendarMode(newCalendarMode);
+            return;
+        }
+
+        if (calendarMode === calendarModes.DAY) {
+            // Set week to week of currently selected day
+            const firstWeekDate = day - new Date(year, month, day).getDay() + 2;
+
+            if (firstWeekDate <= 0) {
+                const previousMonthAndYear = getPreviousMonthAndYear();
+                const numDaysInPreviousMonth = new Date(year, month, 0).getDate();
+
+                setYear(previousMonthAndYear[1]);
+                setMonth(previousMonthAndYear[0]);
+                setDay(firstWeekDate + numDaysInPreviousMonth);
+
+                calculateWeekDates(previousMonthAndYear[1], previousMonthAndYear[0], firstWeekDate + numDaysInPreviousMonth);
+            }
+            else {
+                setDay(firstWeekDate);
+
+                calculateWeekDates(year, month, firstWeekDate);
+            }
+            
+            setCalendarMode(newCalendarMode);
+            return;
+        }
+
+        if (calendarMode === calendarModes.MONTH) {
+            if (month === currentDate.getMonth()) {
+                // Set week to current week
+                const firstWeekDate = currentDate.getDate() - new Date(year, month, currentDate.getDate()).getDay() + 2;
+
+                if (firstWeekDate <= 0) {
+                    const previousMonthAndYear = getPreviousMonthAndYear();
+                    const numDaysInPreviousMonth = new Date(year, month, 0).getDate();
+
+                    setYear(previousMonthAndYear[1]);
+                    setMonth(previousMonthAndYear[0]);
+                    setDay(firstWeekDate + numDaysInPreviousMonth);
+
+                    calculateWeekDates(previousMonthAndYear[1], previousMonthAndYear[0], firstWeekDate + numDaysInPreviousMonth);
+                }
+                else {
+                    setDay(firstWeekDate);
+
+                    calculateWeekDates(year, month, firstWeekDate);
+                }
+                
+                setCalendarMode(newCalendarMode);
+                return;
+            }
+
+            // Set week to first week in month
+            const numDaysInPreviousMonth = new Date(year, month, 0).getDate();
+            const firstWeekDate = (numDaysInPreviousMonth - new Date(year, month, 1).getDay() + 2) % numDaysInPreviousMonth + 1;
+
+            if (firstWeekDate >= 15) {
+                const previousMonthAndYear = getPreviousMonthAndYear();
+                setYear(previousMonthAndYear[1]);
+                setMonth(previousMonthAndYear[0]);
+                setDay(firstWeekDate);
+
+                calculateWeekDates(previousMonthAndYear[1], previousMonthAndYear[0], firstWeekDate);
+                
+                setCalendarMode(newCalendarMode);
+                return;
+            }
+            setDay(firstWeekDate);
+
+            calculateWeekDates(year, month, firstWeekDate);
+
+            setCalendarMode(newCalendarMode);
+            return;
+        }
+        
     }
     
 
     // #### CALENDAR EVENT MANAGEMENT FUNCTIONS
     const createCalendarEvent = (calendarEvent) => {
         setCalendarEvents(calendarEvents.concat(calendarEvent));
-        closeCalendarEventPopover();
+        closeAddCalendarEventPopover();
     }
 
     const updateCalendarEvent = (updatedCalendarEvent) => {
@@ -325,33 +478,34 @@ function Calendar() {
         openCalendarEventPopover(e, calendarEvent)
     }
 
+    const handleDragStart = (event) => {
+        setActiveEvent(calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id));
+    };
+    
+    const handleDragEnd = (event) => {
+        setPopoverCalendarEvent({});
+        setActiveEvent(null);
+
+        if (event.over) {
+            if (event.over.data.current.disabled === true) {
+                return;
+            }
+            const [repairer, day] = event.over.id.split(' ');
+            const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
+            calendarEvent.repairer = repairer;
+            calendarEvent.date = `${day}-${month+1}-${year}`
+            setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
+        }
+    };
+
 
     // #### CALENDAR EVENT POPOVER FUNCTIONS
     const openCalendarEventPopover = (e, calendarEvent) => {
         setPopoverCalendarEvent(calendarEvent);
 
-        const calendarRect = calendarRef.current.getBoundingClientRect();
         const calendarEventRect = e.target.closest('.CalendarEvent').getBoundingClientRect();
-        const pageScrollX = e.pageX - e.clientX;
-        const pageScrollY = e.pageY - e.clientY;
 
-        let popoverPositionX = 0; let popoverPositionY = 0;
-
-        if (calendarRect.width - (pageScrollX + calendarEventRect.x + calendarEventRect.width + 6) < 180) {
-            popoverPositionX = pageScrollX + calendarEventRect.x - 268
-        }
-        else {
-            popoverPositionX = pageScrollX + calendarEventRect.x + calendarEventRect.width + 8
-        }
-
-        if (calendarRect.height - (pageScrollY + calendarEventRect.y) < 20) {
-            popoverPositionY = pageScrollY + calendarEventRect.y + calendarEventRect.height - 312
-        }
-        else {
-            popoverPositionY = pageScrollY + calendarEventRect.y
-        }
-
-        setPopoverPosition([popoverPositionX, popoverPositionY])
+        setPopoverPosition(calculatePopoverPosition(e, calendarEventRect));
     }
 
     const closeCalendarEventPopover = () => {
@@ -364,181 +518,208 @@ function Calendar() {
         closeCalendarEventPopover();
         setCreateCalendarEventPopover({id: id, date: date, repairer: repairer});
 
-        const calendarRect = calendarRef.current.getBoundingClientRect();
         const buttonRect = e.target.closest('.AddCalendarEventButton').getBoundingClientRect();
-        const pageScrollX = e.pageX - e.clientX;
-        const pageScrollY = e.pageY - e.clientY;
 
-        let popoverPositionX = 0; let popoverPositionY = 0;
-
-        if (calendarRect.width - (pageScrollX + buttonRect.x + buttonRect.width + 6) < 180) {
-            popoverPositionX = pageScrollX + buttonRect.x - 268
-        }
-        else {
-            popoverPositionX = pageScrollX + buttonRect.x + buttonRect.width + 8
-        }
-
-        if (calendarRect.height - (pageScrollY + buttonRect.y) < 20) {
-            popoverPositionY = pageScrollY + buttonRect.y + buttonRect.height - 312
-        }
-        else {
-            popoverPositionY = pageScrollY + buttonRect.y
-        }
-
-        setPopoverPosition([popoverPositionX, popoverPositionY])
+        setPopoverPosition(calculatePopoverPosition(e, buttonRect));
     }
 
     const closeAddCalendarEventPopover = () => {
         setCreateCalendarEventPopover({});
     }
 
+    const calculatePopoverPosition = (e, clickedRect) => {
+        const calendarRect = calendarRef.current.getBoundingClientRect();
+        const pageScrollX = e.pageX - e.clientX;
+        const pageScrollY = e.pageY - e.clientY;
 
-    // #### YEAR/MONTH/WEEK/DAY INITIALISATION
-    useEffect(() => {
+        let popoverPositionX = 0; let popoverPositionY = 0;
 
-        const currentYear = currentDate.getFullYear()
-        const currentMonth = currentDate.getMonth()
-        const firstWeekday = new Date(currentYear, currentMonth, 1).getDay();
-        const currentWeek = Math.floor((currentDate.getDate() + firstWeekday - 1) / 7) + 1
-        const currentDay = currentDate.getDate()
-
-        setYear(currentYear);
-        setMonth(currentMonth);
-        setWeek(currentWeek);
-        setDay(currentDay);
-
-        calculateWeekDates(currentYear, currentMonth, currentWeek);
-
-    }, [])
-
-
-
-
-
-    /*
-    useEffect(() => {
-        const handleWeekSelected = (data) => {
-            setPopoverCalendarEvent({});
-            setCreateCalendarEventPopover(false);
-
-            setYear(data[0]);
-            setMonth(data[1]);
-            setWeek(data[2]);
-
-            const firstWeekday = new Date(data[0], data[1], 1).getDay();
-            const daysInCurrentMonth = new Date(data[0], data[1] + 1, 0).getDate();
-            const daysInPreviousMonth = new Date(data[0], data[1], 0).getDate();
-            let firstDayOfTheWeek = (data[2]-1) * 7 - firstWeekday + 3
-
-            if (firstDayOfTheWeek <= 0) {
-                firstDayOfTheWeek += daysInPreviousMonth
-                setWeekDates([firstDayOfTheWeek-1 % daysInPreviousMonth + 1, (firstDayOfTheWeek) % daysInPreviousMonth + 1, (firstDayOfTheWeek+1) % daysInPreviousMonth + 1, (firstDayOfTheWeek+2) % daysInPreviousMonth + 1, (firstDayOfTheWeek+3) % daysInPreviousMonth + 1])
-            }
-            else if (firstDayOfTheWeek + 5 >= daysInCurrentMonth) {
-                setWeekDates([firstDayOfTheWeek-1 % daysInCurrentMonth + 1, (firstDayOfTheWeek) % daysInCurrentMonth + 1, (firstDayOfTheWeek+1) % daysInCurrentMonth + 1, (firstDayOfTheWeek+2) % daysInCurrentMonth + 1, (firstDayOfTheWeek+3) % daysInCurrentMonth + 1])
-            }
-            else {
-                setWeekDates([firstDayOfTheWeek, firstDayOfTheWeek+1, firstDayOfTheWeek+2, firstDayOfTheWeek+3, firstDayOfTheWeek+4])
-            }
-        };
-
-        const handleDragStart = (event) => {
-            setActiveEvent(calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id));
-        };
-        
-        const handleDragEnd = (event) => {
-            setPopoverCalendarEvent({});
-            setActiveEvent(null);
-
-            if (event.over) {
-                if (event.over.data.current.disabled === true) {
-                    return;
-                }
-                const [repairer, day] = event.over.id.split(' ');
-                const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
-                calendarEvent.repairer = repairer;
-                calendarEvent.date = `${day}-${month+1}-${year}`
-                setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
-            }
-        };
-
-        eventBus.on('weekSelected', handleWeekSelected, true);
-        eventBus.on('handleDragStart', handleDragStart);
-        eventBus.on('handleDragEnd', handleDragEnd);
-        return () => {
-            eventBus.off('weekSelected', handleWeekSelected);
-            eventBus.off('handleDragStart', handleDragStart);
-            eventBus.off('handleDragEnd', handleDragEnd);
-        }
-    }, [month, year, calendarEvents])
-    */
-
-    const getCurrentViewDateRange = () => {
-
-        if (calendarMode !== calendarModes.WEEK) return `${MONTHS[month]}, ${year}`;
-
-        const firstWeekday = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month+1, 0).getDate();
-        const lastWeekday = new Date(year, month, daysInMonth).getDay();
-
-        if (week >= 2 && week <= 4) {
-            return `${MONTHS[month]}, ${year}`;
-        }
-        if (week === 1) {
-            if (firstWeekday <= 2) {
-                return `${MONTHS[month]}, ${year}`;
-            }
-            else {
-                if (month >= 1) {
-                    return `${MONTHS[month-1]} - ${MONTHS[month]}, ${year}`;
-                }
-                else {
-                    return `${MONTHS[11]}, ${year-1} - ${MONTHS[month]}, ${year}`;
-                }
-            }
-        } 
-        if (week === 5) {
-            if (lastWeekday == 6 || lastWeekday <= 1) {
-                return `${MONTHS[month]}, ${year}`;
-            }
-            else {
-                if (month < 11) {
-                    return `${MONTHS[month]} - ${MONTHS[month+1]}, ${year}`;
-                }
-                else {
-                    return `${MONTHS[month]}, ${year} - ${MONTHS[0]}, ${year+1}`;
-                }
-            }
+        if ((calendarRect.width - pageScrollX) - (clickedRect.x + clickedRect.width + 6 - pageScrollX) < 180) {
+            popoverPositionX = pageScrollX + clickedRect.x - 268
         }
         else {
-            return '';
+            popoverPositionX = pageScrollX + clickedRect.x + clickedRect.width + 8
         }
+
+        if ((calendarRect.height - pageScrollY) - (clickedRect.y - pageScrollY) < 180) {
+            popoverPositionY = pageScrollY + clickedRect.y + clickedRect.height - 312
+        }
+        else {
+            popoverPositionY = pageScrollY + clickedRect.y
+        }
+
+        return [popoverPositionX, popoverPositionY];
     }
 
 
+    // #### YEAR/MONTH/WEEK/DAY INITIALISATION
+    useEffect(() => {
+        const currentYear = currentDate.getFullYear()
+        const currentMonth = currentDate.getMonth()
+        const currentDay = currentDate.getDate()
+        
+        // Set week to week of currently selected day
+        const firstWeekDate = currentDay - new Date(currentYear, currentMonth, currentDay).getDay() + 2;
+
+        if (firstWeekDate <= 0) {
+            
+            const numDaysInPreviousMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+            if (month <= 0) {
+                setYear(currentYear-1);
+                setMonth(11);
+                setDay(firstWeekDate + numDaysInPreviousMonth);
+                calculateWeekDates(currentYear-1, 11, firstWeekDate + numDaysInPreviousMonth);
+            }
+            else {
+                setYear(currentYear);
+                setMonth(currentMonth-1);
+                setDay(firstWeekDate + numDaysInPreviousMonth);
+                calculateWeekDates(currentYear, currentMonth-1, firstWeekDate + numDaysInPreviousMonth);
+            }
+        }
+        else {
+            setYear(currentYear);
+            setMonth(currentMonth);
+            setDay(firstWeekDate);
+
+            calculateWeekDates(currentYear, currentMonth, firstWeekDate);
+        }
+    }, [])
 
 
+    // #### PAGE TITLE
+    const getCurrentViewDateRange = () => {
+        if (calendarMode !== calendarModes.WEEK) return `${MONTHS[month]}, ${year}`;
 
-    const renderedCalendarGrid = repairers.map(repairer => <>
+        const numDaysInMonth = new Date(year, month+1, 0).getDate();
+        const firstWeekDate = day - new Date(year, month, day).getDay() + 2;
 
-        <p className='calendar-grid-box repairer-name'>{repairer}</p>
+        if (firstWeekDate <= numDaysInMonth - 4) return `${MONTHS[month]}, ${year}`;
+
+        // Week overlaps into next month
+
+        if (month < 11) return `${MONTHS[month]} - ${MONTHS[month+1]}, ${year}`;
+
+        // Week overlaps into next year
+
+        return `${MONTHS[11]}, ${year} - ${MONTHS[0]}, ${year+1}`;
+    }
+
+
+    // #### RENDERED CALENDAR VIEWS
+    const renderedDayCalendarGrid = <div className='day-calendar'>
+
+        <p className='day-title'>{DAYS[new Date(year, month, day).getDay() - 2]} <span className={currentDate.getDate() === day && currentDate.getMonth() === month && currentDate.getFullYear() === year ? 'current-day' : ''}>{day}</span></p>
+
+        <div className='calendar-flex-container'>
+
+            {/* Calendar flex: repairers */}
+            {repairers.map(repairer => <div className='repairer-column'>
+                <div className='title-row'>
+                    {repairer}
+                </div>
+
+                <div className='events-row'>
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                </div>
+            </div>)}
+
+            <div className='repairer-column'>
+                <div className='title-row'>
+                    Miscellaneous
+                </div>
+
+                <div className='events-row'>
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    const renderedWeekCalendarGrid = <div className='week-calendar'>
+
+        {/* Top row of calendar grid */}
+        <p className='calendar-grid-box days-of-the-week'></p>
+        <p className='calendar-grid-box days-of-the-week'>Tue <span className={currentDate.getDate() === weekDates[0] && currentDate.getMonth() === month && currentDate.getFullYear() === year ? 'current-day' : ''}>{weekDates[0]}</span></p>
+        <p className='calendar-grid-box days-of-the-week'>Wed <span className={currentDate.getDate() === weekDates[1] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[1]}</span></p>
+        <p className='calendar-grid-box days-of-the-week'>Thu <span className={currentDate.getDate() === weekDates[2] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[2]}</span></p>
+        <p className='calendar-grid-box days-of-the-week'>Fri <span className={currentDate.getDate() === weekDates[3] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[3]}</span></p>
+        <p className='calendar-grid-box days-of-the-week'>Sat <span className={currentDate.getDate() === weekDates[4] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[4]}</span></p>
+
+        {/* Calendar grid: repairers */}
+        {repairers.map(repairer => <>
+            <p className='calendar-grid-box repairer-name'>{repairer}</p>
+
+            {weekDates.map(weekDate =>
+                <CalendarGridBox uniqueId={`${repairer} ${weekDate}`}>
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer)} />
+                </CalendarGridBox>
+            )}
+        </>)}
+    
+        {/* Calendar grid: miscellaneous */}
+        <p className='calendar-grid-box repairer-name'>Miscellaneous</p>
 
         {weekDates.map(weekDate =>
-            <CalendarGridBox uniqueId={`${repairer} ${weekDate}`}>
-                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
-                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer)} />
+            <CalendarGridBox uniqueId={`misc ${weekDate}`}>
+                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, 'misc')} />
             </CalendarGridBox>
         )}
-    </>)
+        
+    </div>
 
+    const renderedMonthCalendarGrid = <div className='month-calendar'>
 
+        {/* Top row of calendar grid */}
+        <p className='calendar-grid-box days-of-the-week'>Tue</p>
+        <p className='calendar-grid-box days-of-the-week'>Wed</p>
+        <p className='calendar-grid-box days-of-the-week'>Thu</p>
+        <p className='calendar-grid-box days-of-the-week'>Fri</p>
+        <p className='calendar-grid-box days-of-the-week'>Sat</p>
 
+        {/* Calendar grid */}
+        {monthDates.map((monthDate, index) => {
+            // Find actual month and year of day
+            let actualMonth = month;
+            let actualYear = year;
 
+            if (monthDate - index > 10) {
+                const previousMonthAndYear = getPreviousMonthAndYear();
+                actualMonth = previousMonthAndYear[0]
+                actualYear = previousMonthAndYear[1]
+            }
+            else if (index - monthDate > 10) {
+                const nextMonthAndYear = getNextMonthAndYear();
+                actualMonth = nextMonthAndYear[0]
+                actualYear = nextMonthAndYear[1]
+            }
+
+            return (
+                <CalendarGridBox uniqueId={monthDate} className={`${month !== actualMonth && 'faded'} ${['quiet', 'moderate', 'busy'][Math.floor(Math.random() * 3)]}`}>
+                    <p className='date'>{monthDate}</p>
+                </CalendarGridBox>
+            );
+            }
+        )}
+
+    </div>
 
     return (
         <div className='Calendar'>
 
-            <PageTitle>{getCurrentViewDateRange()}</PageTitle>
+            <PageTitle>
+                {getCurrentViewDateRange()}
+                <div className='calendar-mode-toggle'>
+                    <button className={calendarMode === calendarModes.DAY && 'active'} onClick={() => updateCalendarMode(calendarModes.DAY)}>Day</button>
+                    <button className={calendarMode === calendarModes.WEEK && 'active'} onClick={() => updateCalendarMode(calendarModes.WEEK)}>Week</button>
+                    <button className={calendarMode === calendarModes.MONTH && 'active'} onClick={() => updateCalendarMode(calendarModes.MONTH)}>Month</button>
+                </div>
+            </PageTitle>
 
             <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
 
@@ -546,33 +727,26 @@ function Calendar() {
 
                     <NavigationCalendar
                         year={year} setYear={setYear}
-                        month={month} setMonth={setMonth}
-                        week={week} setWeek={setWeek}
+                        month={month} setMonth={setMonth} calculateMonthDates={calculateMonthDates}
+                        week={week} setWeek={setWeek} calculateWeekDates={calculateWeekDates}
                         day={day} setDay={setDay}
                         mode={calendarMode}
                     />
 
-                    <ContentBlock className='calendar-box'>
+                    <ContentBlock className='calendar-box' ref={calendarRef}>
 
-                        <div className='calendar-container' ref={calendarRef}>
+                        {/* Correct view calendar */}
+                        {calendarMode === calendarModes.DAY && renderedDayCalendarGrid}
+                        {calendarMode === calendarModes.WEEK && renderedWeekCalendarGrid}
+                        {calendarMode === calendarModes.MONTH && renderedMonthCalendarGrid}
 
-                            {/* Top row of calendar grid */}
-                            <p className='calendar-grid-box days-of-the-week'></p>
-                            <p className='calendar-grid-box days-of-the-week'>Tue <span className={currentDate.getDate() === weekDates[0] && currentDate.getMonth() === month && currentDate.getFullYear() === year ? 'current-day' : ''}>{weekDates[0]}</span></p>
-                            <p className='calendar-grid-box days-of-the-week'>Wed <span className={currentDate.getDate() === weekDates[1] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[1]}</span></p>
-                            <p className='calendar-grid-box days-of-the-week'>Thu <span className={currentDate.getDate() === weekDates[2] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[2]}</span></p>
-                            <p className='calendar-grid-box days-of-the-week'>Fri <span className={currentDate.getDate() === weekDates[3] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[3]}</span></p>
-                            <p className='calendar-grid-box days-of-the-week'>Sat <span className={currentDate.getDate() === weekDates[4] && currentDate.getMonth() === month && currentDate.getFullYear() === year && currentDate.getDate() >= weekDates[0] ? 'current-day' : ''}>{weekDates[4]}</span></p>
+                        {/* Edit event popover */}
+                        {popoverCalendarEvent.id !== undefined && 
+                        <CalendarEventPopover calendarEvent={popoverCalendarEvent} updateCalendarEvent={updateCalendarEvent} deleteCalendarEvent={() => deleteCalendarEvent(popoverCalendarEvent.id)} position={popoverPosition} closeFunction={() => setPopoverCalendarEvent({})} />}
 
-                            {renderedCalendarGrid}
-
-                            {popoverCalendarEvent.id !== undefined && 
-                            <CalendarEventPopover calendarEvent={popoverCalendarEvent} updateCalendarEvent={updateCalendarEvent} deleteCalendarEvent={() => deleteCalendarEvent(popoverCalendarEvent.id)} position={popoverPosition} closeFunction={() => setPopoverCalendarEvent({})} />}
-
-                            {createCalendarEventPopover.id !== undefined && 
-                            <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairer={createCalendarEventPopover.repairer} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
-
-                        </div>
+                        {/* Create event popover */}
+                        {createCalendarEventPopover.id !== undefined && 
+                        <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairer={createCalendarEventPopover.repairer} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
 
                     </ContentBlock>
 
@@ -606,7 +780,7 @@ function CalendarGridBox(props) {
     });
     
     return (
-        <div className='calendar-grid-box' ref={setNodeRef}>
+        <div className={`calendar-grid-box ${props.className}`} ref={setNodeRef}>
             {props.children}
         </div>
     );

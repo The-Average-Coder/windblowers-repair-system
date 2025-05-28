@@ -21,8 +21,6 @@ import infoLight from '../../../images/info-icons/infoLight.png';
 
 function CreateEventPopover(props) {
 
-    const navigate = useNavigate();
-
     const eventOptions = [
         { name: 'Repair', value: 'Repair' },
         { name: 'Other Event', value: 'Other Event' },

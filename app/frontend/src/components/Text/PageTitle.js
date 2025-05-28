@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import './PageTitle.css';
 
 function PageTitle(props) {

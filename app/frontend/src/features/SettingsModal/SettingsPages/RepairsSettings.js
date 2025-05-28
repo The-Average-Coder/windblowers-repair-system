@@ -1,23 +1,22 @@
 import { useState } from 'react';
 
-import BlockTitle from '../../components/Text/BlockTitle';
-import BlockText from '../../components/Text/BlockText';
-import ActionButton from '../../components/Buttons/ActionButton';
-import TextInput from '../../components/Inputs/TextInput';
-import TextAreaInput from '../../components/Inputs/TextAreaInput';
-import ModalWindow from '../../components/Containers/ModalWindow';
-import ModalTitle from '../../components/Text/ModalTitle';
+import BlockTitle from '../../../components/Text/BlockTitle';
+import BlockText from '../../../components/Text/BlockText';
+import ActionButton from '../../../components/Buttons/ActionButton';
+import TextInput from '../../../components/Inputs/TextInput';
+import TextAreaInput from '../../../components/Inputs/TextAreaInput';
 
 import './RepairsSettings.css';
 
-import plusWhite from '../../images/plus-icon/plusWhite.png';
+import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
 function RepairsSettings() {
 
+    // #### RAW TEST DATA
     const [commonJobs, setCommonJobs] = useState([
-        { id: 0, name: 'Repad', notes: 'bla bla bla' },
-        { id: 1, name: 'Clean', notes: 'whish whosh whish whosh' },
-        { id: 2, name: 'Wax', notes: 'wax on wax off, wax on wax off' },
+        { id: 1, name: 'Repad', notes: 'bla bla bla' },
+        { id: 2, name: 'Clean', notes: 'whish whosh whish whosh' },
+        { id: 3, name: 'Wax', notes: 'wax on wax off, wax on wax off' },
     ]);
 
     const [instrumentStatuses, setInstrumentStatuses] = useState([
@@ -25,6 +24,8 @@ function RepairsSettings() {
         { id: 2, status: 'In Workshop' }
     ]);
 
+
+    // #### STATE VARIABLES
     const [hourlyRate, setHourlyRate] = useState(45);
 
     const [editingCommonJob, setEditingCommonJob] = useState({})
@@ -36,10 +37,8 @@ function RepairsSettings() {
     const [creatingStatus, setCreatingStatus] = useState(false);
     const [newStatus, setNewStatus] = useState('');
 
-    const deleteCommonJob = (id) => {
-        setCommonJobs(commonJobs.filter(job => job.id !== id));
-    }
 
+    // #### COMMON JOB MANAGEMENT FUNCTIONS
     const saveCommonJobEdit = () => {
         const newCommonJobs = [...commonJobs]
         const updatedCommonJob = newCommonJobs.find(job => job.id === editingCommonJob.id)
@@ -50,6 +49,10 @@ function RepairsSettings() {
         setEditingCommonJob({})
     }
 
+    const deleteCommonJob = (id) => {
+        setCommonJobs(commonJobs.filter(job => job.id !== id));
+    }
+
     const cancelNewCommonJob = () => {
         setNewCommonJobName('');
         setNewCommonJobNotes('');
@@ -58,17 +61,15 @@ function RepairsSettings() {
 
     const addNewCommonJob = () => {
         if (newCommonJobName !== '') {
-            setCommonJobs([...commonJobs, { id: 3, name: newCommonJobName, notes: newCommonJobNotes }]);
+            setCommonJobs([...commonJobs, { id: 4, name: newCommonJobName, notes: newCommonJobNotes }]);
         }
         setNewCommonJobName('');
         setNewCommonJobNotes('');
         setCreatingCommonJob(false);
     }
 
-    const deleteStatus = (id) => {
-        setInstrumentStatuses(instrumentStatuses.filter(status => status.id !== id));
-    }
 
+    // #### STATUS MANAGEMENT FUNCTIONS
     const saveStatusEdit = () => {
         const newStatuses = [...instrumentStatuses]
         const updatedStatus = newStatuses.find(status => status.id === editingStatus.id)
@@ -76,6 +77,10 @@ function RepairsSettings() {
         setInstrumentStatuses(newStatuses)
 
         setEditingStatus({})
+    }
+
+    const deleteStatus = (id) => {
+        setInstrumentStatuses(instrumentStatuses.filter(status => status.id !== id));
     }
 
     const cancelNewStatus = () => {
@@ -91,12 +96,14 @@ function RepairsSettings() {
         setCreatingStatus(false);
     }
 
+
+    // #### RENDERED SETTINGS CONTENT
     const renderedCommonJobs = <div className='common-jobs'>
         <BlockTitle className='name'>Name</BlockTitle>
         <BlockTitle className='notes'>Notes</BlockTitle>
         <div />
         <div />
-        {commonJobs.length === 0 ? 'No Common Jobs' : null}
+        {commonJobs.length === 0 && !creatingCommonJob && 'No Common Jobs'}
         {commonJobs.map(job => editingCommonJob.id !== undefined && editingCommonJob.id === job.id ? <>
             <TextInput value={editingCommonJob.name} onChange={(value) => setEditingCommonJob({...editingCommonJob, name: value})} />
             <TextAreaInput value={editingCommonJob.notes} onChange={(value) => setEditingCommonJob({...editingCommonJob, notes: value})} />
@@ -109,10 +116,16 @@ function RepairsSettings() {
             <ActionButton onClick={() => deleteCommonJob(job.id)}>Delete</ActionButton>
             </>
         )}
+        {creatingCommonJob && <>
+            <TextInput value={newCommonJobName} onChange={(value) => setNewCommonJobName(value)} />
+            <TextAreaInput value={newCommonJobNotes} onChange={(value) => setNewCommonJobNotes(value)} />
+            <ActionButton onClick={cancelNewCommonJob}>Cancel</ActionButton>
+            <ActionButton onClick={addNewCommonJob}>Save</ActionButton>
+        </>}
     </div>
 
     const renderedInstrumentStatuses = <div className='instrument-statuses'>
-        {instrumentStatuses.length === 0 ? 'No Statuses' : null}
+        {instrumentStatuses.length === 0 && !creatingStatus && 'No Statuses'}
         {instrumentStatuses.map(status => editingStatus.id !== undefined && editingStatus.id === status.id ? <>
             <TextInput value={editingStatus.status} onChange={(value) => setEditingStatus({...editingStatus, status: value})} />
             <ActionButton onClick={() => setEditingStatus({})}>Cancel</ActionButton>
@@ -123,14 +136,21 @@ function RepairsSettings() {
             <ActionButton onClick={() => deleteStatus(status.id)}>Delete</ActionButton>
             </>
         )}
+        {creatingStatus && <>
+            <TextInput value={newStatus} onChange={(value) => setNewStatus(value)} />
+            <ActionButton onClick={cancelNewStatus}>Cancel</ActionButton>
+            <ActionButton onClick={addNewStatus}>Save</ActionButton>
+        </>}
     </div>
 
     return (
         <div className='RepairsSettings'>
+
+            {/* Common Jobs Section */}
             <div className='section-title'>
                 <div>
                     <BlockTitle>Common Jobs</BlockTitle>
-                    <BlockText>Add common jobs to quickly fill repair notes.</BlockText>
+                    <BlockText>Add common jobs to quickly fill assessment notes.</BlockText>
                 </div>
                 <ActionButton colored='true' onClick={() => setCreatingCommonJob(true)}><img src={plusWhite} />Add Common Job</ActionButton>
             </div>
@@ -139,6 +159,7 @@ function RepairsSettings() {
 
             <div className='divider' />
 
+            {/* Instrument Statuses Section */}
             <div className='section-title'>
                 <div>
                     <BlockTitle>Instrument Statuses</BlockTitle>
@@ -151,35 +172,13 @@ function RepairsSettings() {
 
             <div className='divider' />
 
+            {/* Hourly Rate Section */}
             <BlockTitle>Hourly Rate</BlockTitle>
             <BlockText>Set the default hourly rate for repair quotes.</BlockText>
             <div className='hourly-rate'>
                 <TextInput value={`£${hourlyRate}`} onChange={(value) => setHourlyRate(value.slice(1))} />
                 <p>per hour</p>
             </div>
-
-            {creatingCommonJob ? <ModalWindow className='add-common-job-window' closeFunction={cancelNewCommonJob}>
-                <ModalTitle>Add Common Job</ModalTitle>
-                <div className='details'>
-                    <TextInput placeholder='Name' value={newCommonJobName} onChange={setNewCommonJobName} />
-                    <TextAreaInput placeholder='Notes' value={newCommonJobNotes} onChange={setNewCommonJobNotes} disableAutoResize />
-                </div>
-                <div className='buttons'>
-                    <ActionButton onClick={cancelNewCommonJob}>Cancel</ActionButton>
-                    <ActionButton colored='true' onClick={addNewCommonJob}>Save</ActionButton>
-                </div>
-            </ModalWindow> : null}
-
-            {creatingStatus ? <ModalWindow className='add-instrument-status-window' closeFunction={cancelNewStatus}>
-                <ModalTitle>Add Instrument Status</ModalTitle>
-                <div className='details'>
-                    <TextInput placeholder='Name' value={newStatus} onChange={setNewStatus} />
-                </div>
-                <div className='buttons'>
-                    <ActionButton onClick={cancelNewStatus}>Cancel</ActionButton>
-                    <ActionButton colored='true' onClick={addNewStatus}>Save</ActionButton>
-                </div>
-            </ModalWindow> : null}
         </div>
     );
 }
