@@ -8,12 +8,17 @@
     border-radius: 6px;
     background-color: var(--content-background);
     width: 240px;
-    height: 300px;
+    height: 340px;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
 }
 
-.CalendarEventPopover .BlockTitle {
+.CalendarEventPopover .popover-title {
     font-size: 16px;
+    margin-top: 2px;
+}
+
+.CalendarEventPopover .sub-title {
+    font-size: 14px;
     margin-top: 2px;
 }
 

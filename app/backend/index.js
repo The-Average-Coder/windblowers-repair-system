@@ -16,9 +16,8 @@ const frontEndPath = path.join(__dirname, '..', 'frontend', 'build')
 app.use(cors());
 app.use(express.json());
 app.use(express.static(frontEndPath));
-
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser('82e4e438a3705fabf62f9854e3b575ag'))
+app.use(cookieParser(process.env.cookie_parser_secret))
 
 function myAuthorizer(username, password, cb) {
     db.query('SELECT * FROM users', (err, result) => {

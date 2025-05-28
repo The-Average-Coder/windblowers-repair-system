@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import BlockTitle from '../../../components/Text/BlockTitle';
 import DropdownSelect from '../../../components/Inputs/DropdownSelect';
+import HoursDropdownSelect from '../../../components/Inputs/HoursDropdownSelect';
+import MinutesDropdownSelect from '../../../components/Inputs/MinutesDropdownSelect';
 import TextInput from '../../../components/Inputs/TextInput';
 import TextAreaInput from '../../../components/Inputs/TextAreaInput';
 import ActionButton from '../../../components/Buttons/ActionButton';
@@ -10,6 +11,7 @@ import BlockTopRightButton from '../../../components/Buttons/BlockTopRightButton
 
 import eventBus from '../../../utils/eventBus';
 
+// Reuse styling from CalendarEventPopover as they are essentially the same
 import './CalendarEventPopover.css';
 
 import closeLight from '../../../images/close-icon/closeLight.png';
@@ -24,25 +26,6 @@ function CreateEventPopover(props) {
     const eventOptions = [
         { name: 'Repair', value: 'Repair' },
         { name: 'Other Event', value: 'Other Event' },
-    ]
-
-    const timeHoursOptions = [
-        { name: '0 Hours', value: 0 },
-        { name: '1 Hour', value: 1 },
-        { name: '2 Hours', value: 2 },
-        { name: '3 Hours', value: 3 },
-        { name: '4 Hours', value: 4 },
-        { name: '5 Hours', value: 5 },
-        { name: '6 Hours', value: 6 },
-        { name: '7 Hours', value: 7 },
-        { name: '8 Hours', value: 8 }
-    ]
-
-    const timeMinutesOptions = [
-        { name: '0 Minutes', value: 0 },
-        { name: '15 Minutes', value: 15 },
-        { name: '30 Minutes', value: 30 },
-        { name: '45 Minutes', value: 45 }
     ]
 
     const [calendarEvent, updateCalendarEvent] = useState({
@@ -90,7 +73,7 @@ function CreateEventPopover(props) {
 
     return (
         <div className='CalendarEventPopover' style={{left: `${props.position[0]}px`, top: `${props.position[1]}px`}} onClick={(e) => e.stopPropagation()}>
-            <BlockTitle>Create Event</BlockTitle>
+            <BlockTitle className='popover-title'>Create Event</BlockTitle>
 
             <div className='event-details'>
                 <DropdownSelect options={eventOptions} placeholder={'Select Event Type'} value={calendarEvent.type} onChange={updateCalendarEventType} />
@@ -103,8 +86,8 @@ function CreateEventPopover(props) {
                 </> : null}
 
                 <div className='time-inputs'>
-                    <DropdownSelect options={timeHoursOptions} value={Math.floor(calendarEvent.time / 60)} onChange={updateCalendarEventHours} />
-                    <DropdownSelect options={timeMinutesOptions} value={calendarEvent.time % 60} onChange={updateCalendarEventMinutes} />
+                    <HoursDropdownSelect value={Math.floor(calendarEvent.time / 60)} onChange={updateCalendarEventHours} />
+                    <MinutesDropdownSelect value={calendarEvent.time % 60} onChange={updateCalendarEventMinutes} />
                 </div>
                 
             </div>

@@ -13,7 +13,7 @@ function CalendarSettings(props) {
         { id: 1, name: 'Serial Number', dayEnabled: false, weekEnabled: false },
         { id: 2, name: 'Instrument Status', dayEnabled: false, weekEnabled: false },
         { id: 3, name: 'Customer', dayEnabled: false, weekEnabled: false },
-        { id: 4, name: 'Common Job Type', dayEnabled: false, weekEnabled: false }
+        { id: 4, name: 'Job Type', dayEnabled: false, weekEnabled: false }
     ]);
 
     const toggleDayDetail = (id, value) => {

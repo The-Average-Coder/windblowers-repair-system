@@ -54,6 +54,7 @@ function Calendar() {
                 },
                 notes: 'Some assorted notes',
                 assessment: {
+                    job_type: 0,
                     notes: 'Some assessment notes'
                 }
             }
@@ -71,11 +72,7 @@ function Calendar() {
                 id: 2509002,
                 status: repairStatuses.OPEN,
                 customer: {
-                    firstname: 'Richard',
-                    surname: 'Cox',
-                    email: 'richardphilipcox@gmail.com',
-                    phone: '07740300368',
-                    address: '10 Cross Hill Close, LE12 6UJ'
+                    in_house: true
                 },
                 instrument: {
                     type: 'Alto Saxophone',
@@ -86,6 +83,7 @@ function Calendar() {
                 },
                 notes: 'Some assorted notes',
                 assessment: {
+                    job_type: 1,
                     notes: 'Some assessment notes'
                 }
             }
@@ -118,6 +116,7 @@ function Calendar() {
                 },
                 notes: 'Some assorted notes',
                 assessment: {
+                    job_type: 0,
                     notes: 'Some assessment notes'
                 }
             }
@@ -150,6 +149,7 @@ function Calendar() {
                 },
                 notes: 'Some assorted notes',
                 assessment: {
+                    job_type: 0,
                     notes: 'Some assessment notes'
                 }
             }
@@ -197,11 +197,7 @@ function Calendar() {
                 id: 2509002,
                 status: repairStatuses.OPEN,
                 customer: {
-                    firstname: 'Richard',
-                    surname: 'Cox',
-                    email: 'richardphilipcox@gmail.com',
-                    phone: '07740300368',
-                    address: '10 Cross Hill Close, LE12 6UJ'
+                    in_house: true
                 },
                 instrument: {
                     type: 'Alto Saxophone',
@@ -212,12 +208,37 @@ function Calendar() {
                 },
                 notes: 'Some assorted notes',
                 assessment: {
+                    job_type: 1,
                     notes: 'Some assessment notes'
                 }
             }
         }
     ])
-    const [repairers, setRepairers] = useState(['Purple', 'Ryan']);
+
+    const [repairers, setRepairers] = useState([
+        { id: 1, name: 'Purple', hours: [8, 8, 8, 8, 4] },
+        { id: 2, name: 'Ryan', hours: [0, 8, 8, 0, 0] }
+    ])
+    
+    const [detailsSettings, setDetailsSettings] = useState([
+        { id: 0, name: 'Instrument', dayEnabled: true, weekEnabled: true },
+        { id: 1, name: 'Serial Number', dayEnabled: false, weekEnabled: false },
+        { id: 2, name: 'Instrument Status', dayEnabled: true, weekEnabled: false },
+        { id: 3, name: 'Customer', dayEnabled: false, weekEnabled: false },
+        { id: 4, name: 'Job Type', dayEnabled: true, weekEnabled: false }
+    ]);
+
+    const [jobTypes, setJobTypes] = useState([
+        { id: 1, name: 'Repad', notes: 'bla bla bla' },
+        { id: 2, name: 'Clean', notes: 'whish whosh whish whosh' },
+        { id: 3, name: 'Wax', notes: 'wax on wax off, wax on wax off' },
+    ]);
+    const [instrumentStatuses, setInstrumentStatuses] = useState([
+        { id: 1, status: 'Not Yet Dropped Off' },
+        { id: 2, status: 'In Workshop' }
+    ]);
+
+    
 
 
     // #### CONSTANTS
@@ -445,6 +466,56 @@ function Calendar() {
         }
         
     }
+
+    const navigateForward = () => {
+        if (calendarMode === calendarModes.MONTH) {
+            const nextMonthAndYear = getNextMonthAndYear()
+            setDay(1);
+            setMonth(nextMonthAndYear[0]);
+            setYear(nextMonthAndYear[1]);
+            calculateMonthDates(nextMonthAndYear[1], nextMonthAndYear[0])
+        }
+        else if (calendarMode === calendarModes.WEEK) {
+            const nextWeek = new Date(year, month, day+7);
+            setDay(nextWeek.getDate());
+            setMonth(nextWeek.getMonth());
+            setYear(nextWeek.getFullYear());
+            calculateWeekDates(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate())
+        }
+        else if (calendarMode === calendarModes.DAY) {
+            let nextDay = new Date(year, month, day+1);
+            while (nextDay.getDay() <= 1) nextDay = new Date(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate()+1)
+            setDay(nextDay.getDate());
+            setMonth(nextDay.getMonth());
+            setYear(nextDay.getFullYear());
+            calculateWeekDates(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate())
+        }
+    }
+
+    const navigateBack = () => {
+        if (calendarMode === calendarModes.MONTH) {
+            const previousMonthAndYear = getPreviousMonthAndYear()
+            setDay(1);
+            setMonth(previousMonthAndYear[0]);
+            setYear(previousMonthAndYear[1]);
+            calculateMonthDates(previousMonthAndYear[1], previousMonthAndYear[0])
+        }
+        else if (calendarMode === calendarModes.WEEK) {
+            const previousWeek = new Date(year, month, day-7);
+            setDay(previousWeek.getDate());
+            setMonth(previousWeek.getMonth());
+            setYear(previousWeek.getFullYear());
+            calculateWeekDates(previousWeek.getFullYear(), previousWeek.getMonth(), previousWeek.getDate())
+        }
+        else if (calendarMode === calendarModes.DAY) {
+            let previousDay = new Date(year, month, day-1);
+            while (previousDay.getDay() <= 1) previousDay = new Date(previousDay.getFullYear(), previousDay.getMonth(), previousDay.getDate()-1)
+            setDay(previousDay.getDate());
+            setMonth(previousDay.getMonth());
+            setYear(previousDay.getFullYear());
+            calculateWeekDates(previousDay.getFullYear(), previousDay.getMonth(), previousDay.getDate())
+        }
+    }
     
 
     // #### CALENDAR EVENT MANAGEMENT FUNCTIONS
@@ -455,7 +526,6 @@ function Calendar() {
 
     const updateCalendarEvent = (updatedCalendarEvent) => {
         setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== updatedCalendarEvent.id).concat(updatedCalendarEvent))
-        closeCalendarEventPopover();
     }
 
     const deleteCalendarEvent = (id) => {
@@ -490,10 +560,12 @@ function Calendar() {
             if (event.over.data.current.disabled === true) {
                 return;
             }
-            const [repairer, day] = event.over.id.split(' ');
+
+            const [repairerName, date] = event.over.id.split(' ');
             const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
-            calendarEvent.repairer = repairer;
-            calendarEvent.date = `${day}-${month+1}-${year}`
+            calendarEvent.repairer = repairerName;
+            calendarEvent.date = date
+            console.log(calendarEvent)
             setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
         }
     };
@@ -542,7 +614,7 @@ function Calendar() {
         }
 
         if ((calendarRect.height - pageScrollY) - (clickedRect.y - pageScrollY) < 180) {
-            popoverPositionY = pageScrollY + clickedRect.y + clickedRect.height - 312
+            popoverPositionY = pageScrollY + clickedRect.y + clickedRect.height - 352
         }
         else {
             popoverPositionY = pageScrollY + clickedRect.y
@@ -617,11 +689,11 @@ function Calendar() {
             {/* Calendar flex: repairers */}
             {repairers.map(repairer => <div className='repairer-column'>
                 <div className='title-row'>
-                    {repairer}
+                    {repairer.name}
                 </div>
 
                 <div className='events-row'>
-                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                 </div>
             </div>)}
 
@@ -631,7 +703,7 @@ function Calendar() {
                 </div>
 
                 <div className='events-row'>
-                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                 </div>
             </div>
 
@@ -651,25 +723,45 @@ function Calendar() {
 
         {/* Calendar grid: repairers */}
         {repairers.map(repairer => <>
-            <p className='calendar-grid-box repairer-name'>{repairer}</p>
+            <p className='calendar-grid-box repairer-name'>{repairer.name}</p>
 
-            {weekDates.map(weekDate =>
-                <CalendarGridBox uniqueId={`${repairer} ${weekDate}`}>
-                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
-                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer)} />
+            {weekDates.map((weekDate, index) => {
+
+                let actualMonth = month;
+                let actualYear = year;
+
+                if (weekDate <= index) {
+                    const nextMonthAndYear = getNextMonthAndYear();
+                    actualMonth = nextMonthAndYear[0];
+                    actualYear = nextMonthAndYear[1];
+                }
+
+                return <CalendarGridBox uniqueId={`${repairer.name} ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer.name)} />
                 </CalendarGridBox>
-            )}
+            })}
         </>)}
     
         {/* Calendar grid: miscellaneous */}
         <p className='calendar-grid-box repairer-name'>Miscellaneous</p>
 
-        {weekDates.map(weekDate =>
-            <CalendarGridBox uniqueId={`misc ${weekDate}`}>
-                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+        {weekDates.map((weekDate, index) => {
+
+            let actualMonth = month;
+            let actualYear = year;
+
+            if (weekDate <= index) {
+                const nextMonthAndYear = getNextMonthAndYear();
+                actualMonth = nextMonthAndYear[0];
+                actualYear = nextMonthAndYear[1];
+            }
+
+            return <CalendarGridBox uniqueId={`misc ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
+                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                 <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, 'misc')} />
             </CalendarGridBox>
-        )}
+        })}
         
     </div>
 
@@ -699,8 +791,21 @@ function Calendar() {
                 actualYear = nextMonthAndYear[1]
             }
 
+            const weekDay = new Date(actualYear, actualMonth, monthDate).getDay()
+            let maxTime = 0;
+            repairers.forEach(repairer => {
+                maxTime += repairer.hours[weekDay-2] * 60;
+            })
+
+            const daysEvents = calendarEvents.filter(calendarEvent => parseInt(calendarEvent.date.split('-')[0]) === monthDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear)
+
+            let scheduledTime = 0;
+            daysEvents.forEach(event => {
+                scheduledTime += parseInt(event.time);
+            })
+
             return (
-                <CalendarGridBox uniqueId={monthDate} className={`${month !== actualMonth && 'faded'} ${['quiet', 'moderate', 'busy'][Math.floor(Math.random() * 3)]}`}>
+                <CalendarGridBox uniqueId={monthDate} className={`${month !== actualMonth && 'faded'} ${['quiet', 'moderate', 'busy'][Math.min(Math.floor(scheduledTime / maxTime * 3), 2)]}`}>
                     <p className='date'>{monthDate}</p>
                 </CalendarGridBox>
             );
@@ -718,6 +823,10 @@ function Calendar() {
                     <button className={calendarMode === calendarModes.DAY && 'active'} onClick={() => updateCalendarMode(calendarModes.DAY)}>Day</button>
                     <button className={calendarMode === calendarModes.WEEK && 'active'} onClick={() => updateCalendarMode(calendarModes.WEEK)}>Week</button>
                     <button className={calendarMode === calendarModes.MONTH && 'active'} onClick={() => updateCalendarMode(calendarModes.MONTH)}>Month</button>
+                </div>
+                <div className='navigation-arrows'>
+                    <button onClick={navigateBack}>{'<'}</button>
+                    <button onClick={navigateForward}>{'>'}</button>
                 </div>
             </PageTitle>
 
@@ -757,7 +866,51 @@ function Calendar() {
                     <div className={`CalendarEvent ${activeEvent.color}`}>
                         {activeEvent.type === 'Repair' ?<>
                         <BlockTitle>{activeEvent.repair ? `Repair ${activeEvent.repair.id}` : ''}</BlockTitle>
-                        <BlockText>{activeEvent.repair ? `${activeEvent.repair.instrument.manufacturer} ${activeEvent.repair.instrument.model} ${activeEvent.repair.instrument.type}` : ''}</BlockText>
+                        
+                        {/* Instrument */}
+                        {calendarMode === calendarModes.DAY && <>
+
+                        {detailsSettings.find(detail => detail.name === 'Instrument').dayEnabled &&
+                        <BlockText>{activeEvent.repair && `${activeEvent.repair.instrument.manufacturer} ${activeEvent.repair.instrument.model} ${activeEvent.repair.instrument.type}`}</BlockText>}
+
+                        {detailsSettings.find(detail => detail.name === 'Serial Number').dayEnabled &&
+                        <BlockText>{activeEvent.repair && `Serial: ${activeEvent.repair.instrument.serial_number}`}</BlockText>}
+                        
+                        {detailsSettings.find(detail => detail.name === 'Instrument Status').dayEnabled &&
+                        <BlockText>{activeEvent.repair && `${instrumentStatuses[activeEvent.repair.instrument.status].status}`}</BlockText>}
+                        
+                        {activeEvent.repair.customer.in_house ?
+                        <BlockText>In House Repair</BlockText>
+                        :
+                        detailsSettings.find(detail => detail.name === 'Customer').dayEnabled &&
+                        <BlockText>{activeEvent.repair && `${activeEvent.repair.customer.firstname} ${activeEvent.repair.customer.surname}`}</BlockText>}
+
+                        {detailsSettings.find(detail => detail.name === 'Job Type').dayEnabled &&
+                        <BlockText>{activeEvent.repair && `${jobTypes[activeEvent.repair.assessment.job_type].name}`}</BlockText>}
+                        
+                        </>}
+
+                        {calendarMode === calendarModes.WEEK && <>
+                        
+                        {detailsSettings.find(detail => detail.name === 'Instrument').weekEnabled &&
+                        <BlockText>{activeEvent.repair && `${activeEvent.repair.instrument.manufacturer} ${activeEvent.repair.instrument.model} ${activeEvent.repair.instrument.type}`}</BlockText>}
+
+                        {detailsSettings.find(detail => detail.name === 'Serial Number').weekEnabled &&
+                        <BlockText>{activeEvent.repair && `Serial: ${activeEvent.repair.instrument.serial_number}`}</BlockText>}
+                        
+                        {detailsSettings.find(detail => detail.name === 'Instrument Status').weekEnabled &&
+                        <BlockText>{activeEvent.repair && `${instrumentStatuses[activeEvent.repair.instrument.status].status}`}</BlockText>}
+                        
+                        {activeEvent.repair.customer.in_house ?
+                        <BlockText>In House Repair</BlockText>
+                        :
+                        detailsSettings.find(detail => detail.name === 'Customer').weekEnabled &&
+                        <BlockText>{activeEvent.repair && `${activeEvent.repair.customer.firstname} ${activeEvent.repair.customer.surname}`}</BlockText>}
+
+                        {detailsSettings.find(detail => detail.name === 'Job Type').weekEnabled &&
+                        <BlockText>{activeEvent.repair && `${jobTypes[activeEvent.repair.assessment.job_type].name}`}</BlockText>}
+                        
+                        </>}                        
                         <BlockText>{activeEvent.repair ? `${Math.floor(activeEvent.time / 60)} Hrs ${activeEvent.time % 60} Mins` : ''}</BlockText>
                         </> : <>
                         <BlockTitle>{activeEvent.title} </BlockTitle>
