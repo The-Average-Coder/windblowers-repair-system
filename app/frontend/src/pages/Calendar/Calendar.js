@@ -935,7 +935,7 @@ function Calendar() {
                         {detailsSettings.find(detail => detail.name === 'Instrument Status').dayEnabled &&
                         <BlockText>{activeEvent.repair && `${instrumentStatuses[activeEvent.repair.instrument.status].status}`}</BlockText>}
                         
-                        {activeEvent.repair.customer.in_house ?
+                        {activeEvent.repair.in_house ?
                         <BlockText>In House Repair</BlockText>
                         :
                         detailsSettings.find(detail => detail.name === 'Customer').dayEnabled &&

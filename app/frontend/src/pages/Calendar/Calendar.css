@@ -154,7 +154,7 @@
     display: grid;
     min-width: 1000px;
     background-color: var(--subcontent-border);
-    gap: 0.85px;
+    gap: 0.07em;
     grid-template-columns: 120px 1fr 1fr 1fr 1fr 1fr;
 }
 
@@ -213,7 +213,7 @@
 .Calendar .week-calendar .calendar-grid-box .time-heat-bar {
     position: absolute;
     display: flex;
-    height: 0.1em;
+    height: 0.15em;
     border-radius: 8px;
     overflow: hidden;
     bottom: 4px;

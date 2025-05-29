@@ -152,7 +152,7 @@ function NavigationCalendar(props) {
             eventBus.off('handleDragOver', handleDragOver);
             eventBus.off('handleDragEnd', handleDragEnd);
         }
-    }, [props.month, props.year, props.day, props.mode])
+    }, [month, year, props.mode])
 
     const renderedDays = () => {
         const firstWeekday = new Date(year, month, 1).getDay();
