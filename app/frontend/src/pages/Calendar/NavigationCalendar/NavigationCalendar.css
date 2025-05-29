@@ -107,3 +107,9 @@
     background-color: var(--text);
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 12px 0 rgba(0, 0, 0, 0.19);
 }
+
+@media screen and (max-width: 1000px) {
+    .NavigationCalendar {
+        display: none;
+    }
+}

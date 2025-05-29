@@ -18,3 +18,7 @@
     font-size: var(--font-standard);
     color: var(--text);
 }
+
+.DropdownSelect:disabled {
+    background-color: var(--subcontent-border);
+}

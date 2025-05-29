@@ -61,6 +61,11 @@ function CalendarEventPopover(props) {
         props.calendarEvent.time = Math.floor(props.calendarEvent.time / 60) * 60 + parseInt(updatedMinutes);
     }
 
+    const updateCalendarEventAllDay = (value) => {
+        props.updateCalendarEvent({...props.calendarEvent, all_day: value});
+        props.calendarEvent.all_day = value;
+    }
+
     useEffect(() => {
         eventBus.on('click', props.closeFunction);
         return () => eventBus.off('click', props.closeFunction);
@@ -85,9 +90,14 @@ function CalendarEventPopover(props) {
                 <DatePicker value={props.calendarEvent.date} onChange={updateCalendarEventDate} />
 
                 <div className='time-inputs'>
-                    <HoursDropdownSelect value={Math.floor(props.calendarEvent.time / 60)} onChange={updateCalendarEventHours} />
-                    <MinutesDropdownSelect value={props.calendarEvent.time % 60} onChange={updateCalendarEventMinutes} />
+                    <HoursDropdownSelect disabled={props.calendarEvent.all_day} value={Math.floor(props.calendarEvent.time / 60)} onChange={updateCalendarEventHours} />
+                    <MinutesDropdownSelect disabled={props.calendarEvent.all_day} value={props.calendarEvent.time % 60} onChange={updateCalendarEventMinutes} />
                 </div>
+
+                {props.calendarEvent.type === 'Other Event' && <div className='all-day-checkbox'>
+                    <input type='checkbox' checked={props.calendarEvent.all_day} onChange={(e) => updateCalendarEventAllDay(e.target.checked)} />
+                    <label>All Day Event</label>
+                </div>}
                 
             </div>
 

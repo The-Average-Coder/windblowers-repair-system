@@ -70,16 +70,16 @@ function CalendarEvent(props) {
             
             </>}
 
-            <BlockText>{props.calendarEvent.repair && `${Math.floor(props.calendarEvent.time / 60)} Hrs ${props.calendarEvent.time % 60} Mins`}</BlockText>
             
             </> : <>
 
             {/* Other Event */}
             <BlockTitle>{props.calendarEvent.title}</BlockTitle>
             {props.calendarEvent.description ? <BlockText>{props.calendarEvent.description} </BlockText> : null}
-            <BlockText>{`${Math.floor(props.calendarEvent.time / 60)} Hrs ${props.calendarEvent.time % 60} Mins`}</BlockText>
             
             </>}
+
+            <BlockText>{props.calendarEvent.all_day ? 'All Day' : `${Math.floor(props.calendarEvent.time / 60)} Hrs ${props.calendarEvent.time % 60} Mins`}</BlockText>
             
         </div>
     );

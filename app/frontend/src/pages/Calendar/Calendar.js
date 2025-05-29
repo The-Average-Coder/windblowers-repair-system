@@ -126,7 +126,7 @@ function Calendar() {
             type: 'Repair',
             title: '',
             description: '',
-            date: '27-05-2025',
+            date: '28-05-2025',
             time: '150',
             color: 'blue',
             repairer: 'Ryan',
@@ -160,9 +160,10 @@ function Calendar() {
             title: 'Holiday',
             description: 'A Description',
             date: '30-05-2025',
-            time: '480',
+            time: '0',
+            all_day: true,
             color: 'red',
-            repairer: 'Ryan',
+            repairer: 'Purple',
         },
         {
             id: 6,
@@ -170,7 +171,8 @@ function Calendar() {
             title: 'Holiday',
             description: 'A Description',
             date: '31-05-2025',
-            time: '480',
+            time: '0',
+            all_day: true,
             color: 'yellow',
             repairer: 'Purple',
         },
@@ -179,8 +181,9 @@ function Calendar() {
             type: 'Other Event',
             title: 'Holiday',
             description: 'A Description',
-            date: '31-05-2025',
-            time: '480',
+            date: '29-05-2025',
+            time: '0',
+            all_day: true,
             color: 'indigo',
             repairer: 'Ryan',
         },
@@ -239,12 +242,11 @@ function Calendar() {
     ]);
 
     
-
-
     // #### CONSTANTS
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     const DAYS = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     
+
     // #### STATE VARIABLES
     const [calendarMode, setCalendarMode] = useState(calendarModes.WEEK);
 
@@ -613,8 +615,8 @@ function Calendar() {
             popoverPositionX = pageScrollX + clickedRect.x + clickedRect.width + 8
         }
 
-        if ((calendarRect.height - pageScrollY) - (clickedRect.y - pageScrollY) < 180) {
-            popoverPositionY = pageScrollY + clickedRect.y + clickedRect.height - 352
+        if ((calendarRect.height - pageScrollY) - (clickedRect.y - pageScrollY) < 200) {
+            popoverPositionY = pageScrollY + clickedRect.y + clickedRect.height - 372
         }
         else {
             popoverPositionY = pageScrollY + clickedRect.y
@@ -692,7 +694,7 @@ function Calendar() {
                     {repairer.name}
                 </div>
 
-                <div className='events-row'>
+                <div className={`events-row ${repairer.hours[new Date(year, month, day).getDay() - 2] === 0 && 'disabled'}`}>
                     {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                 </div>
             </div>)}
@@ -735,10 +737,46 @@ function Calendar() {
                     actualMonth = nextMonthAndYear[0];
                     actualYear = nextMonthAndYear[1];
                 }
+                
 
-                return <CalendarGridBox uniqueId={`${repairer.name} ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
+                const weekDay = new Date(actualYear, actualMonth, weekDate).getDay()
+                let maxTime = repairer.hours[weekDay-2] * 60;
+
+                const daysEvents = calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear)
+
+                let scheduledTime = 0;
+                daysEvents.forEach(event => {
+                    if (activeEvent && event.id === activeEvent.id) return;
+                    if (event.type === 'Repair')
+                        scheduledTime += parseInt(event.time);
+                    else {
+                        if (event.all_day)
+                            maxTime -= parseInt(repairer.hours[weekDay-2] * 60);
+                        else
+                            maxTime -= parseInt(event.time);
+                    }
+                })
+
+                const percentageFull = maxTime <= 0 ? 1 : scheduledTime / maxTime;
+                const heatValue = percentageFull === 0 ? 0 : percentageFull <= 0.25 && 1 || percentageFull <= 0.65 && 2 || 3;
+
+                const heatCSSVariables = ['var(--calendar-green-border)', 'var(--calendar-yellow-border)', 'var(--calendar-orange-border)', 'var(--calendar-red-border)']
+
+                const disabled = repairer.hours[new Date(actualYear, actualMonth, weekDate).getDay() - 2] === 0
+
+                return <CalendarGridBox disabled={disabled} uniqueId={`${repairer.name} ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
                     {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    
+                    {!disabled && <>
+                    
                     <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer.name)} />
+                
+                    <div className='time-heat-bar'>
+                        <div className='heat' style={{backgroundColor: heatCSSVariables[heatValue], flex: percentageFull}} />
+                        <div className='heat' style={{flex: 1 - percentageFull}} />
+                    </div>
+                    </>}
+
                 </CalendarGridBox>
             })}
         </>)}
@@ -801,11 +839,34 @@ function Calendar() {
 
             let scheduledTime = 0;
             daysEvents.forEach(event => {
-                scheduledTime += parseInt(event.time);
+                if (event.type === 'Repair')
+                    scheduledTime += parseInt(event.time);
+                else {
+                    if (event.all_day)
+                        maxTime -= parseInt(repairers.find(repairer => event.repairer === repairer.name).hours[weekDay-2] * 60)
+                    else
+                        maxTime -= parseInt(event.time);
+                }
             })
 
+
+            const percentageFull = maxTime <= 0 ? 1 : scheduledTime / maxTime;
+            const heatValue = percentageFull === 0 ? 0 : percentageFull <= 0.25 && 1 || percentageFull <= 0.7 && 2 || 3;
+
             return (
-                <CalendarGridBox uniqueId={monthDate} className={`${month !== actualMonth && 'faded'} ${['quiet', 'moderate', 'busy'][Math.min(Math.floor(scheduledTime / maxTime * 3), 2)]}`}>
+                <CalendarGridBox uniqueId={monthDate}
+                    className={`${month !== actualMonth && 'faded'} ${['empty', 'quiet', 'moderate', 'busy'][heatValue]}`}
+                    onClick={() => {
+                        const firstWeekDate = monthDate - new Date(actualYear, actualMonth, monthDate).getDay() + 2;
+
+                        setYear(new Date(actualYear, actualMonth, firstWeekDate).getFullYear());
+                        setMonth(new Date(actualYear, actualMonth, firstWeekDate).getMonth());
+                        setDay(new Date(actualYear, actualMonth, firstWeekDate).getDate());
+
+                        calculateWeekDates(new Date(actualYear, actualMonth, firstWeekDate).getFullYear(), new Date(actualYear, actualMonth, firstWeekDate).getMonth(), new Date(actualYear, actualMonth, firstWeekDate).getDate());
+                        
+                        setCalendarMode(calendarModes.WEEK);
+                    }}>
                     <p className='date'>{monthDate}</p>
                 </CalendarGridBox>
             );
@@ -817,8 +878,8 @@ function Calendar() {
     return (
         <div className='Calendar'>
 
-            <PageTitle>
-                {getCurrentViewDateRange()}
+            <PageTitle static='true'>
+                <p className='date-range'>{getCurrentViewDateRange()}</p>
                 <div className='calendar-mode-toggle'>
                     <button className={calendarMode === calendarModes.DAY && 'active'} onClick={() => updateCalendarMode(calendarModes.DAY)}>Day</button>
                     <button className={calendarMode === calendarModes.WEEK && 'active'} onClick={() => updateCalendarMode(calendarModes.WEEK)}>Week</button>
@@ -929,11 +990,11 @@ function Calendar() {
 function CalendarGridBox(props) {
     const {setNodeRef} = useDroppable({
         id: props.uniqueId,
-        data: { disabled: false }
+        data: { disabled: props.disabled }
     });
     
     return (
-        <div className={`calendar-grid-box ${props.className}`} ref={setNodeRef}>
+        <div className={`calendar-grid-box ${props.disabled && 'disabled'} ${props.className}`} onClick={props.onClick} ref={setNodeRef}>
             {props.children}
         </div>
     );

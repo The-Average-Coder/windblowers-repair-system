@@ -14,7 +14,7 @@ function HoursDropdownSelect(props) {
         { name: '8 Hours', value: 8 }
     ]
 
-    return <DropdownSelect className={props.className} options={timeHoursOptions} value={props.value} onChange={props.onChange} placeholder='Hours' />
+    return <DropdownSelect className={props.className} options={timeHoursOptions} value={props.value} onChange={props.onChange} placeholder='Hours' disabled={props.disabled} />
 }
 
 export default HoursDropdownSelect;

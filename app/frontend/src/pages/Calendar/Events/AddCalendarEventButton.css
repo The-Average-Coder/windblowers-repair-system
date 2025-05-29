@@ -3,6 +3,7 @@
     background: none;
     border: none;
     border-radius: 6px;
+    margin-bottom: 8px;
 }
 
 .AddCalendarEventButton:hover {

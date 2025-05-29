@@ -9,7 +9,7 @@ function MinutesDropdownSelect(props) {
         { name: '45 Minutes', value: 45 }
     ]
 
-    return <DropdownSelect className={props.className} options={timeMinutesOptions} value={props.value} onChange={props.onChange} placeholder='Minutes' />
+    return <DropdownSelect className={props.className} options={timeMinutesOptions} value={props.value} onChange={props.onChange} placeholder='Minutes' disabled={props.disabled} />
 }
 
 export default MinutesDropdownSelect;

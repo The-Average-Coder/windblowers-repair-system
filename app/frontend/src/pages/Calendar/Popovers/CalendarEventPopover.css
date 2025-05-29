@@ -8,7 +8,7 @@
     border-radius: 6px;
     background-color: var(--content-background);
     width: 240px;
-    height: 340px;
+    height: 360px;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -36,6 +36,11 @@
 
 .CalendarEventPopover .event-details .time-inputs .DropdownSelect {
     flex: 1;
+}
+
+.CalendarEventPopover .event-details .all-day-checkbox input {
+    margin-right: 6px;
+    vertical-align: -1px;
 }
 
 .CalendarEventPopover .action-buttons {
