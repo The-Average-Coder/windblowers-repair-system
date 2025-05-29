@@ -1,42 +1,42 @@
-import { useState } from 'react';
-
 import BlockTitle from '../../../components/Text/BlockTitle';
 import BlockText from '../../../components/Text/BlockText';
 import ToggleSwitch from '../../../components/Inputs/ToggleSwitch';
 
 import './CalendarSettings.css';
 
+import axios from 'axios';
+
 function CalendarSettings(props) {
 
-    const [details, setDetails] = useState([
-        { id: 0, name: 'Instrument', dayEnabled: true, weekEnabled: true },
-        { id: 1, name: 'Serial Number', dayEnabled: false, weekEnabled: false },
-        { id: 2, name: 'Instrument Status', dayEnabled: false, weekEnabled: false },
-        { id: 3, name: 'Customer', dayEnabled: false, weekEnabled: false },
-        { id: 4, name: 'Job Type', dayEnabled: false, weekEnabled: false }
-    ]);
-
     const toggleDayDetail = (id, value) => {
-        const newDetails = [...details];
-        const updatedDetail = newDetails.find(detail => detail.id === id);
-        updatedDetail.dayEnabled = value;
-        setDetails(newDetails);
+        const newSettings = [...props.calendarDetailsSettings];
+        const updatedSetting = newSettings.find(setting => setting.id === id);
+        updatedSetting.day_enabled = value;
+        props.updateCalendarDetailsSettings(newSettings);
+
+        axios.put('/api/settings/updateCalendarDetailSetting', updatedSetting)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
     }
 
     const toggleWeekDetail = (id, value) => {
-        const newDetails = [...details];
-        const updatedDetail = newDetails.find(detail => detail.id === id);
-        updatedDetail.weekEnabled = value;
-        setDetails(newDetails);
+        const newSettings = [...props.calendarDetailsSettings];
+        const updatedSetting = newSettings.find(detail => detail.id === id);
+        updatedSetting.week_enabled = value;
+        props.updateCalendarDetailsSettings(newSettings);
+        
+        axios.put('/api/settings/updateCalendarDetailSetting', updatedSetting)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
     }
 
     const renderedDetails = <div className='details'>
         <div className='week-view-column'>
             <BlockTitle>Week View</BlockTitle>
-            {details.map(detail => <div className='detail'>
-                <BlockText>{detail.name}</BlockText>
+            {props.calendarDetailsSettings.map(setting => <div className='detail'>
+                <BlockText>{setting.name}</BlockText>
                 <div>
-                    <ToggleSwitch value={detail.weekEnabled} onChange={(value) => toggleWeekDetail(detail.id, value)} />
+                    <ToggleSwitch value={setting.week_enabled} onChange={(value) => toggleWeekDetail(setting.id, value)} />
                 </div>
             </div>)}
         </div>
@@ -45,10 +45,10 @@ function CalendarSettings(props) {
         
         <div className='day-view-column'>
             <BlockTitle>Day View</BlockTitle>
-            {details.map(detail => <div className='detail'>
-                <BlockText>{detail.name}</BlockText>
+            {props.calendarDetailsSettings.map(setting => <div className='detail'>
+                <BlockText>{setting.name}</BlockText>
                 <div>
-                    <ToggleSwitch value={detail.dayEnabled} onChange={(value) => toggleDayDetail(detail.id, value)} />
+                    <ToggleSwitch value={setting.day_enabled} onChange={(value) => toggleDayDetail(setting.id, value)} />
                 </div>
             </div>)}
         </div>

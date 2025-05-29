@@ -10,152 +10,177 @@ import './RepairsSettings.css';
 
 import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
-function RepairsSettings() {
+import axios from 'axios';
 
-    // #### RAW TEST DATA
-    const [commonJobs, setCommonJobs] = useState([
-        { id: 1, name: 'Repad', notes: 'bla bla bla' },
-        { id: 2, name: 'Clean', notes: 'whish whosh whish whosh' },
-        { id: 3, name: 'Wax', notes: 'wax on wax off, wax on wax off' },
-    ]);
-
-    const [instrumentStatuses, setInstrumentStatuses] = useState([
-        { id: 1, status: 'Not Yet Dropped Off' },
-        { id: 2, status: 'In Workshop' }
-    ]);
-
+function RepairsSettings(props) {
 
     // #### STATE VARIABLES
-    const [hourlyRate, setHourlyRate] = useState(45);
+    const [editingJobType, setEditingJobType] = useState({});
+    const [creatingJobType, setCreatingJobType] = useState(false);
+    const [newJobTypeName, setNewJobTypeName] = useState('');
+    const [newJobTypeNotes, setNewJobTypeNotes] = useState('');
 
-    const [editingCommonJob, setEditingCommonJob] = useState({})
-    const [creatingCommonJob, setCreatingCommonJob] = useState(false);
-    const [newCommonJobName, setNewCommonJobName] = useState('');
-    const [newCommonJobNotes, setNewCommonJobNotes] = useState('');
-
-    const [editingStatus, setEditingStatus] = useState({})
-    const [creatingStatus, setCreatingStatus] = useState(false);
-    const [newStatus, setNewStatus] = useState('');
+    const [editingInstrumentStatus, setEditingInstrumentStatus] = useState({});
+    const [creatingInstrumentStatus, setCreatingInstrumentStatus] = useState(false);
+    const [newInstrumentStatus, setNewInstrumentStatus] = useState('');
 
 
     // #### COMMON JOB MANAGEMENT FUNCTIONS
-    const saveCommonJobEdit = () => {
-        const newCommonJobs = [...commonJobs]
-        const updatedCommonJob = newCommonJobs.find(job => job.id === editingCommonJob.id)
-        updatedCommonJob.name = editingCommonJob.name;
-        updatedCommonJob.notes = editingCommonJob.notes;
-        setCommonJobs(newCommonJobs)
+    const saveJobTypeEdit = () => {
+        const newJobTypes = [...props.jobTypes]
+        const updatedJobType = newJobTypes.find(job => job.id === editingJobType.id)
+        updatedJobType.name = editingJobType.name;
+        updatedJobType.notes = editingJobType.notes;
+        props.updateJobTypes(newJobTypes)
 
-        setEditingCommonJob({})
+        axios.put('/api/settings/updateJobType', updatedJobType)
+            .catch(error => console.log(error));
+
+        setEditingJobType({})
     }
+    const deleteJobType = (id) => {
+        if (prompt(`Type 'CONFIRM' to confirm deletion of job type '${props.jobTypes.find(jobType => jobType.id === id).name}'`) !== 'CONFIRM') return;
+        
+        props.updateJobTypes(props.jobTypes.filter(job => job.id !== id));
 
-    const deleteCommonJob = (id) => {
-        setCommonJobs(commonJobs.filter(job => job.id !== id));
+        axios.delete(`/api/settings/deleteJobType/${id}`)
+            .catch(error => console.log(error));
     }
-
-    const cancelNewCommonJob = () => {
-        setNewCommonJobName('');
-        setNewCommonJobNotes('');
-        setCreatingCommonJob(false);
+    const cancelNewJobType = () => {
+        setNewJobTypeName('');
+        setNewJobTypeNotes('');
+        setCreatingJobType(false);
     }
+    const addNewJobType = () => {
+        if (newJobTypeName === '') return;
+        
+        axios.post('/api/settings/addJobType', {name: newJobTypeName, notes: newJobTypeNotes})
+            .then(response => {
+                props.updateJobTypes([...props.jobTypes, {
+                    id: response.data.insertId,
+                    name: newJobTypeName,
+                    notes: newJobTypeNotes
+                }]);
 
-    const addNewCommonJob = () => {
-        if (newCommonJobName !== '') {
-            setCommonJobs([...commonJobs, { id: 4, name: newCommonJobName, notes: newCommonJobNotes }]);
-        }
-        setNewCommonJobName('');
-        setNewCommonJobNotes('');
-        setCreatingCommonJob(false);
+                setNewJobTypeName('');
+                setNewJobTypeNotes('');
+                setCreatingJobType(false);
+            })
+            .catch(error => console.log(error));
     }
 
 
     // #### STATUS MANAGEMENT FUNCTIONS
-    const saveStatusEdit = () => {
-        const newStatuses = [...instrumentStatuses]
-        const updatedStatus = newStatuses.find(status => status.id === editingStatus.id)
-        updatedStatus.status = editingStatus.status;
-        setInstrumentStatuses(newStatuses)
+    const saveInstrumentStatusEdit = () => {
+        const newStatuses = [...props.instrumentStatuses]
+        const updatedStatus = newStatuses.find(status => status.id === editingInstrumentStatus.id)
+        updatedStatus.status = editingInstrumentStatus.status;
+        props.updateInstrumentStatuses(newStatuses)
 
-        setEditingStatus({})
+        axios.put('/api/settings/updateInstrumentStatus', updatedStatus)
+            .catch(error => console.log(error));
+
+        setEditingInstrumentStatus({})
+    }
+    const deleteInstrumentStatus = (id) => {
+        if (prompt(`Type 'CONFIRM' to confirm deletion of instrument status '${props.instrumentStatuses.find(status => status.id === id).status}'`) !== 'CONFIRM') return;
+        
+        props.updateInstrumentStatuses(props.instrumentStatuses.filter(status => status.id !== id));
+
+        axios.delete(`/api/settings/deleteInstrumentStatus/${id}`)
+            .catch(error => console.log(error));
+    }
+    const cancelNewInstrumentStatus = () => {
+        setNewInstrumentStatus('');
+        setCreatingInstrumentStatus(false);
+    }
+    const addNewInstrumentStatus = () => {
+        if (newInstrumentStatus === '') return;
+        
+        axios.post('/api/settings/addInstrumentStatus', {status: newInstrumentStatus})
+            .then(response => {
+                props.updateInstrumentStatuses([...props.instrumentStatuses, {
+                    id: response.data.insertId,
+                    status: newInstrumentStatus
+                }]);
+        
+                setNewInstrumentStatus('');
+                setCreatingInstrumentStatus(false);
+            })
+            .catch(error => console.log(error));
     }
 
-    const deleteStatus = (id) => {
-        setInstrumentStatuses(instrumentStatuses.filter(status => status.id !== id));
-    }
 
-    const cancelNewStatus = () => {
-        setNewStatus('');
-        setCreatingStatus(false);
-    }
+    // #### HOURLY RATE MANAGEMENT FUNCTIONS
+    const updateHourlyRate = (value) => {
+        props.updateHourlyRate(value);
 
-    const addNewStatus = () => {
-        if (newStatus !== '') {
-            setInstrumentStatuses([...instrumentStatuses, { id: 3, status: newStatus }]);
-        }
-        setNewStatus('');
-        setCreatingStatus(false);
+        axios.put('/api/settings/updateHourlyRate', {new_rate: value})
+            .catch(error => console.log(error));
     }
 
 
     // #### RENDERED SETTINGS CONTENT
-    const renderedCommonJobs = <div className='common-jobs'>
+    const renderedJobTypes = <div className='job-types'>
         <BlockTitle className='name'>Name</BlockTitle>
         <BlockTitle className='notes'>Notes</BlockTitle>
         <div />
         <div />
-        {commonJobs.length === 0 && !creatingCommonJob && 'No Common Jobs'}
-        {commonJobs.map(job => editingCommonJob.id !== undefined && editingCommonJob.id === job.id ? <>
-            <TextInput value={editingCommonJob.name} onChange={(value) => setEditingCommonJob({...editingCommonJob, name: value})} />
-            <TextAreaInput value={editingCommonJob.notes} onChange={(value) => setEditingCommonJob({...editingCommonJob, notes: value})} />
-            <ActionButton onClick={() => setEditingCommonJob({})}>Cancel</ActionButton>
-            <ActionButton onClick={saveCommonJobEdit}>Save</ActionButton>
+        {props.jobTypes.length === 0 && !creatingJobType && 'No Job Types'}
+        {props.jobTypes.map(job => editingJobType.id !== undefined && editingJobType.id === job.id ? <>
+            <TextInput value={editingJobType.name} onChange={(value) => setEditingJobType({...editingJobType, name: value})} />
+            <TextAreaInput value={editingJobType.notes} onChange={(value) => setEditingJobType({...editingJobType, notes: value})} />
+            <ActionButton onClick={() => setEditingJobType({})}>Cancel</ActionButton>
+            <ActionButton onClick={saveJobTypeEdit}>Save</ActionButton>
             </> : <>
             <BlockText>{job.name}</BlockText>
             <BlockText>{job.notes}</BlockText>
-            <ActionButton onClick={() => setEditingCommonJob(commonJobs.find(commonJob => commonJob.id === job.id))}>Edit</ActionButton>
-            <ActionButton onClick={() => deleteCommonJob(job.id)}>Delete</ActionButton>
+            <ActionButton onClick={() => setEditingJobType(props.jobTypes.find(jobType => jobType.id === job.id))}>Edit</ActionButton>
+            <ActionButton onClick={() => deleteJobType(job.id)}>Delete</ActionButton>
             </>
         )}
-        {creatingCommonJob && <>
-            <TextInput value={newCommonJobName} onChange={(value) => setNewCommonJobName(value)} />
-            <TextAreaInput value={newCommonJobNotes} onChange={(value) => setNewCommonJobNotes(value)} />
-            <ActionButton onClick={cancelNewCommonJob}>Cancel</ActionButton>
-            <ActionButton onClick={addNewCommonJob}>Save</ActionButton>
+        {creatingJobType && <>
+            <TextInput value={newJobTypeName} onChange={(value) => setNewJobTypeName(value)} />
+            <TextAreaInput value={newJobTypeNotes} onChange={(value) => setNewJobTypeNotes(value)} />
+            <ActionButton onClick={cancelNewJobType}>Cancel</ActionButton>
+            <ActionButton onClick={addNewJobType}>Save</ActionButton>
         </>}
     </div>
 
     const renderedInstrumentStatuses = <div className='instrument-statuses'>
-        {instrumentStatuses.length === 0 && !creatingStatus && 'No Statuses'}
-        {instrumentStatuses.map(status => editingStatus.id !== undefined && editingStatus.id === status.id ? <>
-            <TextInput value={editingStatus.status} onChange={(value) => setEditingStatus({...editingStatus, status: value})} />
-            <ActionButton onClick={() => setEditingStatus({})}>Cancel</ActionButton>
-            <ActionButton onClick={saveStatusEdit}>Save</ActionButton>
+        {props.instrumentStatuses.length === 0 && !creatingInstrumentStatus && 'No Statuses'}
+        {props.instrumentStatuses.map(status => editingInstrumentStatus.id !== undefined && editingInstrumentStatus.id === status.id ? <>
+            <TextInput value={editingInstrumentStatus.status} onChange={(value) => setEditingInstrumentStatus({...editingInstrumentStatus, status: value})} />
+            <ActionButton onClick={() => setEditingInstrumentStatus({})}>Cancel</ActionButton>
+            <ActionButton onClick={saveInstrumentStatusEdit}>Save</ActionButton>
             </> : <>
             <BlockText>{status.status}</BlockText>
-            <ActionButton onClick={() => setEditingStatus(instrumentStatuses.find(instrumentStatus => instrumentStatus.id === status.id))}>Edit</ActionButton>
-            <ActionButton onClick={() => deleteStatus(status.id)}>Delete</ActionButton>
+            <ActionButton onClick={() => setEditingInstrumentStatus(props.instrumentStatuses.find(instrumentStatus => instrumentStatus.id === status.id))}>Edit</ActionButton>
+            <ActionButton onClick={() => deleteInstrumentStatus(status.id)}>Delete</ActionButton>
             </>
         )}
-        {creatingStatus && <>
-            <TextInput value={newStatus} onChange={(value) => setNewStatus(value)} />
-            <ActionButton onClick={cancelNewStatus}>Cancel</ActionButton>
-            <ActionButton onClick={addNewStatus}>Save</ActionButton>
+        {creatingInstrumentStatus && <>
+            <TextInput value={newInstrumentStatus} onChange={(value) => setNewInstrumentStatus(value)} />
+            <ActionButton onClick={cancelNewInstrumentStatus}>Cancel</ActionButton>
+            <ActionButton onClick={addNewInstrumentStatus}>Save</ActionButton>
         </>}
     </div>
 
+
+    // #### RETURNED COMPONENT
     return (
         <div className='RepairsSettings'>
 
-            {/* Common Jobs Section */}
+            {/* Job Types Section */}
             <div className='section-title'>
                 <div>
-                    <BlockTitle>Common Jobs</BlockTitle>
+                    <BlockTitle>Job Types</BlockTitle>
                     <BlockText>Add common jobs to quickly fill assessment notes.</BlockText>
                 </div>
-                <ActionButton colored='true' onClick={() => setCreatingCommonJob(true)}><img src={plusWhite} />Add Common Job</ActionButton>
+                <ActionButton colored='true' onClick={() => setCreatingJobType(true)}><img src={plusWhite} />Add Job Type</ActionButton>
             </div>
             
-            {renderedCommonJobs}
+            {renderedJobTypes}
 
             <div className='divider' />
 
@@ -165,7 +190,7 @@ function RepairsSettings() {
                     <BlockTitle>Instrument Statuses</BlockTitle>
                     <BlockText>Set possible statuses of instruments.</BlockText>
                 </div>
-                <ActionButton colored='true' onClick={() => setCreatingStatus(true)}><img src={plusWhite} />Add Instrument Status</ActionButton>
+                <ActionButton colored='true' onClick={() => setCreatingInstrumentStatus(true)}><img src={plusWhite} />Add Instrument Status</ActionButton>
             </div>
 
             {renderedInstrumentStatuses}
@@ -176,7 +201,7 @@ function RepairsSettings() {
             <BlockTitle>Hourly Rate</BlockTitle>
             <BlockText>Set the default hourly rate for repair quotes.</BlockText>
             <div className='hourly-rate'>
-                <TextInput value={`£${hourlyRate}`} onChange={(value) => setHourlyRate(value.slice(1))} />
+                <TextInput value={`£${props.hourlyRate}`} onChange={(value) => updateHourlyRate(value.slice(1))} />
                 <p>per hour</p>
             </div>
         </div>

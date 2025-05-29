@@ -37,14 +37,14 @@ function CalendarEvent(props) {
             {props.detailsSettings.find(detail => detail.name === 'Instrument Status').dayEnabled &&
             <BlockText>{props.calendarEvent.repair && `${props.instrumentStatuses[props.calendarEvent.repair.instrument.status].status}`}</BlockText>}
             
-            {props.calendarEvent.repair.customer.in_house ?
+            {props.calendarEvent.repair.in_house ?
             <BlockText>In House Repair</BlockText>
             :
             props.detailsSettings.find(detail => detail.name === 'Customer').dayEnabled &&
             <BlockText>{props.calendarEvent.repair && `${props.calendarEvent.repair.customer.firstname} ${props.calendarEvent.repair.customer.surname}`}</BlockText>}
 
             {props.detailsSettings.find(detail => detail.name === 'Job Type').dayEnabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.jobTypes[props.calendarEvent.repair.assessment.job_type].name}`}</BlockText>}
+            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.assessment && `${props.jobTypes[props.calendarEvent.repair.assessment.job_type].name}`}</BlockText>}
             
             </>}
 
@@ -59,14 +59,14 @@ function CalendarEvent(props) {
             {props.detailsSettings.find(detail => detail.name === 'Instrument Status').weekEnabled &&
             <BlockText>{props.calendarEvent.repair && `${props.instrumentStatuses[props.calendarEvent.repair.instrument.status].status}`}</BlockText>}
             
-            {props.calendarEvent.repair.customer.in_house ?
+            {props.calendarEvent.repair.in_house ?
             <BlockText>In House Repair</BlockText>
             :
             props.detailsSettings.find(detail => detail.name === 'Customer').weekEnabled &&
             <BlockText>{props.calendarEvent.repair && `${props.calendarEvent.repair.customer.firstname} ${props.calendarEvent.repair.customer.surname}`}</BlockText>}
 
             {props.detailsSettings.find(detail => detail.name === 'Job Type').weekEnabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.jobTypes[props.calendarEvent.repair.assessment.job_type].name}`}</BlockText>}
+            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.assessment && `${props.jobTypes[props.calendarEvent.repair.assessment.job_type].name}`}</BlockText>}
             
             </>}
 

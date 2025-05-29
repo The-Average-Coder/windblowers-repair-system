@@ -71,9 +71,7 @@ function Calendar() {
             repair: {
                 id: 2509002,
                 status: repairStatuses.OPEN,
-                customer: {
-                    in_house: true
-                },
+                in_house: true,
                 instrument: {
                     type: 'Alto Saxophone',
                     manufacturer: 'Yamaha',
@@ -199,9 +197,7 @@ function Calendar() {
             repair: {
                 id: 2509002,
                 status: repairStatuses.OPEN,
-                customer: {
-                    in_house: true
-                },
+                in_house: true,
                 instrument: {
                     type: 'Alto Saxophone',
                     manufacturer: 'Yamaha',
@@ -567,7 +563,6 @@ function Calendar() {
             const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
             calendarEvent.repairer = repairerName;
             calendarEvent.date = date
-            console.log(calendarEvent)
             setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
         }
     };
@@ -753,12 +748,12 @@ function Calendar() {
                         if (event.all_day)
                             maxTime -= parseInt(repairer.hours[weekDay-2] * 60);
                         else
-                            maxTime -= parseInt(event.time);
+                            scheduledTime += parseInt(event.time);
                     }
                 })
 
                 const percentageFull = maxTime <= 0 ? 1 : scheduledTime / maxTime;
-                const heatValue = percentageFull === 0 ? 0 : percentageFull <= 0.25 && 1 || percentageFull <= 0.65 && 2 || 3;
+                const heatValue = percentageFull === 0 ? 0 : percentageFull <= 0.25 && 1 || percentageFull <= 0.6 && 2 || 3;
 
                 const heatCSSVariables = ['var(--calendar-green-border)', 'var(--calendar-yellow-border)', 'var(--calendar-orange-border)', 'var(--calendar-red-border)']
 
@@ -769,7 +764,7 @@ function Calendar() {
                     
                     {!disabled && <>
                     
-                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, repairer.name)} />
+                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate.toString().padStart(2, '0')}-${(month+1).toString().padStart(2, '0')}-${year}`, repairer.name)} />
                 
                     <div className='time-heat-bar'>
                         <div className='heat' style={{backgroundColor: heatCSSVariables[heatValue], flex: percentageFull}} />
@@ -845,13 +840,13 @@ function Calendar() {
                     if (event.all_day)
                         maxTime -= parseInt(repairers.find(repairer => event.repairer === repairer.name).hours[weekDay-2] * 60)
                     else
-                        maxTime -= parseInt(event.time);
+                        scheduledTime += parseInt(event.time);
                 }
             })
 
 
             const percentageFull = maxTime <= 0 ? 1 : scheduledTime / maxTime;
-            const heatValue = percentageFull === 0 ? 0 : percentageFull <= 0.25 && 1 || percentageFull <= 0.7 && 2 || 3;
+            const heatValue = percentageFull === 0 ? 0 : percentageFull <= 0.25 && 1 || percentageFull <= 0.6 && 2 || 3;
 
             return (
                 <CalendarGridBox uniqueId={monthDate}
@@ -962,7 +957,7 @@ function Calendar() {
                         {detailsSettings.find(detail => detail.name === 'Instrument Status').weekEnabled &&
                         <BlockText>{activeEvent.repair && `${instrumentStatuses[activeEvent.repair.instrument.status].status}`}</BlockText>}
                         
-                        {activeEvent.repair.customer.in_house ?
+                        {activeEvent.repair.in_house ?
                         <BlockText>In House Repair</BlockText>
                         :
                         detailsSettings.find(detail => detail.name === 'Customer').weekEnabled &&

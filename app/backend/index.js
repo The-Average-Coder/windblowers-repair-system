@@ -45,12 +45,13 @@ const auth = basicAuth({
 });
 
 const checkAuthentication = (req, res, next) => {
-    if (req.signedCookies.name === 'user') {
+    next()                                                     // <---------- REMOVE THIS ONCE LOGIN IS BUILT
+    /*if (req.signedCookies.name === 'user') {
         next()
     }
     else {
         res.status(401).send('Unauthorised');
-    }
+    }*/
 }
 
 app.get('/authenticate', auth, (req, res) => {
@@ -82,26 +83,26 @@ app.get('/api', checkAuthentication, (req, res) => {
     res.send('Hello from the API!')
 })
 
-const customersRoutes = require('./routes/customers/customersRoutes');
+const customersRoutes = require('./routes/customersRoutes');
 app.use('/api/customers', checkAuthentication, customersRoutes);
 
-const instrumentsRoutes = require('./routes/instruments/instrumentsRoutes');
+const instrumentsRoutes = require('./routes/instrumentsRoutes');
 app.use('/api/instruments', checkAuthentication, instrumentsRoutes);
 
-const activityRoutes = require('./routes/activity/activityRoutes');
-app.use('/api/activity', checkAuthentication, activityRoutes);
-
-const repairersRoutes = require('./routes/repairers/repairersRoutes');
+const repairersRoutes = require('./routes/repairersRoutes');
 app.use('/api/repairers', checkAuthentication, repairersRoutes);
 
-const repairsRoutes = require('./routes/repairs/repairsRoutes');
+const repairsRoutes = require('./routes/repairsRoutes');
 app.use('/api/repairs', checkAuthentication, repairsRoutes);
 
-const assessmentsRoutes = require('./routes/assessments/assessmentsRoutes');
+const assessmentsRoutes = require('./routes/assessmentsRoutes');
 app.use('/api/assessments', checkAuthentication, assessmentsRoutes);
 
-const calendarEventsRoutes = require('./routes/calendar_events/calendarEventsRoutes');
+const calendarEventsRoutes = require('./routes/calendarEventsRoutes');
 app.use('/api/calendarEvents', checkAuthentication, calendarEventsRoutes);
+
+const settingsRoutes = require('./routes/settingsRoutes');
+app.use('/api/settings', checkAuthentication, settingsRoutes);
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(frontEndPath, 'index.html'));

@@ -36,6 +36,7 @@ function Repair() {
             phone: '07796593187',
             address: '10 Cross Hill Close, LE12 6UJ'
         },
+        in_house: true,
         instrument: {
             type: 'Flute',
             manufacturer: 'Pearl',
@@ -94,7 +95,7 @@ function Repair() {
 
                 <ContentBlock className='customer-and-instrument-details'>
 
-                    <CustomerDetails customer={repair.customer} openModal={() => setCustomerModalOpen(true)} />
+                    <CustomerDetails customer={repair.customer} inHouse={repair.in_house} openModal={() => setCustomerModalOpen(true)} />
 
                     <div className='divider' />
                     

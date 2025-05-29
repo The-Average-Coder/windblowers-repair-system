@@ -10,14 +10,9 @@ import './RepairersSettings.css';
 
 import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
-function RepairersSettings() {
+import axios from 'axios';
 
-    // #### RAW TEST DATA
-    const [repairers, setRepairers] = useState([
-        { id: 1, name: 'Purple', hours: [8, 8, 8, 8, 4] },
-        { id: 2, name: 'Ryan', hours: [0, 8, 8, 0, 0] }
-    ])
-
+function RepairersSettings(props) {
 
     // #### STATE VARIABLES
     const [creatingRepairer, setCreatingRepairer] = useState(false);
@@ -26,19 +21,37 @@ function RepairersSettings() {
 
     // #### REPAIRER MANAGEMENT FUNCTIONS
     const updateHours = (value, index, repairerId) => {
-        const newRepairers = [...repairers]
-        newRepairers.find(repairer => repairer.id === repairerId).hours[index] = value;
-        setRepairers(newRepairers)
+        const newRepairers = [...props.repairers];
+        const updatedRepairer = newRepairers.find(repairer => repairer.id === repairerId)
+        updatedRepairer.hours[index] = value;
+        props.updateRepairers(newRepairers);
+
+        axios.put('/api/repairers/updateRepairer', updatedRepairer)
+            .catch(error => console.log(error));
     }
 
     const deleteRepairer = (repairerId) => {
-        setRepairers(repairers.filter(repairer => repairer.id !== repairerId));
+        if (prompt(`Type 'CONFIRM' to confirm deletion of repairer '${props.repairers.find(repairer => repairer.id === repairerId).name}'`) !== 'CONFIRM') return;
+        
+        props.updateRepairers(props.repairers.filter(repairer => repairer.id !== repairerId));
+
+        axios.delete(`/api/repairers/deleteRepairer/${repairerId}`)
+            .catch(error => console.log(error));
     }
 
     const addNewRepairer = () => {
-        setRepairers([...repairers, { id: 3, name: newRepairerName, hours: [0, 0, 0, 0, 0] }])
-        setCreatingRepairer(false);
-        setNewRepairerName('');
+        if (newRepairerName === '') return;
+
+        axios.post('/api/repairers/addRepairer', {name: newRepairerName, hours: [0, 0, 0, 0, 0]})
+            .then(response => {
+                props.updateRepairers([
+                    ...props.repairers,
+                    { id: response.data.insertId, name: newRepairerName, hours: [0, 0, 0, 0, 0] }
+                ]);
+                
+                setCreatingRepairer(false);
+                setNewRepairerName('');
+            })
     }
 
     const cancelNewRepairer = () => {
@@ -48,7 +61,7 @@ function RepairersSettings() {
 
 
     // #### RENDERED SETTINGS CONTENT
-    const renderedRepairers = repairers.length !== 0 ? <div className='repairers-grid'>
+    const renderedRepairers = props.repairers.length !== 0 ? <div className='repairers-grid'>
         <p />
         <p>Tuesday</p>
         <p>Wednesday</p>
@@ -56,7 +69,7 @@ function RepairersSettings() {
         <p>Friday</p>
         <p>Saturday</p>
         <p />
-        {repairers.map(repairer => <>
+        {props.repairers.map(repairer => <>
             <p>{repairer.name}</p>
             {repairer.hours.map((hours, index) => <div><HoursDropdownSelect value={hours} onChange={(value) => updateHours(value, index, repairer.id)} /></div>)}
 

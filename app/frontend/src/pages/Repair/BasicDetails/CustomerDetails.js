@@ -12,6 +12,14 @@ import expandHoverDark from '../../../images/expand-icon/expandHoverDark.png';
 function CustomerDetails(props) {
     return (
         <div className='CustomerDetails'>
+            {props.inHouse ?
+
+            <div>
+                <BlockTitle>Customer</BlockTitle>
+                <BlockText className='detail'>In House</BlockText>
+            </div>
+
+            : <>
             <div>
                 <BlockTitle>Customer</BlockTitle>
                 <BlockText className='detail'>{props.customer.firstname} {props.customer.surname}</BlockText>
@@ -29,6 +37,8 @@ function CustomerDetails(props) {
             </div>
 
             <BlockTopRightButton onClick={props.openModal} light={expandLight} lightHover={expandHoverLight} dark={expandDark} darkHover={expandHoverDark} />
+        
+            </>}
         </div>
     );
 }

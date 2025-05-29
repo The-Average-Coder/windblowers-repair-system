@@ -17,6 +17,7 @@
     "express-basic-auth": "^1.2.1",
     "JSON": "^1.0.0",
     "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
     "nodemon": "^3.1.0",
     "path": "^0.12.7"
   }

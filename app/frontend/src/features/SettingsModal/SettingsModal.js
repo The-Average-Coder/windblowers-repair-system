@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ModalWindow from '../../components/Containers/ModalWindow';
 import ModalTitle from '../../components/Text/ModalTitle';
@@ -12,7 +12,43 @@ import AccountSettings from './SettingsPages/AccountSettings';
 
 import './SettingsModal.css';
 
+import axios from 'axios';
+
 function SettingsModal(props) {
+
+    // #### DATA
+    const [settings, setSettings] = useState({});
+    const [repairers, setRepairers] = useState([]);
+
+
+    // #### DATABASE FETCH
+    useEffect(() => {
+        axios.get('/api/repairers/get')
+            .then(response => setRepairers(response.data))
+            .catch(error => console.log(error));
+
+        axios.get('/api/settings/get')
+            .then(response => setSettings(response.data))
+            .catch(error => console.log(error));
+    }, [])
+
+    
+    // #### SETTINGS MANAGEMENT FUNCTIONS
+    const updateJobTypes = (jobTypes) => {
+        setSettings({...settings, job_types: jobTypes});
+    }
+    const updateInstrumentStatuses = (instrumentStatuses) => {
+        setSettings({...settings, instrument_statuses: instrumentStatuses});
+    }
+    const updateCalendarDetailsSettings = (calendarDetailsSettings) => {
+        setSettings({...settings, calendar_details_settings: calendarDetailsSettings});
+    }
+    const updateRepairers = (repairers) => {
+        setRepairers(repairers);
+    }
+    const updateHourlyRate = (rate) => {
+        setSettings({...settings, hourly_rate: rate});
+    }
 
     const pages = ['Repairers', 'Repairs', 'Materials', 'Calendar', 'Appearance', 'Account'];
 
@@ -26,9 +62,9 @@ function SettingsModal(props) {
             <SettingsMenu pages={pages} currentPage={currentPage} setCurrentPage={(page) => setCurrentPage(page)} />
 
             <div className='settings-content'>
-            {pages[currentPage] === 'Repairers' ? <RepairersSettings />
-            : pages[currentPage] === 'Repairs' ? <RepairsSettings />
-            : pages[currentPage] === 'Calendar' ? <CalendarSettings />
+            {pages[currentPage] === 'Repairers' ? <RepairersSettings repairers={repairers} updateRepairers={updateRepairers} />
+            : pages[currentPage] === 'Repairs' ? <RepairsSettings jobTypes={settings.job_types} updateJobTypes={updateJobTypes} instrumentStatuses={settings.instrument_statuses} updateInstrumentStatuses={updateInstrumentStatuses} hourlyRate={settings.hourly_rate} updateHourlyRate={updateHourlyRate} />
+            : pages[currentPage] === 'Calendar' ? <CalendarSettings calendarDetailsSettings={settings.calendar_details_settings} updateCalendarDetailsSettings={updateCalendarDetailsSettings} />
             : pages[currentPage] === 'Appearance' ? <AppearanceSettings />
             : pages[currentPage] === 'Account' ? <AccountSettings />
             : null}
