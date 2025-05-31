@@ -57,6 +57,9 @@ function Assessment(props) {
 
     return (
         <div className='Assessment'>
+
+            {props.assessment ? <>
+
             <div className='cost-estimate'>
                 <BlockTitle>Cost Estimate</BlockTitle>
                 <BlockText>As of 05/03/2025</BlockText>
@@ -129,6 +132,8 @@ function Assessment(props) {
                 }
              
             </div>
+
+            </> : 'Loading' }
 
         </div>
     );

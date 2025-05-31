@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ModalWindow from '../../components/Containers/ModalWindow';
 import ModalTitle from '../../components/Text/ModalTitle';
@@ -16,12 +16,12 @@ import editHoverLight from '../../images/edit-icon/editHoverLight.png';
 import editDark from '../../images/edit-icon/editDark.png';
 import editHoverDark from '../../images/edit-icon/editHoverDark.png';
 
+import axios from 'axios';
+
 function InstrumentModal(props) {
 
-    const [editMode, setEditMode] = useState(false);
-    const [tempInstrument, setTempInstrument] = useState({});
-
-    const instrumentTypeOptions = [
+    // #### CONSTANTS
+    const INSTRUMENT_TYPE_OPTIONS = [
         {group: 'Flute Family', options: [
             {name: 'Flute', value: 'Flute'},
             {name: 'Piccolo', value: 'Piccolo'},
@@ -71,11 +71,41 @@ function InstrumentModal(props) {
         {name: 'Other', value: 'Other'}
     ]
 
-    const statuses = [
-        'Not Set', 'Not Yet Dropped Off', 'In Workshop'
-    ]
+    // #### DATA
+    const [statusOptions, setStatusOptions] = useState([]);
 
-    const statusOptions = statuses.map((status, index) => {return {name: status, value: index}})
+    // #### DATABASE FETCH
+    useEffect(() => {
+        axios.get('/api/settings/getInstrumentStatuses')
+            .then(response => setStatusOptions([{name: 'Not Set', value: -1},
+                                        ...response.data.map(status => {return {name: status.status, value: status.id}})]))
+            .catch(error => console.log(error));
+    }, [])
+
+    // #### STATE VARIABLES
+    const [editMode, setEditMode] = useState(false);
+    const [tempInstrument, setTempInstrument] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');
+
+
+    // #### EDIT FUNCTIONS
+    const isInstrumentValid = () => {
+        if (tempInstrument.serial_number.trim() === '') {
+            setErrorMessage('Serial number required');
+            return false;
+        }
+        if (tempInstrument.manufacturer.trim() === '') {
+            setErrorMessage('Manufacturer required');
+            return false;
+        }
+        if (tempInstrument.model.trim() === '') {
+            setErrorMessage('Model required');
+            return false;
+        }
+
+        setErrorMessage('');
+        return true;
+    }
 
     const toggleEditMode = () => {
         setTempInstrument(props.instrument)
@@ -83,6 +113,12 @@ function InstrumentModal(props) {
     }
 
     const saveEdit = () => {
+    
+        if (!isInstrumentValid()) return;
+
+        axios.put('/api/instruments/update', tempInstrument)
+            .catch((error) => console.log(error));
+
         props.updateInstrument(tempInstrument);
         toggleEditMode();
     }
@@ -104,7 +140,7 @@ function InstrumentModal(props) {
     }
 
     const updateStatus = (value) => {
-        setTempInstrument({...tempInstrument, status: value})
+        setTempInstrument({...tempInstrument, status_id: parseInt(value)})
     }
 
     return (
@@ -126,7 +162,7 @@ function InstrumentModal(props) {
                     {
                     editMode ?
                     <div className='text-inputs'>
-                    <DropdownSelect value={tempInstrument.type} onChange={updateType} options={instrumentTypeOptions} placeholder='Instrument Type' />
+                    <DropdownSelect value={tempInstrument.type} onChange={updateType} options={INSTRUMENT_TYPE_OPTIONS} placeholder='Instrument Type' />
                     <TextInput value={tempInstrument.manufacturer} onChange={updateManufacturer} placeholder='Manufacturer' />
                     <TextInput value={tempInstrument.model} onChange={updateModel} placeholder='Model' />
                     </div>
@@ -145,22 +181,20 @@ function InstrumentModal(props) {
                     {
                     editMode ?
                     <div className='text-inputs'>
-                    <DropdownSelect value={tempInstrument.status} onChange={updateStatus} options={statusOptions} placeholder='Status' />
+                    <DropdownSelect value={tempInstrument.status_id} onChange={updateStatus} options={statusOptions} placeholder='Status' />
                     </div>
                     :
-                    <BlockText className='detail'>{statuses[props.instrument.status]}</BlockText>
+                    <BlockText className='detail'>{statusOptions.length > 0 && statusOptions.find(status => status.value === props.instrument.status_id).name}</BlockText>
                     }
                 </span>
 
-                {
-                editMode ?
+                {editMode && <>
+                <p className='error-message'>{errorMessage}</p>
                 <div className='buttons'>
                     <ActionButton onClick={toggleEditMode}>Cancel</ActionButton>
                     <ActionButton onClick={saveEdit} colored='true'>Save</ActionButton>
                 </div>
-                :
-                null
-                }
+                </>}
 
             </div>            
 

@@ -16,6 +16,54 @@
     background-color: var(--subcontent-border);
 }
 
+.Repair .actions-menu-button {
+    position: absolute;
+    right: 0;
+    top: 14px;
+    background-color: var(--content-background);
+}
+.Repair .actions-menu-button img {
+    height: 20px;
+    vertical-align: -5px;
+    margin-left: 5px;
+}
+.light-theme .Repair .PageTitle .dark { display: none; }
+.dark-theme .Repair .PageTitle .light { display: none; }
+
+.Repair .actions-menu {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background-color: var(--subcontent-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 120px;
+    border: 1px solid var(--subcontent-border);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+.Repair .actions-menu .ActionButton {
+    background-color: var(--content-background);
+    border: none;
+    border-radius: 0;
+}
+.Repair .actions-menu .ActionButton:hover {
+    background-color: var(--hover-color);
+}
+.Repair .actions-menu .ActionButton:active {
+    background-color: var(--click-color);
+}
+.Repair .actions-menu img {
+    height: 17px;
+    vertical-align: -3px;
+    margin-right: 6px;
+}
+.Repair .actions-menu .ActionButton.red {
+    color: red;
+}
+
 /* BASIC DETAILS */
 
 .Repair .basic-details {

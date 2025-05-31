@@ -44,6 +44,13 @@
     width: 100%;
 }
 
+.CustomerModal .basic-info .error-message {
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    color: red;
+}
+
 .CustomerModal .basic-info .buttons {
     position: absolute;
     bottom: 0;

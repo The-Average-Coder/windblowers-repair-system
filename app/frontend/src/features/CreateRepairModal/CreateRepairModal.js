@@ -134,19 +134,19 @@ function CreateRepairModal(props) {
             setErrorMessage('Instrument required');
             return false;
         }
-        if (instrument.serial_number === '') {
+        if (instrument.serial_number.trim() === '') {
             setErrorMessage('Instrument serial number required');
             return false;
         }
-        if (instrument.type === '') {
+        if (instrument.type.trim() === '') {
             setErrorMessage('Instrument type required');
             return false;
         }
-        if (instrument.manufacturer === '') {
+        if (instrument.manufacturer.trim() === '') {
             setErrorMessage('Instrument manufacturer required');
             return false;
         }
-        if (instrument.model === '') {
+        if (instrument.model.trim() === '') {
             setErrorMessage('Instrument model required');
             return false;
         }

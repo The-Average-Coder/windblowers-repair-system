@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2025 at 06:18 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: May 31, 2025 at 07:09 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -154,7 +154,7 @@ CREATE TABLE `instruments` (
 --
 
 INSERT INTO `instruments` (`id`, `type`, `manufacturer`, `model`, `serial_number`, `status_id`) VALUES
-(1, 'Flute', 'Pearl', '505', 'HDL1963', 1);
+(1, 'Flute', 'Pearl', '505', 'HDL1963', 2);
 
 -- --------------------------------------------------------
 

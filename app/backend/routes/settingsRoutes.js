@@ -73,6 +73,20 @@ router.delete('/deleteJobType/:id', async (req, res) => {
 
 })
 
+router.get('/getInstrumentStatuses', async (req, res) => {
+
+    try {
+
+        const instrumentStatuses = await db.promise().query('SELECT id, status FROM instrument_statuses;');
+
+        res.send(instrumentStatuses[0])
+
+    } catch (err) {
+        console.error('Failed to fetch instrument statuses:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
 router.post('/addInstrumentStatus', async (req, res) => {
 
     try {

@@ -10,12 +10,12 @@ import expandDark from '../../../images/expand-icon/expandDark.png';
 import expandHoverDark from '../../../images/expand-icon/expandHoverDark.png';
 
 function InstrumentDetails(props) {
-    const statuses = [
-        'Not Set', 'Not Yet Dropped Off', 'In Workshop'
-    ]
 
     return (
+
         <div className='InstrumentDetails'>
+
+            {props.instrument ? <>
             <div>
                 <BlockTitle>Instrument</BlockTitle>
                 <BlockText className='detail'>{props.instrument.manufacturer} {props.instrument.model} {props.instrument.type}</BlockText>
@@ -28,10 +28,13 @@ function InstrumentDetails(props) {
             
             <div>
                 <BlockTitle>Status</BlockTitle>
-                <BlockText className='detail'>{statuses[props.instrument.status]}</BlockText>
+                <BlockText className='detail'>{props.instrument.status_id === -1 ? 'Not Set' : props.statuses.length > 0 && props.statuses.find(status => status.id === props.instrument.status_id).status}</BlockText>
             </div>
 
             <BlockTopRightButton onClick={props.openModal} light={expandLight} lightHover={expandHoverLight} dark={expandDark} darkHover={expandHoverDark} />
+        
+            </>: 'Loading' }
+            
         </div>
     );
 }

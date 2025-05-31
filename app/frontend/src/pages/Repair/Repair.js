@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import PageTitle from '../../components/Text/PageTitle';
 import ContentBlock from '../../components/Containers/ContentBlock';
@@ -16,45 +17,77 @@ import Assessment from './Assessment/Assessment';
 
 import './Repair.css';
 
-import repairStatuses from '../../enums/repairStatuses';
+import eventBus from '../../utils/eventBus';
 
 import editLight from '../../images/edit-icon/editLight.png';
 import editHoverLight from '../../images/edit-icon/editHoverLight.png';
 import editDark from '../../images/edit-icon/editDark.png';
 import editHoverDark from '../../images/edit-icon/editHoverDark.png';
 
+import caretDownBlack from '../../images/caret-icons/caretDownBlack.png';
+import caretDownWhite from '../../images/caret-icons/caretDownWhite.png';
+
+import assessLight from '../../images/assess-icon/assessLight.png';
+import assessDark from '../../images/assess-icon/assessDark.png';
+
+import archiveLight from '../../images/archive-icon/archiveLight.png';
+import archiveDark from '../../images/archive-icon/archiveDark.png';
+
+import deleteRed from '../../images/delete-icon/deleteRed.png';
+
+import axios from 'axios';
+
 function Repair() {
 
-    // #### RAW TEST DATA
-    const [repair, setRepair] = useState({
-        id: 2508004,
-        status: repairStatuses.OPEN,
-        customer: {
-            firstname: 'Josh',
-            surname: 'Cox',
-            email: 'joshuajosephcox@gmail.com',
-            phone: '07796593187',
-            address: '10 Cross Hill Close, LE12 6UJ'
-        },
-        in_house: true,
-        instrument: {
-            type: 'Flute',
-            manufacturer: 'Pearl',
-            model: '505',
-            serial_number: 'ABC123',
-            status: 1,
-        },
-        notes: 'Some assorted notes',
-        assessment: {
-            job_type_id: 1,
-            notes: 'bla bla bla'
-        }
-    })
+    const { id } = useParams()
+
+    // #### DATA
+    const [repair, setRepair] = useState({})
+    const [instrumentStatuses, setInstrumentStatuses] = useState([])
+
+    // #### DATABASE DATA FETCH
+    useEffect(() => {
+        axios.get(`/api/repairs/get/${id}`)
+            .then(response => setRepair(response.data))
+            .catch(error => console.log(error));
+        
+        axios.get('/api/settings/getInstrumentStatuses')
+            .then(response => setInstrumentStatuses(response.data))
+            .catch(error => console.log(error));
+    }, [])
 
 
     // #### STATE VARIABLES
     const [editNotesMode, setEditNotesMode] = useState(false);
     const [tempNotes, setTempNotes] = useState('');
+    
+    const [showActionsMenu, setShowActionsMenu] = useState(false);
+
+    // #### ACTIONS MENU
+    const toggleActionsMenu = (e = null) => {
+
+        e && e.stopPropagation();
+
+        if (!showActionsMenu) {
+            eventBus.on('click', closeActionsMenu);
+        }
+        else {
+            eventBus.off('click', closeActionsMenu);
+        }
+
+        setShowActionsMenu(!showActionsMenu);
+    }
+
+    const closeActionsMenu = () => {
+        setShowActionsMenu(false);
+        eventBus.off('click', closeActionsMenu);
+    }
+
+    const deleteRepair = () => {
+        closeActionsMenu();
+
+        if (prompt(`Type 'CONFIRM' to confirm deletion of repair`) !== 'CONFIRM') return;
+    }
 
 
     // #### DATA MANAGEMENT FUNCTIONS
@@ -72,6 +105,10 @@ function Repair() {
     }
 
     const updateNotes = () => {
+
+        axios.put('/api/repairs/update', {...repair, id: id, notes: tempNotes})
+            .catch(error => console.log(error));
+
         setRepair({...repair, notes: tempNotes})
         toggleEditNotesMode();
     }
@@ -89,8 +126,23 @@ function Repair() {
     return (
         <div className='Repair'>
             
-            <PageTitle>Repair {repair.id} <span className={`status ${statusColors[repair.status]}`}>{statuses[repair.status]}</span></PageTitle>
+            <PageTitle>
+                Repair {id}
+                <span className={`status ${statusColors[repair.status]}`}>{statuses[repair.status]}</span>
+                <ActionButton className='actions-menu-button' onClick={toggleActionsMenu}>
+                    Actions
+                    <img className='light' src={caretDownBlack} />
+                    <img className='dark' src={caretDownWhite} />
+                </ActionButton>
 
+                {showActionsMenu && <div className='actions-menu'>
+                    <ActionButton><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Assess</ActionButton>
+                    <ActionButton><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Archive</ActionButton>
+                    <ActionButton onClick={deleteRepair} className='red'><img img src={deleteRed} />Delete</ActionButton>
+                </div>}
+            </PageTitle>
+
+            {repair.status !== undefined ? <>
             <div className='basic-details'>
 
                 <ContentBlock className='customer-and-instrument-details'>
@@ -99,7 +151,7 @@ function Repair() {
 
                     <div className='divider' />
                     
-                    <InstrumentDetails instrument={repair.instrument} openModal={() => setInstrumentModalOpen(true)} />
+                    <InstrumentDetails instrument={repair.instrument} statuses={instrumentStatuses} openModal={() => setInstrumentModalOpen(true)} />
 
                 </ContentBlock>
 
@@ -131,7 +183,7 @@ function Repair() {
 
             <ContentBlock className='assessment-block'>
 
-                <Assessment assessment={repair.assessment} updateAssessment={updateAssessment} />
+                <Assessment assessment={repair.assessments && repair.assessments[0]} updateAssessment={updateAssessment} />
 
             </ContentBlock>
 
@@ -146,6 +198,8 @@ function Repair() {
             <InstrumentModal instrument={repair.instrument} updateInstrument={updateInstrument} closeFunction={() => setInstrumentModalOpen(false)} />
             : null
             }
+
+            </> : 'Repair Not Found'}
 
         </div>
     );
