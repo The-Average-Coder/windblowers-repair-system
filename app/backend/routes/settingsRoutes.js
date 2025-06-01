@@ -9,15 +9,17 @@ router.get('/get', async (req, res) => {
         const queries = [
             db.promise().query('SELECT * FROM job_types WHERE id > 1;'), // ID > 1 to ignore 'Unspecified' which isn't needed for settings page
             db.promise().query('SELECT * FROM instrument_statuses;'),
+            db.promise().query('SELECT * FROM materials;'),
             db.promise().query('SELECT * FROM calendar_details_settings;'),
             db.promise().query('SELECT hourly_rate FROM hourly_rate;')
         ];
 
-        const [job_types, instrument_statuses, calendar_details_settings, hourly_rate] = await Promise.all(queries);
+        const [job_types, instrument_statuses, materials, calendar_details_settings, hourly_rate] = await Promise.all(queries);
 
         const formatted_data = {
             job_types: job_types[0],
             instrument_statuses: instrument_statuses[0],
+            materials: materials[0],
             calendar_details_settings: calendar_details_settings[0],
             hourly_rate: hourly_rate[0][0].hourly_rate
         };
@@ -124,6 +126,62 @@ router.delete('/deleteInstrumentStatus/:id', async (req, res) => {
 
     } catch (err) {
         console.error('Failed to update instrument statuses:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
+router.get('/getMaterials', async (req, res) => {
+
+    try {
+
+        const materials = await db.promise().query('SELECT id, name, price FROM instrument_statuses;');
+
+        res.send(materials[0])
+
+    } catch (err) {
+        console.error('Failed to fetch materials:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.post('/addMaterial', async (req, res) => {
+
+    try {
+
+        const response = await db.promise().query('INSERT INTO materials (name, price) VALUES (?, ?);',
+            [req.body.name, req.body.price]);
+
+        res.send(response[0]);
+
+    } catch (err) {
+        console.error('Failed to update materials:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.put('/updateMaterial', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE materials SET name = ?, price = ? WHERE id = ?;',
+            [req.body.name, req.body.price, req.body.id]);
+
+    } catch (err) {
+        console.error('Failed to update materials:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.delete('/deleteMaterial/:id', async (req, res) => {
+
+    try {
+
+        db.query('DELETE FROM materials WHERE id = ?;',
+            [req.params.id]);
+
+    } catch (err) {
+        console.error('Failed to update materials:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 

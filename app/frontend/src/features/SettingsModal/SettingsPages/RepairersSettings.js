@@ -10,6 +10,8 @@ import './RepairersSettings.css';
 
 import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
+import deleteLight from '../../../images/delete-icon/deleteRed.png';
+
 import axios from 'axios';
 
 function RepairersSettings(props) {
@@ -40,7 +42,7 @@ function RepairersSettings(props) {
     }
 
     const addNewRepairer = () => {
-        if (newRepairerName === '') return;
+        if (newRepairerName.trim() === '') return;
 
         axios.post('/api/repairers/addRepairer', {name: newRepairerName, hours: [0, 0, 0, 0, 0]})
             .then(response => {
@@ -74,7 +76,8 @@ function RepairersSettings(props) {
             {repairer.hours.map((hours, index) => <div><HoursDropdownSelect value={hours} onChange={(value) => updateHours(value, index, repairer.id)} /></div>)}
 
             <div className='delete-button'>
-                <ActionButton onClick={() => deleteRepairer(repairer.id)}>Delete</ActionButton>
+                {/*<ActionButton onClick={() => deleteRepairer(repairer.id)}>Delete</ActionButton>*/}
+                <ActionButton onClick={() => deleteRepairer(repairer.id)}><img src={deleteLight} /></ActionButton>
             </div>
         </>)}
     </div> : <p>No Repairers Found</p>

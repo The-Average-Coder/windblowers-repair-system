@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 31, 2025 at 07:09 PM
+-- Generation Time: Jun 01, 2025 at 03:48 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -195,7 +195,34 @@ CREATE TABLE `job_types` (
 INSERT INTO `job_types` (`id`, `name`, `notes`, `materials`) VALUES
 (1, 'Unspecified', '', ''),
 (2, 'Repad', 'Repad Notes', ''),
-(3, 'Clean', 'Clean Notes', '');
+(3, 'Clean', 'Clean Notes', ''),
+(12, 'Flute Repad', 'Flute Repad Notes\nMore Notes', ''),
+(13, 'Clarinet Repad', 'Clarinet  Repad Notes\nMore Notes', ''),
+(14, 'Soprano Saxophone Repad', 'Soprano Sax Repad Notes\nMore Notes', ''),
+(15, 'Alto Saxophone Repad', 'Alto Sax  Repad Notes\nMore Notes', ''),
+(16, 'Tenor Saxophone Repaid', 'Tenor Sax  Repad Notes\nMore Notes', ''),
+(17, 'Baritone Saxophone Repad', 'Baritone Sax  Repad Notes\nMore Notes', ''),
+(18, 'Bass Saxophone Repaid', 'Bass Sax  Repad Notes\nMore Notes', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `materials`
+--
+
+CREATE TABLE `materials` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `materials`
+--
+
+INSERT INTO `materials` (`id`, `name`, `price`) VALUES
+(2, 'Flute Pad', 50),
+(3, 'Clarinet Pad', 12);
 
 -- --------------------------------------------------------
 
@@ -292,6 +319,12 @@ ALTER TABLE `job_types`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `materials`
+--
+ALTER TABLE `materials`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `repairers`
 --
 ALTER TABLE `repairers`
@@ -347,7 +380,13 @@ ALTER TABLE `instrument_statuses`
 -- AUTO_INCREMENT for table `job_types`
 --
 ALTER TABLE `job_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `materials`
+--
+ALTER TABLE `materials`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `repairers`

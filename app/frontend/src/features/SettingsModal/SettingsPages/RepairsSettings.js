@@ -52,7 +52,7 @@ function RepairsSettings(props) {
         setCreatingJobType(false);
     }
     const addNewJobType = () => {
-        if (newJobTypeName === '') return;
+        if (newJobTypeName.trim() === '') return;
         
         axios.post('/api/settings/addJobType', {name: newJobTypeName, notes: newJobTypeNotes})
             .then(response => {
@@ -95,7 +95,7 @@ function RepairsSettings(props) {
         setCreatingInstrumentStatus(false);
     }
     const addNewInstrumentStatus = () => {
-        if (newInstrumentStatus === '') return;
+        if (newInstrumentStatus.trim() === '') return;
         
         axios.post('/api/settings/addInstrumentStatus', {status: newInstrumentStatus})
             .then(response => {
@@ -126,8 +126,8 @@ function RepairsSettings(props) {
         <BlockTitle className='notes'>Notes</BlockTitle>
         <div />
         <div />
-        {props.jobTypes.length === 0 && !creatingJobType && 'No Job Types'}
-        {props.jobTypes.map(job => editingJobType.id !== undefined && editingJobType.id === job.id ? <>
+        {props.jobTypes ? props.jobTypes.length === 0 && !creatingJobType && 'No Job Types' : 'Loading'}
+        {props.jobTypes && props.jobTypes.map(job => editingJobType.id !== undefined && editingJobType.id === job.id ? <>
             <TextInput value={editingJobType.name} onChange={(value) => setEditingJobType({...editingJobType, name: value})} />
             <TextAreaInput value={editingJobType.notes} onChange={(value) => setEditingJobType({...editingJobType, notes: value})} />
             <ActionButton onClick={() => setEditingJobType({})}>Cancel</ActionButton>
@@ -135,7 +135,7 @@ function RepairsSettings(props) {
             </> : <>
             <BlockText>{job.name}</BlockText>
             <BlockText>{job.notes}</BlockText>
-            <ActionButton onClick={() => setEditingJobType(props.jobTypes.find(jobType => jobType.id === job.id))}>Edit</ActionButton>
+            <ActionButton onClick={() => setEditingJobType(job)}>Edit</ActionButton>
             <ActionButton onClick={() => deleteJobType(job.id)}>Delete</ActionButton>
             </>
         )}
@@ -148,14 +148,14 @@ function RepairsSettings(props) {
     </div>
 
     const renderedInstrumentStatuses = <div className='instrument-statuses'>
-        {props.instrumentStatuses.length === 0 && !creatingInstrumentStatus && 'No Statuses'}
-        {props.instrumentStatuses.map(status => editingInstrumentStatus.id !== undefined && editingInstrumentStatus.id === status.id ? <>
+        {props.instrumentStatuses ? props.instrumentStatuses.length === 0 && !creatingInstrumentStatus && 'No Statuses' : 'Loading'}
+        {props.instrumentStatuses && props.instrumentStatuses.map(status => editingInstrumentStatus.id !== undefined && editingInstrumentStatus.id === status.id ? <>
             <TextInput value={editingInstrumentStatus.status} onChange={(value) => setEditingInstrumentStatus({...editingInstrumentStatus, status: value})} />
             <ActionButton onClick={() => setEditingInstrumentStatus({})}>Cancel</ActionButton>
             <ActionButton onClick={saveInstrumentStatusEdit}>Save</ActionButton>
             </> : <>
             <BlockText>{status.status}</BlockText>
-            <ActionButton onClick={() => setEditingInstrumentStatus(props.instrumentStatuses.find(instrumentStatus => instrumentStatus.id === status.id))}>Edit</ActionButton>
+            <ActionButton onClick={() => setEditingInstrumentStatus(status)}>Edit</ActionButton>
             <ActionButton onClick={() => deleteInstrumentStatus(status.id)}>Delete</ActionButton>
             </>
         )}

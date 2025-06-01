@@ -13,6 +13,7 @@ import AccountSettings from './SettingsPages/AccountSettings';
 import './SettingsModal.css';
 
 import axios from 'axios';
+import MaterialsSettings from './SettingsPages/MaterialsSettings';
 
 function SettingsModal(props) {
 
@@ -40,6 +41,9 @@ function SettingsModal(props) {
     const updateInstrumentStatuses = (instrumentStatuses) => {
         setSettings({...settings, instrument_statuses: instrumentStatuses});
     }
+    const updateMaterials = (materials) => {
+        setSettings({...settings, materials: materials});
+    }
     const updateCalendarDetailsSettings = (calendarDetailsSettings) => {
         setSettings({...settings, calendar_details_settings: calendarDetailsSettings});
     }
@@ -64,6 +68,7 @@ function SettingsModal(props) {
             <div className='settings-content'>
             {pages[currentPage] === 'Repairers' ? <RepairersSettings repairers={repairers} updateRepairers={updateRepairers} />
             : pages[currentPage] === 'Repairs' ? <RepairsSettings jobTypes={settings.job_types} updateJobTypes={updateJobTypes} instrumentStatuses={settings.instrument_statuses} updateInstrumentStatuses={updateInstrumentStatuses} hourlyRate={settings.hourly_rate} updateHourlyRate={updateHourlyRate} />
+            : pages[currentPage] === 'Materials' ? <MaterialsSettings materials={settings.materials} updateMaterials={updateMaterials} />
             : pages[currentPage] === 'Calendar' ? <CalendarSettings calendarDetailsSettings={settings.calendar_details_settings} updateCalendarDetailsSettings={updateCalendarDetailsSettings} />
             : pages[currentPage] === 'Appearance' ? <AppearanceSettings />
             : pages[currentPage] === 'Account' ? <AccountSettings />

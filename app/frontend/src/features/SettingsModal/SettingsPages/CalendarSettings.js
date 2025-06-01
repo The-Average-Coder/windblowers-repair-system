@@ -33,7 +33,7 @@ function CalendarSettings(props) {
     const renderedDetails = <div className='details'>
         <div className='week-view-column'>
             <BlockTitle>Week View</BlockTitle>
-            {props.calendarDetailsSettings.map(setting => <div className='detail'>
+            {props.calendarDetailsSettings && props.calendarDetailsSettings.map(setting => <div className='detail'>
                 <BlockText>{setting.name}</BlockText>
                 <div>
                     <ToggleSwitch value={setting.week_enabled} onChange={(value) => toggleWeekDetail(setting.id, value)} />
@@ -45,7 +45,7 @@ function CalendarSettings(props) {
         
         <div className='day-view-column'>
             <BlockTitle>Day View</BlockTitle>
-            {props.calendarDetailsSettings.map(setting => <div className='detail'>
+            {props.calendarDetailsSettings && props.calendarDetailsSettings.map(setting => <div className='detail'>
                 <BlockText>{setting.name}</BlockText>
                 <div>
                     <ToggleSwitch value={setting.day_enabled} onChange={(value) => toggleDayDetail(setting.id, value)} />

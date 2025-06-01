@@ -14,7 +14,7 @@
     align-items: center;
 }
 
-.RepairsSettings .section-title div{
+.RepairsSettings .section-title div {
     flex: 1;
 }
 
@@ -27,7 +27,7 @@
 .RepairsSettings .job-types {
     margin-top: 16px;
     display: grid;
-    grid-template-columns: 200px auto 70px 70px;
+    grid-template-columns: 240px auto 70px 70px;
     gap: 8px;
     align-items: start;
 }

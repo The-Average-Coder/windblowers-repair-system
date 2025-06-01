@@ -21,6 +21,21 @@
     align-items: center;
 }
 
+.RepairersSettings .delete-button .ActionButton {
+    border-color: red;
+}
+.RepairersSettings .delete-button .ActionButton:hover {
+    background-color: var(--calendar-red);
+}
+
+
+.RepairersSettings .delete-button img {
+    height: 20px;
+    vertical-align: -5px;
+    margin-left: -3px;
+    margin-right: -2px;
+}
+
 .RepairersSettings .repairers-grid .delete-button {
     text-align: right;
 }

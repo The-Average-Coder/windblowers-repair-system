@@ -1,0 +1,22 @@
+.MaterialsSettings .materials-title {
+    display: flex;
+    align-items: center;
+}
+
+.MaterialsSettings .materials-title div {
+    flex: 1;
+}
+
+.MaterialsSettings .materials-title .ActionButton img {
+    height: 20px;
+    vertical-align: -5px;
+    margin-right: 6px;
+}
+
+.MaterialsSettings .materials-table {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 240px auto 70px 70px;
+    gap: 8px;
+    align-items: start;
+}
