@@ -17,11 +17,11 @@ router.get('/get', async (req, res) => {
         const [job_types, instrument_statuses, materials, calendar_details_settings, hourly_rate] = await Promise.all(queries);
 
         const formatted_data = {
-            job_types: job_types[0],
+            job_types: job_types[0].map(job_type => {return {...job_type, materials: job_type.materials.trim() !== '' ? job_type.materials.split(',').map(materialString => {return { id: materialString.split('x')[0], quantity: materialString.split('x')[1] }}) : []}}),
             instrument_statuses: instrument_statuses[0],
-            materials: materials[0],
+            materials: materials[0].map(material => {return {...material, price: material.price / 100}}),
             calendar_details_settings: calendar_details_settings[0],
-            hourly_rate: hourly_rate[0][0].hourly_rate
+            hourly_rate: hourly_rate[0][0].hourly_rate / 100
         };
 
         res.send(formatted_data);
@@ -37,8 +37,8 @@ router.post('/addJobType', async (req, res) => {
 
     try {
 
-        const response = await db.promise().query('INSERT INTO job_types (name, notes) VALUES (?, ?);',
-            [req.body.name, req.body.notes]);
+        const response = await db.promise().query('INSERT INTO job_types (name, notes, materials, time) VALUES (?, ?, ?, ?);',
+            [req.body.name, req.body.notes, req.body.materials.length > 0 ? req.body.materials.map(material => `${material.id}x${material.quantity}`).join(',') : '', req.body.time]);
 
         res.send(response[0]);
 
@@ -52,8 +52,8 @@ router.put('/updateJobType', async (req, res) => {
 
     try {
 
-        db.query('UPDATE job_types SET name = ?, notes = ? WHERE id = ?;',
-            [req.body.name, req.body.notes, req.body.id]);
+        db.query('UPDATE job_types SET name = ?, notes = ?, materials = ?, time = ? WHERE id = ?;',
+            [req.body.name, req.body.notes, req.body.materials.map(material => `${material.id}x${material.quantity}`).join(','), req.body.time, req.body.id]);
 
     } catch (err) {
         console.error('Failed to update job types:', err);
@@ -150,7 +150,7 @@ router.post('/addMaterial', async (req, res) => {
     try {
 
         const response = await db.promise().query('INSERT INTO materials (name, price) VALUES (?, ?);',
-            [req.body.name, req.body.price]);
+            [req.body.name, req.body.price * 100]);
 
         res.send(response[0]);
 
@@ -165,7 +165,7 @@ router.put('/updateMaterial', async (req, res) => {
     try {
 
         db.query('UPDATE materials SET name = ?, price = ? WHERE id = ?;',
-            [req.body.name, req.body.price, req.body.id]);
+            [req.body.name, req.body.price * 100, req.body.id]);
 
     } catch (err) {
         console.error('Failed to update materials:', err);
@@ -192,7 +192,7 @@ router.put('/updateHourlyRate', async(req, res) => {
     try {
 
         db.query('UPDATE hourly_rate SET hourly_rate = ? WHERE id = 1;',
-            [req.body.new_rate]);
+            [req.body.new_rate * 100]);
 
     }catch (err) {
         console.error('Failed to update hourly rate:', err);

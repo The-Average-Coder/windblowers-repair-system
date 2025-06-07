@@ -73,19 +73,19 @@ function MaterialsSettings(props) {
         {props.materials ? props.materials.length === 0 && !creatingMaterial && 'No Materials' : 'Loading'}
         {props.materials && props.materials.map(material => editingMaterial.id !== undefined && editingMaterial.id === material.id ? <>
             <TextInput value={editingMaterial.name} onChange={(value) => setEditingMaterial({...editingMaterial, name: value})} />
-            <TextInput value={`£${editingMaterial.price}`} onChange={(value) => setEditingMaterial({...editingMaterial, price: value.slice(1)})} />
+            <TextInput value={`£${editingMaterial.price}`} onChange={(value) => setEditingMaterial({...editingMaterial, price: value.slice(1).split('').filter(char => char >= '0' && char <= '9' || char =='.').join('')})} />
             <ActionButton onClick={() => setEditingMaterial({})}>Cancel</ActionButton>
             <ActionButton onClick={saveMaterialEdit}>Save</ActionButton>
             </> : <>
             <BlockText>{material.name}</BlockText>
-            <BlockText>{material.price}</BlockText>
+            <BlockText>£{parseFloat(material.price).toFixed(2)}</BlockText>
             <ActionButton onClick={() => setEditingMaterial(material)}>Edit</ActionButton>
             <ActionButton onClick={() => deleteMaterial(material.id)}>Delete</ActionButton>
             </>
         )}
         {creatingMaterial && <>
             <TextInput value={newMaterialName} onChange={(value) => setNewMaterialName(value)} />
-            <TextInput value={`£${newMaterialPrice}`} onChange={(value) => setNewMaterialPrice(value.slice(1))} />
+            <TextInput value={`£${newMaterialPrice}`} onChange={(value) => setNewMaterialPrice(value.slice(1).split('').filter(char => char >= '0' && char <= '9').join(''))} />
             <ActionButton onClick={cancelNewMaterial}>Cancel</ActionButton>
             <ActionButton onClick={addNewMaterial}>Save</ActionButton>
         </>}

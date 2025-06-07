@@ -29,7 +29,7 @@ function SettingsModal(props) {
             .catch(error => console.log(error));
 
         axios.get('/api/settings/get')
-            .then(response => setSettings(response.data))
+            .then(response => {setSettings(response.data);console.log(response.data.job_types)})
             .catch(error => console.log(error));
     }, [])
 
@@ -67,7 +67,7 @@ function SettingsModal(props) {
 
             <div className='settings-content'>
             {pages[currentPage] === 'Repairers' ? <RepairersSettings repairers={repairers} updateRepairers={updateRepairers} />
-            : pages[currentPage] === 'Repairs' ? <RepairsSettings jobTypes={settings.job_types} updateJobTypes={updateJobTypes} instrumentStatuses={settings.instrument_statuses} updateInstrumentStatuses={updateInstrumentStatuses} hourlyRate={settings.hourly_rate} updateHourlyRate={updateHourlyRate} />
+            : pages[currentPage] === 'Repairs' ? <RepairsSettings jobTypes={settings.job_types} updateJobTypes={updateJobTypes} materials={settings.materials} instrumentStatuses={settings.instrument_statuses} updateInstrumentStatuses={updateInstrumentStatuses} hourlyRate={settings.hourly_rate} updateHourlyRate={updateHourlyRate} />
             : pages[currentPage] === 'Materials' ? <MaterialsSettings materials={settings.materials} updateMaterials={updateMaterials} />
             : pages[currentPage] === 'Calendar' ? <CalendarSettings calendarDetailsSettings={settings.calendar_details_settings} updateCalendarDetailsSettings={updateCalendarDetailsSettings} />
             : pages[currentPage] === 'Appearance' ? <AppearanceSettings />

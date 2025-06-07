@@ -27,9 +27,56 @@
 .RepairsSettings .job-types {
     margin-top: 16px;
     display: grid;
-    grid-template-columns: 240px auto 70px 70px;
+    grid-template-columns: 240px auto 220px 220px 70px 70px;
     gap: 8px;
     align-items: start;
+}
+
+.RepairsSettings .job-types .TextAreaInput {
+    width: 90%;
+}
+
+.RepairsSettings .job-types .materials-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: start;
+}
+
+.RepairsSettings .job-types .material-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.RepairsSettings .job-types .material-input .TextInput {
+    width: 30px;
+    padding: 2px 8px;
+}
+
+.RepairsSettings .job-types .material-input .ActionButton {
+    border-color: red;
+    height: 24px;
+    width: 24px;
+    padding: 3px;
+}
+
+.RepairsSettings .job-types .material-input .ActionButton:hover {
+    background-color: var(--calendar-red);
+}
+
+.RepairsSettings .job-types .material-input .ActionButton img {
+    width: 16px;
+}
+
+.RepairsSettings .job-types .time-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.RepairsSettings .job-types .DropdownSelect {
+    font-size: 13px;
+    padding: 5px;
 }
 
 .RepairsSettings .instrument-statuses {

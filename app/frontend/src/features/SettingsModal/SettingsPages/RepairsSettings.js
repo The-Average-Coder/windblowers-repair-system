@@ -5,12 +5,17 @@ import BlockText from '../../../components/Text/BlockText';
 import ActionButton from '../../../components/Buttons/ActionButton';
 import TextInput from '../../../components/Inputs/TextInput';
 import TextAreaInput from '../../../components/Inputs/TextAreaInput';
+import HoursDropdownSelect from '../../../components/Inputs/HoursDropdownSelect';
+import MinutesDropdownSelect from '../../../components/Inputs/MinutesDropdownSelect';
 
 import './RepairsSettings.css';
 
 import plusWhite from '../../../images/plus-icon/plusWhite.png';
 
+import deleteRed from '../../../images/delete-icon/deleteRed.png';
+
 import axios from 'axios';
+import DropdownSelect from '../../../components/Inputs/DropdownSelect';
 
 function RepairsSettings(props) {
 
@@ -19,6 +24,8 @@ function RepairsSettings(props) {
     const [creatingJobType, setCreatingJobType] = useState(false);
     const [newJobTypeName, setNewJobTypeName] = useState('');
     const [newJobTypeNotes, setNewJobTypeNotes] = useState('');
+    const [newJobTypeMaterials, setNewJobTypeMaterials] = useState([]);
+    const [newJobTypeTime, setNewJobTypeTime] = useState('0');
 
     const [editingInstrumentStatus, setEditingInstrumentStatus] = useState({});
     const [creatingInstrumentStatus, setCreatingInstrumentStatus] = useState(false);
@@ -26,11 +33,26 @@ function RepairsSettings(props) {
 
 
     // #### COMMON JOB MANAGEMENT FUNCTIONS
+    const updateJobTypeMaterialQuantity = (id, quantity) => {
+        const newMaterials = [...editingJobType.materials];
+        const updatedMaterial = newMaterials.find(material => material.id === id);
+        updatedMaterial.quantity = quantity.split('').filter(char => char >= '0' && char <= '9').join('');
+        setEditingJobType({...editingJobType, materials: newMaterials});
+    }
+    const updateNewJobTypeMaterialQuantity = (id, quantity) => {
+        const newMaterials = [...newJobTypeMaterials];
+        const updatedMaterial = newMaterials.find(material => material.id === id);
+        updatedMaterial.quantity = quantity.split('').filter(char => char >= '0' && char <= '9').join('');
+        setNewJobTypeMaterials(newMaterials);
+    }
+
     const saveJobTypeEdit = () => {
-        const newJobTypes = [...props.jobTypes]
+        const newJobTypes = [...props.jobTypes];
         const updatedJobType = newJobTypes.find(job => job.id === editingJobType.id)
         updatedJobType.name = editingJobType.name;
         updatedJobType.notes = editingJobType.notes;
+        updatedJobType.time = editingJobType.time;
+        updatedJobType.materials = editingJobType.materials;
         props.updateJobTypes(newJobTypes)
 
         axios.put('/api/settings/updateJobType', updatedJobType)
@@ -49,18 +71,23 @@ function RepairsSettings(props) {
     const cancelNewJobType = () => {
         setNewJobTypeName('');
         setNewJobTypeNotes('');
+        setNewJobTypeMaterials([]);
+        setNewJobTypeTime('0');
         setCreatingJobType(false);
     }
     const addNewJobType = () => {
         if (newJobTypeName.trim() === '') return;
-        
-        axios.post('/api/settings/addJobType', {name: newJobTypeName, notes: newJobTypeNotes})
+
+        const newJob = {
+            name: newJobTypeName,
+            notes: newJobTypeNotes,
+            materials: newJobTypeMaterials,
+            time: newJobTypeTime
+        }
+
+        axios.post('/api/settings/addJobType', newJob)
             .then(response => {
-                props.updateJobTypes([...props.jobTypes, {
-                    id: response.data.insertId,
-                    name: newJobTypeName,
-                    notes: newJobTypeNotes
-                }]);
+                props.updateJobTypes([...props.jobTypes, {...newJob, id: response.data.insertId}]);
 
                 setNewJobTypeName('');
                 setNewJobTypeNotes('');
@@ -113,9 +140,10 @@ function RepairsSettings(props) {
 
     // #### HOURLY RATE MANAGEMENT FUNCTIONS
     const updateHourlyRate = (value) => {
-        props.updateHourlyRate(value);
+        const numberValue = value.split('').filter(char => char >= '0' && char <= '9' || char == '.').join('')
+        props.updateHourlyRate(numberValue);
 
-        axios.put('/api/settings/updateHourlyRate', {new_rate: value})
+        axios.put('/api/settings/updateHourlyRate', {new_rate: numberValue})
             .catch(error => console.log(error));
     }
 
@@ -124,17 +152,36 @@ function RepairsSettings(props) {
     const renderedJobTypes = <div className='job-types'>
         <BlockTitle className='name'>Name</BlockTitle>
         <BlockTitle className='notes'>Notes</BlockTitle>
+        <BlockTitle className='notes'>Materials</BlockTitle>
+        <BlockTitle className='notes'>Time</BlockTitle>
         <div />
         <div />
         {props.jobTypes ? props.jobTypes.length === 0 && !creatingJobType && 'No Job Types' : 'Loading'}
         {props.jobTypes && props.jobTypes.map(job => editingJobType.id !== undefined && editingJobType.id === job.id ? <>
             <TextInput value={editingJobType.name} onChange={(value) => setEditingJobType({...editingJobType, name: value})} />
             <TextAreaInput value={editingJobType.notes} onChange={(value) => setEditingJobType({...editingJobType, notes: value})} />
+            
+            <div className='materials-input'>
+                {editingJobType.materials.map(material => <div className='material-input'>
+                    <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name}</BlockText>
+                    <TextInput value={material.quantity} onChange={(value) => updateJobTypeMaterialQuantity(material.id, value)} />
+                    <ActionButton onClick={() => setEditingJobType({...editingJobType, materials: editingJobType.materials.filter(otherMaterial => otherMaterial.id !== material.id)})}><img src={deleteRed} /></ActionButton>
+                </div>)}
+                <DropdownSelect options={props.materials.map(materialOption => {return {name: materialOption.name, value: materialOption.id}})} placeholder='Select Material' value={''} onChange={(value) => editingJobType.materials.find(otherMaterial => otherMaterial.id === value) || setEditingJobType({...editingJobType, materials: [...editingJobType.materials, {id: value, quantity: 0}]})} />
+            </div>
+            
+            <div className='time-inputs'>
+                <HoursDropdownSelect value={Math.floor(editingJobType.time / 60)} onChange={(updatedHours) => setEditingJobType({...editingJobType, time: updatedHours * 60 + editingJobType.time % 60})} />
+                <MinutesDropdownSelect value={editingJobType.time % 60} onChange={(updatedMinutes) => setEditingJobType({...editingJobType, time: Math.floor(editingJobType.time / 60) * 60 + parseInt(updatedMinutes)})} />
+            </div>
+
             <ActionButton onClick={() => setEditingJobType({})}>Cancel</ActionButton>
             <ActionButton onClick={saveJobTypeEdit}>Save</ActionButton>
             </> : <>
             <BlockText>{job.name}</BlockText>
             <BlockText>{job.notes}</BlockText>
+            <div>{job.materials.map(material => <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name} <strong>x{material.quantity}</strong></BlockText>)}</div>
+            <BlockText>{Math.floor(job.time / 60)} Hrs {job.time % 60} Mins</BlockText>
             <ActionButton onClick={() => setEditingJobType(job)}>Edit</ActionButton>
             <ActionButton onClick={() => deleteJobType(job.id)}>Delete</ActionButton>
             </>
@@ -142,6 +189,21 @@ function RepairsSettings(props) {
         {creatingJobType && <>
             <TextInput value={newJobTypeName} onChange={(value) => setNewJobTypeName(value)} />
             <TextAreaInput value={newJobTypeNotes} onChange={(value) => setNewJobTypeNotes(value)} />
+            
+            <div className='materials-input'>
+                {newJobTypeMaterials.map(material => <div className='material-input'>
+                    <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name}</BlockText>
+                    <TextInput value={material.quantity} onChange={(value) => updateNewJobTypeMaterialQuantity(material.id, value)} />
+                    <ActionButton onClick={() => setNewJobTypeMaterials(newJobTypeMaterials.filter(otherMaterial => otherMaterial.id !== material.id))}><img src={deleteRed} /></ActionButton>
+                </div>)}
+                <DropdownSelect options={props.materials.map(materialOption => {return {name: materialOption.name, value: materialOption.id}})} placeholder='Select Material' value={''} onChange={(value) => newJobTypeMaterials.find(otherMaterial => otherMaterial.id === value) || setNewJobTypeMaterials([...newJobTypeMaterials, {id: value, quantity: 0}])} />
+            </div>
+            
+            <div className='time-inputs'>
+                <HoursDropdownSelect value={Math.floor(newJobTypeTime / 60)} onChange={(updatedHours) => setNewJobTypeTime(updatedHours * 60 + (newJobTypeTime % 60))} />
+                <MinutesDropdownSelect value={newJobTypeTime % 60} onChange={(updatedMinutes) => setNewJobTypeTime(Math.floor(newJobTypeTime / 60) * 60 + parseInt(updatedMinutes))} />
+            </div>
+            
             <ActionButton onClick={cancelNewJobType}>Cancel</ActionButton>
             <ActionButton onClick={addNewJobType}>Save</ActionButton>
         </>}

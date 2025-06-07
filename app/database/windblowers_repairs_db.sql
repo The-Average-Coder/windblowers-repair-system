@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 01, 2025 at 03:48 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Jun 07, 2025 at 02:19 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,10 +31,10 @@ CREATE TABLE `assessments` (
   `id` int(11) NOT NULL,
   `repair_id` varchar(10) NOT NULL,
   `date_created` date NOT NULL,
-  `time` int(11) NOT NULL,
-  `time_cost` int(11) NOT NULL,
+  `time` int(11) NOT NULL DEFAULT 0,
+  `time_cost` int(11) NOT NULL DEFAULT 0,
   `materials` text NOT NULL,
-  `material_cost` text NOT NULL,
+  `material_cost` int(11) NOT NULL DEFAULT 0,
   `job_type_id` int(11) NOT NULL,
   `notes` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,7 +44,7 @@ CREATE TABLE `assessments` (
 --
 
 INSERT INTO `assessments` (`id`, `repair_id`, `date_created`, `time`, `time_cost`, `materials`, `material_cost`, `job_type_id`, `notes`) VALUES
-(1, '2522001', '2025-05-27', 240, 180, '', '', 1, 'Some Notes');
+(1, '2522001', '2025-05-27', 240, 180, '', 0, 1, 'Some Notes');
 
 -- --------------------------------------------------------
 
@@ -82,6 +82,7 @@ CREATE TABLE `calendar_events` (
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `date` date NOT NULL,
+  `time` int(11) NOT NULL DEFAULT 0,
   `color` varchar(20) NOT NULL,
   `repairer_id` int(11) NOT NULL,
   `repair_id` varchar(10) NOT NULL
@@ -91,8 +92,8 @@ CREATE TABLE `calendar_events` (
 -- Dumping data for table `calendar_events`
 --
 
-INSERT INTO `calendar_events` (`id`, `type`, `title`, `description`, `date`, `color`, `repairer_id`, `repair_id`) VALUES
-(1, 'Repair', '', '', '2025-05-29', 'blue', 1, '2522001');
+INSERT INTO `calendar_events` (`id`, `type`, `title`, `description`, `date`, `time`, `color`, `repairer_id`, `repair_id`) VALUES
+(1, 'Repair', '', '', '2025-05-29', 0, 'blue', 1, '2522001');
 
 -- --------------------------------------------------------
 
@@ -132,7 +133,7 @@ CREATE TABLE `hourly_rate` (
 --
 
 INSERT INTO `hourly_rate` (`id`, `hourly_rate`) VALUES
-(1, 45);
+(1, 4500);
 
 -- --------------------------------------------------------
 
@@ -185,24 +186,18 @@ CREATE TABLE `job_types` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `notes` text NOT NULL,
-  `materials` text NOT NULL
+  `materials` text NOT NULL,
+  `time` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `job_types`
 --
 
-INSERT INTO `job_types` (`id`, `name`, `notes`, `materials`) VALUES
-(1, 'Unspecified', '', ''),
-(2, 'Repad', 'Repad Notes', ''),
-(3, 'Clean', 'Clean Notes', ''),
-(12, 'Flute Repad', 'Flute Repad Notes\nMore Notes', ''),
-(13, 'Clarinet Repad', 'Clarinet  Repad Notes\nMore Notes', ''),
-(14, 'Soprano Saxophone Repad', 'Soprano Sax Repad Notes\nMore Notes', ''),
-(15, 'Alto Saxophone Repad', 'Alto Sax  Repad Notes\nMore Notes', ''),
-(16, 'Tenor Saxophone Repaid', 'Tenor Sax  Repad Notes\nMore Notes', ''),
-(17, 'Baritone Saxophone Repad', 'Baritone Sax  Repad Notes\nMore Notes', ''),
-(18, 'Bass Saxophone Repaid', 'Bass Sax  Repad Notes\nMore Notes', '');
+INSERT INTO `job_types` (`id`, `name`, `notes`, `materials`, `time`) VALUES
+(1, 'Unspecified', '', '', 0),
+(19, 'Flute Repad', 'Clean flute\nRepad it', '2x20', 225),
+(20, 'Saxophone Repad', 'Clean saxophone\nThen repad it...', '4x24,5x6', 240);
 
 -- --------------------------------------------------------
 
@@ -213,7 +208,7 @@ INSERT INTO `job_types` (`id`, `name`, `notes`, `materials`) VALUES
 CREATE TABLE `materials` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `price` int(11) NOT NULL
+  `price` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -221,8 +216,12 @@ CREATE TABLE `materials` (
 --
 
 INSERT INTO `materials` (`id`, `name`, `price`) VALUES
-(2, 'Flute Pad', 50),
-(3, 'Clarinet Pad', 12);
+(2, 'Flute Pad', 90),
+(3, 'Clarinet Pad', 110),
+(4, 'Saxophone Pad', 145),
+(5, 'Large Saxophone Pad', 200),
+(6, 'Piano Key', 1500),
+(7, 'Piano Hammer', 2560);
 
 -- --------------------------------------------------------
 
@@ -380,13 +379,13 @@ ALTER TABLE `instrument_statuses`
 -- AUTO_INCREMENT for table `job_types`
 --
 ALTER TABLE `job_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `materials`
 --
 ALTER TABLE `materials`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `repairers`
