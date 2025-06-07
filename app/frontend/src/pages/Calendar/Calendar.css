@@ -277,10 +277,6 @@
     .Calendar .PageTitle .calendar-mode-toggle {
         left: 50%;
     }
-
-    .Calendar .PageTitle .navigation-arrows {
-        right: 16px;
-    }
 }
 
 @media screen and (max-width: 600px) {

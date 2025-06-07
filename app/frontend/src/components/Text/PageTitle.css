@@ -1,27 +1,3 @@
-@keyframes shrinkParent {
-    0% {
-        border-bottom: 1px solid var(--background);
-    }
-
-    25% {
-        border-bottom: 1px solid var(--content-border);
-    }
-
-    50%, to {
-        font-size: 18px;
-        padding-top: 0;
-        padding-left: 0;
-        border-bottom: 1px solid var(--content-border);
-    }
-}
-
-@keyframes shrinkChild {
-    50%, to {
-        margin-left: 50%;
-        transform: translateX(-50%);
-    }
-}
-
 .PageTitle {
 
     display: flex;
@@ -34,31 +10,4 @@
     padding: 12px 0;
     z-index: 1;
 
-}
-
-.PageTitle p {
-    flex: 1;
-    display: flex;
-}
-
-@media screen and (max-width: 1000px) {
-    .PageTitle {
-        width: 100%;
-        left: 0;
-        padding-left: 12px;
-    }
-}
-
-@media screen and (max-width: 500px) {
-    @supports (animation-timeline: scroll()) {
-        .PageTitle:not(.static) {
-            animation: shrinkParent linear both;
-            animation-timeline: scroll(y);
-        }
-    
-        .PageTitle:not(.static) p {
-            animation: shrinkChild linear both;
-            animation-timeline: scroll(y);
-        }
-    }
 }

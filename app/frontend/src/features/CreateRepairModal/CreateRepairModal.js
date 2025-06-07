@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ActionButton from '../../components/Buttons/ActionButton';
 import ModalWindow from '../../components/Containers/ModalWindow';
@@ -10,7 +10,14 @@ import ModalTitle from '../../components/Text/ModalTitle';
 
 import './CreateRepairModal.css';
 
+import axios from 'axios';
+
 function CreateRepairModal(props) {
+
+    
+
+    // #### DATA
+    const [instrumentStatuses, setInstrumentStatuses] = useState([]);
 
     const instrumentTypeOptions = [
         {group: 'Flute Family', options: [
@@ -62,15 +69,20 @@ function CreateRepairModal(props) {
         {name: 'Other', value: 'Other'}
     ]
 
-    const statuses = [
-        'Not Yet Dropped Off', 'In Workshop'
-    ]
+    // #### DATABASE FETCH DATA
+    useEffect(() => {
+        axios.get('/api/settings/getInstrumentStatuses')
+            .then(response => setInstrumentStatuses(response.data))
+            .catch(error => console.log(error));
+    }, [])
 
-    const statusOptions = statuses.map((status, index) => {return {name: status, value: index}})
-
+    // #### STATE VARIABLES
     const [customerSearch, setCustomerSearch] = useState('')
+    const [customerSearchResults, setCustomerSearchResults] = useState(null);
     const [creatingNewCustomer, setCreatingNewCustomer] = useState(false);
+
     const [instrumentSearch, setInstrumentSearch] = useState('')
+    const [instrumentSearchResults, setInstrumentSearchResults] = useState(null);
     const [creatingNewInstrument, setCreatingNewInstrument] = useState(false);
 
     const [customer, setCustomer] = useState({});
@@ -80,6 +92,32 @@ function CreateRepairModal(props) {
 
     const [errorMessage, setErrorMessage] = useState('');
 
+
+    // #### SEARCH FUNCTIONS
+    const searchCustomer = (query) => {
+        setCustomerSearch(query);
+        setCustomerSearchResults(null);
+
+        if (query.trim() === '') return;
+
+        axios.get(`/api/customers/search/${query}`)
+            .then(response => setCustomerSearchResults(response.data))
+            .catch(error => console.log(error));
+    }
+
+    const searchInstrument = (query) => {
+        setInstrumentSearch(query);
+        setInstrumentSearchResults(null);
+
+        if (query.trim() === '') return;
+
+        axios.get(`/api/instruments/search/${query}`)
+            .then(response => setInstrumentSearchResults(response.data))
+            .catch(error => console.log(error));
+    }
+
+
+    // #### CREATE FUNCTIONS
     const createNewCustomer = () => {
         setInHouseCustomer(false);
         setCustomer({
@@ -92,7 +130,6 @@ function CreateRepairModal(props) {
         });
         setCreatingNewCustomer(true);
     }
-
     const createNewInstrument = () => {
         setInstrument({
             type: '',
@@ -150,6 +187,10 @@ function CreateRepairModal(props) {
             setErrorMessage('Instrument model required');
             return false;
         }
+        if (instrument.status_id === undefined) {
+            setErrorMessage('Status required');
+            return false;
+        }
 
         setErrorMessage('');
         return true;
@@ -158,10 +199,14 @@ function CreateRepairModal(props) {
     return (<ModalWindow className='CreateRepairWindow' closeFunction={props.closeFunction}>
         <ModalTitle>Create Repair</ModalTitle>
         <div className='details'>
+
+            {/* Customer */}
             <div className='customer-details'>
                 <BlockTitle>Customer</BlockTitle>
 
                 {creatingNewCustomer ? <>
+
+                {/* Create New Customer Form */}
                 <div className='new-customer-name'>
                     <TextInput value={customer.firstname} onChange={(value) => setCustomer({...customer, firstname: value})} placeholder='Firstname' />
                     <TextInput value={customer.surname} onChange={(value) => setCustomer({...customer, surname: value})} placeholder='Surname' />
@@ -187,19 +232,53 @@ function CreateRepairModal(props) {
 
                 </div>
 
-                </> : <>
-                <TextInput className='name' value={customerSearch} onChange={setCustomerSearch} placeholder='Search Name' />
+                </> :
+
+                customer.id ? <>
+                <p>{customer.firstname} {customer.surname}</p>
+                <p>{customer.telephone}</p>
+                <p>{customer.email}</p>
+                <p>{customer.address}</p>
+                </>
+                
+                : <>
+
+                {/* Search Customer */}
+                <TextInput className='name-search' value={customerSearch} onChange={searchCustomer} placeholder='Search Name' />
                 <input className='in-house-repair-checkbox' type='checkbox' onChange={(e) => setInHouseCustomer(e.target.checked)} /><label>In House Repair</label>
-                {customerSearch !== '' ? <>
-                    <p className='search-results'>No Results Found</p>
+                
+                {/* Search Loading */}
+                {customerSearch && !customerSearchResults && !inHouseCustomer && <>
+                    <p className='search-results'>Loading</p>
+                </>}
+
+                {/* Search Results */}
+                {customerSearchResults && !inHouseCustomer && <>
+
+                    <div className='search-results'>
+                    {customerSearchResults.length > 0 ? customerSearchResults.map(customer => 
+                        <div className='search-result' onClick={() => setCustomer(customer)}>
+                            <div className='details-flex-container'>
+                                <p className='name'>{customer.firstname} {customer.surname}</p>
+                                {customer.telephone && <p className='telephone'>{customer.telephone}</p>}
+                                {customer.email && <p className='email'>{customer.email}</p>}
+                                <div className='blankspace' />
+                            </div>
+                        </div>
+                    )
+                    : 'No Results Found'}
+                    </div>
+
                     <ActionButton className='create-new-customer-button' onClick={createNewCustomer}>Create New Customer</ActionButton>
-                </> : null}
+                </>}
+
                 </>}
                 
 
             </div>
 
-            {customer.surname !== undefined || inHouseCustomer ? <div className='instrument-details'>
+            {/* Instrument */}
+            {(customer.surname !== undefined || inHouseCustomer) && <div className='instrument-details'>
                 <BlockTitle>Instrument</BlockTitle>
 
                 {creatingNewInstrument ? <>
@@ -220,25 +299,61 @@ function CreateRepairModal(props) {
                     <span>
                         <BlockTitle>Status</BlockTitle>
                         <div className='text-inputs'>
-                            <DropdownSelect value={instrument.status} onChange={(value) => setInstrument({...instrument, status: value})} options={statusOptions} placeholder='Status' />
+                            <DropdownSelect value={instrument.status_id} onChange={(value) => setInstrument({...instrument, status_id: value})} options={instrumentStatuses.map(status => {return {name: status.status, value: status.id}})} placeholder='Status' />
                         </div>
                     </span>
 
                 </div>
 
-                </> : <>
-                <TextInput className='serial_number' value={instrumentSearch} onChange={setInstrumentSearch} placeholder='Search Serial Number' />
-                {instrumentSearch !== '' ? <>
-                    <p className='search-results'>No Results Found</p>
-                    <ActionButton className='create-new-instrument-button' onClick={createNewInstrument}>Create New Instrument</ActionButton>
-                </> : null}
-                </>}
-            </div> : null}
+                </> :
+                
+                instrument.serial_number ? <>
+                <p>{instrument.serial_number}</p>
+                <p>{instrument.type}</p>
+                <p>{instrument.manufacturer} {instrument.model}</p>
+                <DropdownSelect value={instrument.status_id} onChange={(value) => setInstrument({...instrument, status_id: value})} options={instrumentStatuses.map(status => {return {name: status.status, value: status.id}})} placeholder='Status' />
+                </>
+                
+                : <>
 
+                {/* Search Instrument */}
+                <TextInput className='serial-number-search' value={instrumentSearch} onChange={searchInstrument} placeholder='Search Serial Number' />
+                
+                {/* Search Loading */}
+                {instrumentSearch && !instrumentSearchResults && <>
+                    <p className='search-results'>Loading</p>
+                </>}
+
+                {/* Search Results */}
+                {instrumentSearchResults && <>
+
+                <div className='search-results'>
+                    {instrumentSearchResults.length > 0 ? instrumentSearchResults.map(instrument => 
+                        <div className='search-result' onClick={() => setInstrument(instrument)}>
+                            <div className='details-flex-container'>
+                                <p className='serial-number'>{instrument.serial_number}</p>
+                                <p className='type'>{instrument.type}</p>
+                                <p className='instrument'>{instrument.manufacturer} {instrument.model}</p>
+                                <div className='blankspace' />
+                            </div>
+                        </div>
+                    )
+                    : 'No Results Found'}
+                </div>
+
+                <ActionButton className='create-new-instrument-button' onClick={createNewInstrument}>Create New Instrument</ActionButton>
+                </>}
+
+                </>}
+            </div>}
+
+            {/* Job Type and Notes */}
             {instrument.serial_number !== undefined && (customer.surname !== undefined || inHouseCustomer) ? <div className='notes'>
-                <BlockTitle>Notes</BlockTitle>
+                <BlockTitle>Job Type and Notes</BlockTitle>
+                <DropdownSelect options={[]} placeholder='Job Type' />
                 <TextAreaInput value={notes} onChange={setNotes} placeholder='Notes' />
             </div> : null}
+
         </div>
 
         <p className='error-message'>{errorMessage}</p>

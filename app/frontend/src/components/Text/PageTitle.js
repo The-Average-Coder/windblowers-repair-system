@@ -4,7 +4,7 @@ function PageTitle(props) {
 
     return (
         <div className={`PageTitle ${props.static && 'static'} ${props.className}`}>
-            <p>{props.children}</p>
+            {props.children}
         </div>
     );
 }

@@ -17,4 +17,20 @@ router.put('/update', async (req, res) => {
 
 })
 
+router.get('/search/:query', async (req, res) => {
+
+    try {
+
+        const searchResults = await db.promise().query('SELECT id, firstname, surname, email, telephone, address FROM customers WHERE CONCAT(firstname, " ", surname) LIKE CONCAT("%", ?, "%") LIMIT 20;',
+            [req.params.query]);
+        
+        res.send(searchResults[0]);
+
+    } catch (err) {
+        console.error('Failed to search customers:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
 module.exports = router;

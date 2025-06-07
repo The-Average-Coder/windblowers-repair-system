@@ -29,7 +29,7 @@ function SettingsModal(props) {
             .catch(error => console.log(error));
 
         axios.get('/api/settings/get')
-            .then(response => {setSettings(response.data);console.log(response.data.job_types)})
+            .then(response => setSettings(response.data))
             .catch(error => console.log(error));
     }, [])
 

@@ -9,10 +9,6 @@
     height: calc(100% - 80px);
 }
 
-.CreateRepairWindow .customer-details {
-    margin-top: 8px;
-}
-
 .CreateRepairWindow .customer-details .new-customer-name {
     display: flex;
     gap: 8px;
@@ -27,12 +23,45 @@
     margin-right: 4px;
 }
 
-.CreateRepairWindow .customer-details .search-results,
+.CreateRepairWindow .name-search, .CreateRepairWindow .serial-number-search {
+    margin-top: 4px;
+}
+.CreateRepairWindow .customer-details,
 .CreateRepairWindow .customer-details .create-new-customer-button,
 .CreateRepairWindow .instrument-details .search-results,
 .CreateRepairWindow .instrument-details .create-new-instrument-button {
     margin-top: 8px;
 }
+
+.CreateRepairWindow .search-results {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--subcontent-border);
+}
+
+.CreateRepairWindow .search-result {
+    border-bottom: 1px solid var(--subcontent-border);
+    transition: 0.1s;
+}
+.CreateRepairWindow .search-result .details-flex-container {
+    margin: 0 8px;
+    padding: 2px 0;
+    transition: 0.1s;
+    display: flex;
+}
+.CreateRepairWindow .search-result:hover .details-flex-container {
+    margin: 0;
+    padding: 2px 8px;
+    background-color: var(--subcontent-border);
+    cursor: pointer;
+}
+
+.CreateRepairWindow .customer-details .search-result .details-flex-container .name { width: 160px; }
+.CreateRepairWindow .customer-details .search-result .details-flex-container .telephone { width: 160px; }
+
+.CreateRepairWindow .instrument-details .search-result .details-flex-container .serial-number { width: 120px; }
+.CreateRepairWindow .instrument-details .search-result .details-flex-container .type { width: 120px; }
 
 .CreateRepairWindow .basic-info {
     display: flex;
