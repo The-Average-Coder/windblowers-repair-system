@@ -17,6 +17,22 @@ router.put('/update', async (req, res) => {
 
 })
 
+router.post('/create', async (req, res) => {
+
+    try {
+    
+        const response = await db.promise().query('INSERT INTO customers (firstname, surname, email, telephone, address) VALUES (?, ?, ?, ?, ?);',
+            [req.body.firstname, req.body.surname, req.body.email, req.body.telephone, req.body.address]);
+
+        res.send(response[0]);
+
+    } catch (err) {
+        console.error('Failed to update customers:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
+})
+
 router.get('/search/:query', async (req, res) => {
 
     try {

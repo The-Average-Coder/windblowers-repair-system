@@ -28,7 +28,7 @@ function RepairersSettings(props) {
         updatedRepairer.hours[index] = value;
         props.updateRepairers(newRepairers);
 
-        axios.put('/api/repairers/updateRepairer', updatedRepairer)
+        axios.put('/api/repairers/update', updatedRepairer)
             .catch(error => console.log(error));
     }
 
@@ -37,14 +37,14 @@ function RepairersSettings(props) {
         
         props.updateRepairers(props.repairers.filter(repairer => repairer.id !== repairerId));
 
-        axios.delete(`/api/repairers/deleteRepairer/${repairerId}`)
+        axios.delete(`/api/repairers/delete/${repairerId}`)
             .catch(error => console.log(error));
     }
 
     const addNewRepairer = () => {
         if (newRepairerName.trim() === '') return;
 
-        axios.post('/api/repairers/addRepairer', {name: newRepairerName, hours: [0, 0, 0, 0, 0]})
+        axios.post('/api/repairers/create', {name: newRepairerName, hours: [0, 0, 0, 0, 0]})
             .then(response => {
                 props.updateRepairers([
                     ...props.repairers,

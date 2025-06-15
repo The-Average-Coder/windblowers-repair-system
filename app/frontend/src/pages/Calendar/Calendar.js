@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DndContext, useSensor, useSensors, KeyboardSensor, MouseSensor, TouchSensor, DragOverlay, useDroppable } from '@dnd-kit/core';
+import { DndContext, useSensor, useSensors, KeyboardSensor, MouseSensor, DragOverlay, useDroppable } from '@dnd-kit/core';
 
 import eventBus from '../../utils/eventBus';
 
@@ -263,12 +263,10 @@ function Calendar() {
 
     // #### DRAG AND DROP INITIALISATION
     const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 5 }});
-    const touchSensor = useSensor(TouchSensor, { activationConstraint: { distance: 5 }});
     const keyboardSensor = useSensor(KeyboardSensor);
     
     const sensors = useSensors(
         mouseSensor,
-        touchSensor,
         keyboardSensor,
     )
 

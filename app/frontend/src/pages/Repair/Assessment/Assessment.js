@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import BlockTitle from '../../../components/Text/BlockTitle';
 import BlockText from '../../../components/Text/BlockText';
@@ -16,49 +16,53 @@ import editHoverDark from '../../../images/edit-icon/editHoverDark.png';
 
 function Assessment(props) {
 
-    // #### RAW TEST DATA
-    const JOB_TYPE_OPTIONS = [
-        {name: 'Unspecified', value: 0},
-        {name: 'Repad', value: 1},
-        {name: 'Clean', value: 2},
-        {name: 'Wax', value: 3}
-    ]
-
-    const JOB_TYPES = [
-        { id: 0, name: 'Unspecified', notes: '' },
-        { id: 1, name: 'Repad', notes: 'bla bla bla' },
-        { id: 2, name: 'Clean', notes: 'whish whosh whish whosh' },
-        { id: 3, name: 'Wax', notes: 'wax on wax off, wax on wax off' },
-    ]
-
     // #### STATE VARIABLES
-    const [editNotesMode, setEditNotesMode] = useState(false);
-    const [tempJobType, setTempJobType] = useState('');
+    const [currentAssessment, setCurrentAssessment] = useState(-1);
+
+    const [editMode, setEditMode] = useState(false);
     const [tempNotes, setTempNotes] = useState('');
+    const [tempTime, setTempTime] = useState(0);
+    const [tempTimeCost, setTempTimeCost] = useState(0);
+    const [tempMaterials, setTempMaterials] = useState([]);
+
+
+    // #### STATE VARIABLE INITIALISATION
+    useEffect(() => {
+
+        if (props.assessments && props.assessments.length > 0) {
+            setCurrentAssessment(props.assessments.length - 1);
+        }
+        else {
+            setCurrentAssessment(-1);
+        }
+
+    }, [props.assessments])
     
     
     // #### DATA MANAGEMENT FUNCTIONS
-    const toggleEditNotesMode = () => {
-        setTempJobType(props.assessment.job_type_id);
-        setTempNotes(props.assessment.notes);
-        setEditNotesMode(!editNotesMode);
+    const toggleEditMode = () => {
+        setTempNotes(props.assessments[currentAssessment].notes);
+        setTempTime(props.assessments[currentAssessment].time);
+        setTempTimeCost(props.assessments[currentAssessment].time_cost);
+        setTempMaterials(props.assessments[currentAssessment].materials);
+        setEditMode(!editMode);
     }
 
-    const updateNotes = () => {
-        props.updateAssessment({...props.assessment, notes: tempNotes, job_type_id: tempJobType});
-        toggleEditNotesMode();
+    const overwriteAssessment = () => {
+        props.updateAssessments([...props.assessments.slice(0, currentAssessment), {...props.assessments[currentAssessment], notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials}, ...props.assessments.slice(currentAssessment + 1)]);
+        console.log([...props.assessments.slice(0, currentAssessment), {...props.assessments[currentAssessment], notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials}, ...props.assessments.slice(currentAssessment + 1)])
+        toggleEditMode();
     }
 
-    const updateTempJobType = (value) => {
-        setTempJobType(parseInt(value));
-        if (parseInt(value) === 0) return;
-        setTempNotes(JOB_TYPES.find(job_type => job_type.id === parseInt(value)).notes);
+    const updateAssessment = () => {
+        props.updateAssessments([...props.assessments, {...props.assessments[currentAssessment], notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials}]);
+        toggleEditMode();
     }
 
     return (
         <div className='Assessment'>
 
-            {props.assessment ? <>
+            {currentAssessment !== -1 ? <>
 
             <div className='cost-estimate'>
                 <BlockTitle>Cost Estimate</BlockTitle>
@@ -90,8 +94,6 @@ function Assessment(props) {
                     <p>Generate an estimate</p>
                     <ActionButton colored='true'>Download</ActionButton>
                 </div>
-
-                <BlockTopRightButton light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
             </div>
 
             <div className='divider' />
@@ -99,35 +101,29 @@ function Assessment(props) {
             <div className='assessment-notes'>
 
                 <BlockTitle>Job Type</BlockTitle>
+                <BlockText className='job-type'>{props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id).name}</BlockText>
 
-                {
-                editNotesMode ? 
-                <>
-                <DropdownSelect options={JOB_TYPE_OPTIONS} value={tempJobType} onChange={updateTempJobType} />
-                </>
-                :
-                <>
-                <BlockText className='job-type'>{JOB_TYPES.find(job_type => job_type.id === props.assessment.job_type_id).name}</BlockText>
-                </>
-                }
 
                 <BlockTitle className='assessment-notes-title'>Assessment Notes</BlockTitle>
-
                 {
-                editNotesMode ? 
+                editMode ? 
                 <>
                 <TextAreaInput value={tempNotes} onChange={setTempNotes} />
 
                 <div className='buttons'>
-                    <ActionButton onClick={toggleEditNotesMode}>Cancel</ActionButton>
-                    <ActionButton onClick={updateNotes} colored='true'>Save</ActionButton>
+                    <ActionButton onClick={toggleEditMode}>Cancel</ActionButton>
+                    <ActionButton onClick={overwriteAssessment}>Overwrite</ActionButton>
+                    
+                    {currentAssessment === props.assessments.length - 1 &&
+                    <ActionButton onClick={updateAssessment} colored='true'>Update</ActionButton>
+                    }
                 </div>
                 </>
                 :
                 <>
-                <BlockText className='notes'>{props.assessment.notes}</BlockText>
+                <BlockText className='notes'>{props.assessments[currentAssessment].notes}</BlockText>
 
-                <BlockTopRightButton onClick={toggleEditNotesMode} light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
+                <BlockTopRightButton onClick={toggleEditMode} light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
                 </>
                 }
              

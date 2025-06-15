@@ -75,6 +75,20 @@ router.get('/get/:id', async (req, res) => {
 
 })
 
+router.post('/create', async (req, res) => {
+
+    try {
+
+        db.query('INSERT INTO repairs (id, status, customer_id, in_house, instrument_id, notes) VALUES (?, ?, ?, ?, ?, ?);',
+            [req.body.id, 1, req.body.customer_id, req.body.in_house, req.body.instrument_id, req.body.notes]);
+
+    } catch (err) {
+        console.error('Failed to create repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
 router.put('/update', async (req, res) => {
 
     try {
@@ -83,6 +97,20 @@ router.put('/update', async (req, res) => {
 
     } catch (err) {
         console.error('Failed to update repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
+router.delete('/delete/:id', async (req, res) => {
+
+    try {
+    
+        db.query('DELETE FROM repairs WHERE id = ?;',
+            [req.params.id]);
+
+    } catch (err) {
+        console.error('Failed to delete repair:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 

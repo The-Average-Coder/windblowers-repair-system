@@ -22,7 +22,7 @@ router.get('/get', async (req, res) => {
 
 })
 
-router.post('/addRepairer', async (req, res) => {
+router.post('/create', async (req, res) => {
 
     try {
 
@@ -37,7 +37,7 @@ router.post('/addRepairer', async (req, res) => {
     }
 
 })
-router.put('/updateRepairer', async (req, res) => {
+router.put('/update', async (req, res) => {
 
     try {
 
@@ -50,7 +50,7 @@ router.put('/updateRepairer', async (req, res) => {
     }
 
 })
-router.delete('/deleteRepairer/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
 
     try {
 

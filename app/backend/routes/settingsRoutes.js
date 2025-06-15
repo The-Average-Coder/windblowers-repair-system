@@ -8,7 +8,7 @@ router.get('/get', async (req, res) => {
     try {
         const queries = [
             db.promise().query('SELECT * FROM job_types WHERE id > 1;'), // ID > 1 to ignore 'Unspecified' which isn't needed for settings page
-            db.promise().query('SELECT * FROM instrument_statuses;'),
+            db.promise().query('SELECT * FROM instrument_statuses WHERE id > 1;'), // Same reason
             db.promise().query('SELECT * FROM materials;'),
             db.promise().query('SELECT * FROM calendar_details_settings;'),
             db.promise().query('SELECT hourly_rate FROM hourly_rate;')
@@ -33,6 +33,21 @@ router.get('/get', async (req, res) => {
 
 })
 
+
+router.get('/getJobTypes', async (req, res) => {
+
+    try {
+
+        const jobTypes = await db.promise().query('SELECT id, name, notes, materials, time FROM job_types;');
+
+        res.send(jobTypes[0])
+
+    } catch (err) {
+        console.error('Failed to fetch job types:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
 router.post('/addJobType', async (req, res) => {
 
     try {
@@ -66,6 +81,9 @@ router.delete('/deleteJobType/:id', async (req, res) => {
     try {
 
         db.query('DELETE FROM job_types WHERE id = ?;',
+            [req.params.id]);
+
+        db.query('UPDATE assessments SET job_type_id = 1 WHERE job_type_id = ?;',
             [req.params.id]);
 
     } catch (err) {
@@ -124,6 +142,9 @@ router.delete('/deleteInstrumentStatus/:id', async (req, res) => {
         db.query('DELETE FROM instrument_statuses WHERE id = ?;',
             [req.params.id]);
 
+        db.query('UPDATE instruments SET status_id = 1 WHERE status_id = ?;',
+            [req.params.id]);
+
     } catch (err) {
         console.error('Failed to update instrument statuses:', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -135,7 +156,7 @@ router.get('/getMaterials', async (req, res) => {
 
     try {
 
-        const materials = await db.promise().query('SELECT id, name, price FROM instrument_statuses;');
+        const materials = await db.promise().query('SELECT id, name, price FROM materials;');
 
         res.send(materials[0])
 

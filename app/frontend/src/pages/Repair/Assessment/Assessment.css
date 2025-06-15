@@ -5,7 +5,7 @@
 
 .Assessment .cost-estimate {
     position: relative;
-    flex: 8;
+    flex: 3;
 }
 
 .Assessment .cost-estimate .costs { margin-top: 8px; }
@@ -32,7 +32,7 @@
 .Assessment .cost-estimate .estimate-invoice-message .ActionButton {font-size: var(--font-subtext);}
 
 .Assessment .assessment-notes {
-    flex: 7;
+    flex: 2;
     height: unset;
     position: relative;
 }

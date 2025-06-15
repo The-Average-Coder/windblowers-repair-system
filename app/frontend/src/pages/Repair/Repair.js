@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import PageTitle from '../../components/Text/PageTitle';
 import ContentBlock from '../../components/Containers/ContentBlock';
@@ -39,11 +39,13 @@ import axios from 'axios';
 
 function Repair() {
 
-    const { id } = useParams()
+    const { id } = useParams();
 
     // #### DATA
-    const [repair, setRepair] = useState({})
-    const [instrumentStatuses, setInstrumentStatuses] = useState([])
+    const [repair, setRepair] = useState({});
+    const [instrumentStatuses, setInstrumentStatuses] = useState([]);
+    const [jobTypes, setJobTypes] = useState([]);
+    const [materials, setMaterials] = useState([]);
 
     // #### DATABASE DATA FETCH
     useEffect(() => {
@@ -54,6 +56,14 @@ function Repair() {
         axios.get('/api/settings/getInstrumentStatuses')
             .then(response => setInstrumentStatuses(response.data))
             .catch(error => console.log(error));
+
+        axios.get('/api/settings/getJobTypes')
+            .then(response => setJobTypes(response.data))
+            .catch(error => console.log(error));
+
+        axios.get('/api/settings/getMaterials')
+            .then(response => setMaterials(response.data))
+            .catch(error => console.log(error));
     }, [])
 
 
@@ -62,6 +72,11 @@ function Repair() {
     const [tempNotes, setTempNotes] = useState('');
     
     const [showActionsMenu, setShowActionsMenu] = useState(false);
+
+
+    // #### MISCELLANEOUS INITIALISATION
+    const navigate = useNavigate();
+
 
     // #### ACTIONS MENU
     const toggleActionsMenu = (e = null) => {
@@ -87,6 +102,10 @@ function Repair() {
         closeActionsMenu();
 
         if (prompt(`Type 'CONFIRM' to confirm deletion of repair`) !== 'CONFIRM') return;
+
+        axios.delete(`/api/repairs/delete/${id}`);
+
+        navigate('/')
     }
 
 
@@ -94,16 +113,13 @@ function Repair() {
     const updateCustomer = (value) => {
         setRepair({...repair, customer: value})
     }
-
     const updateInstrument = (value) => {
         setRepair({...repair, instrument: value})
     }
-    
     const toggleEditNotesMode = () => {
         setTempNotes(repair.notes)
         setEditNotesMode(!editNotesMode);
     }
-
     const updateNotes = () => {
 
         axios.put('/api/repairs/update', {...repair, id: id, notes: tempNotes})
@@ -112,9 +128,8 @@ function Repair() {
         setRepair({...repair, notes: tempNotes})
         toggleEditNotesMode();
     }
-
-    const updateAssessment = (value) => {
-        setRepair({...repair, assessment: value})
+    const updateAssessments = (value) => {
+        setRepair({...repair, assessments: value})
     }
 
     const [customerModalOpen, setCustomerModalOpen] = useState(false);
@@ -180,12 +195,14 @@ function Repair() {
                 </ContentBlock>
 
             </div>
-
+            
+            {repair.assessments && repair.assessments.length > 0 &&
             <ContentBlock className='assessment-block'>
 
-                <Assessment assessment={repair.assessments && repair.assessments[0]} updateAssessment={updateAssessment} />
+                <Assessment assessments={repair.assessments} updateAssessments={updateAssessments} jobTypes={jobTypes} materials={materials} />
 
             </ContentBlock>
+            }
 
             {
             customerModalOpen ?

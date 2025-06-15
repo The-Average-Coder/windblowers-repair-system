@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ActionButton from '../../components/Buttons/ActionButton';
 import ModalWindow from '../../components/Containers/ModalWindow';
@@ -13,8 +14,6 @@ import './CreateRepairModal.css';
 import axios from 'axios';
 
 function CreateRepairModal(props) {
-
-    
 
     // #### DATA
     const [instrumentStatuses, setInstrumentStatuses] = useState([]);
@@ -93,6 +92,10 @@ function CreateRepairModal(props) {
     const [errorMessage, setErrorMessage] = useState('');
 
 
+    // #### MISCELLANEOUS INITIALISATION
+    const navigate = useNavigate();
+
+
     // #### SEARCH FUNCTIONS
     const searchCustomer = (query) => {
         setCustomerSearch(query);
@@ -124,9 +127,8 @@ function CreateRepairModal(props) {
             firstname: customerSearch.split(' ').length === 2 ? customerSearch.split(' ')[0] : '',
             surname: customerSearch.split(' ').length === 1 ? customerSearch.split(' ')[0] : customerSearch.split(' ').length === 2 ? customerSearch.split(' ')[1] : '',
             email: '',
-            phone: '',
-            address: '',
-            status: 0
+            telephone: '',
+            address: ''
         });
         setCreatingNewCustomer(true);
     }
@@ -136,15 +138,44 @@ function CreateRepairModal(props) {
             manufacturer: '',
             model: '',
             serial_number: instrumentSearch,
-            status: 0
+            status_id: 0
         });
         setCreatingNewInstrument(true);
     }
 
-    const createRepair = () => {
+    async function createRepair() {
         if (!isValidRepair()) return;
         
-        
+        let customerId = customer.id;
+        if (inHouseCustomer) customerId = 0; // Null customer
+        else if (creatingNewCustomer) {
+            const response = await axios.post('/api/customers/create', customer)
+            customerId = response.data.insertId
+        }
+
+        let instrumentId = instrument.id;
+        if (creatingNewInstrument) {
+            const response = await axios.post('/api/instruments/create', instrument)
+            instrumentId = response.data.insertId
+        }
+        else {
+            // Update status
+            axios.put('/api/instruments/update', instrument)
+                .catch(error => console.log(error));
+        }
+
+        const repairId = calculateRepairId();
+
+        axios.post('/api/repairs/create', {
+            id: repairId,
+            customer_id: customerId,
+            in_house: inHouseCustomer,
+            instrument_id: instrumentId,
+            notes: notes
+        })
+
+        navigate(`/repair/${repairId}`);
+        props.closeFunction();
     }
 
     const isValidRepair = () => {
@@ -161,7 +192,7 @@ function CreateRepairModal(props) {
                 setErrorMessage('Customer firstname required');
                 return false;
             }
-            if (customer.email === '' && customer.phone === '') {
+            if (customer.email === '' && customer.telephone === '') {
                 setErrorMessage('Customer contact method required');
                 return false;
             }
@@ -196,6 +227,10 @@ function CreateRepairModal(props) {
         return true;
     }
 
+    const calculateRepairId = () => {
+        return '2525001';
+    }
+
     return (<ModalWindow className='CreateRepairWindow' closeFunction={props.closeFunction}>
         <ModalTitle>Create Repair</ModalTitle>
         <div className='details'>
@@ -217,7 +252,7 @@ function CreateRepairModal(props) {
                         <BlockTitle>Contact Information</BlockTitle>
                         <div className='text-inputs'>
                         <TextInput value={customer.email} onChange={(value) => setCustomer({...customer, email: value})} placeholder='Email' />
-                        <TextInput value={customer.phone} onChange={(value) => setCustomer({...customer, phone: value})} placeholder='Phone Number' />
+                        <TextInput value={customer.telephone} onChange={(value) => setCustomer({...customer, telephone: value})} placeholder='Phone Number' />
                         </div>
                     </span>
 
@@ -347,10 +382,9 @@ function CreateRepairModal(props) {
                 </>}
             </div>}
 
-            {/* Job Type and Notes */}
+            {/* Notes */}
             {instrument.serial_number !== undefined && (customer.surname !== undefined || inHouseCustomer) ? <div className='notes'>
-                <BlockTitle>Job Type and Notes</BlockTitle>
-                <DropdownSelect options={[]} placeholder='Job Type' />
+                <BlockTitle>Notes</BlockTitle>
                 <TextAreaInput value={notes} onChange={setNotes} placeholder='Notes' />
             </div> : null}
 
