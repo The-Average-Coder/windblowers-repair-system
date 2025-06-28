@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useViewTransitionState } from 'react-router-dom';
 
 import ActionButton from '../../components/Buttons/ActionButton';
 import ModalWindow from '../../components/Containers/ModalWindow';
@@ -12,6 +12,7 @@ import ModalTitle from '../../components/Text/ModalTitle';
 import './CreateRepairModal.css';
 
 import axios from 'axios';
+import moment from 'moment';
 
 function CreateRepairModal(props) {
 
@@ -164,7 +165,11 @@ function CreateRepairModal(props) {
                 .catch(error => console.log(error));
         }
 
-        const repairId = calculateRepairId();
+        const response = await axios.get('/api/repairs/getPreviousRepairId');
+        const previousRepairId = response.data[0].max_id;
+        console.log(response);
+
+        const repairId = calculateRepairId(previousRepairId);
 
         axios.post('/api/repairs/create', {
             id: repairId,
@@ -227,8 +232,28 @@ function CreateRepairModal(props) {
         return true;
     }
 
-    const calculateRepairId = () => {
-        return '2525001';
+    const calculateRepairId = (previousRepairId) => {
+        const currentDate = new Date();
+        const currentYearCode = currentDate.getFullYear().toString().slice(2);
+        const currentWeekCode = moment(currentDate).format('W').toString().padStart(2, '0');
+
+        const dateCode = currentYearCode + currentWeekCode;
+        
+        if (previousRepairId && previousRepairId.length >= 4) {
+        const previousDateCode = previousRepairId.slice(0, 4);
+
+        if (dateCode === previousDateCode) {
+            const previousJobNumber = parseInt(previousRepairId.slice(4));
+            const jobNumber = ('00' + (previousJobNumber + 1).toString()).slice(-3);
+            const repairId = dateCode + jobNumber;
+            return repairId;
+        }
+        }
+
+        const jobNumber = '001';
+        const repairId = (dateCode + jobNumber).toString();
+
+        return repairId;
     }
 
     return (<ModalWindow className='CreateRepairWindow' closeFunction={props.closeFunction}>
@@ -346,7 +371,7 @@ function CreateRepairModal(props) {
                 <p>{instrument.serial_number}</p>
                 <p>{instrument.type}</p>
                 <p>{instrument.manufacturer} {instrument.model}</p>
-                <DropdownSelect value={instrument.status_id} onChange={(value) => setInstrument({...instrument, status_id: value})} options={instrumentStatuses.map(status => {return {name: status.status, value: status.id}})} placeholder='Status' />
+                <DropdownSelect className='status-dropdown' value={instrument.status_id} onChange={(value) => setInstrument({...instrument, status_id: value})} options={instrumentStatuses.map(status => {return {name: status.status, value: status.id}})} placeholder='Status' />
                 </>
                 
                 : <>

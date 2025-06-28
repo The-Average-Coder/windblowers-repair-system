@@ -131,4 +131,19 @@ router.delete('/delete/:id', async (req, res) => {
 
 })
 
+router.get('/getPreviousRepairId', async (req, res) => {
+
+    try {
+
+        const response = await db.promise().query('SELECT max(id) as max_id FROM repairs;')
+
+        res.send(response[0]);
+
+    } catch (err) {
+        console.error('Failed to get previous repair id: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
 module.exports = router;

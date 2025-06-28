@@ -37,11 +37,9 @@
     margin-top: 8px;
     display: flex;
     flex-direction: column;
-    border-top: 1px solid var(--subcontent-border);
 }
 
 .CreateRepairWindow .search-result {
-    border-bottom: 1px solid var(--subcontent-border);
     transition: 0.1s;
 }
 .CreateRepairWindow .search-result .details-flex-container {
@@ -49,6 +47,7 @@
     padding: 2px 0;
     transition: 0.1s;
     display: flex;
+    border-radius: 4px;
 }
 .CreateRepairWindow .search-result:hover .details-flex-container {
     margin: 0;
@@ -91,6 +90,11 @@
 
 .CreateRepairWindow .instrument-details {
     margin-top: 16px;
+}
+
+.CreateRepairWindow .status-dropdown {
+    margin-top: 4px;
+    padding: 2px 8px;
 }
 
 .CreateRepairWindow .notes {
