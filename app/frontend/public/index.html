@@ -8,13 +8,18 @@
     <meta name="theme-color" content="#f3f1f4" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Windblowers repair system."
     />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Windblowers Repairs</title>
   </head>
-  <body class="light-theme">
+  <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      const match = document.cookie.match(/(^| )theme=([^;]+)/);
+      const theme = match ? match[2] : "light-theme";
+      document.body.className = theme;
+    </script>
   </body>
 </html>

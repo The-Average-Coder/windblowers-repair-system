@@ -16,10 +16,23 @@
     gap: 4px;
 }
 
+.Assessment .cost-estimate .costs .cost-item .cost-contents {
+    flex: 5;
+}
+
+.Assessment .cost-estimate .costs .cost-item .cost-contents .cost-content {
+    display: flex;
+    gap: 4px;
+}
+
 .Assessment .cost-estimate .costs .cost-item .title { flex: 5; }
 .Assessment .cost-estimate .costs .cost-item .value { flex: 4; }
 .Assessment .cost-estimate .costs .cost-item .cost { flex: 1; text-align: right; align-self: flex-end; }
 .Assessment .cost-estimate .costs .cost-item .total { font-weight: bold; color: var(--text); }
+
+.Assessment .cost-estimate .assessment-select {
+    padding: 2px 8px;
+}
 
 .Assessment .cost-estimate .estimate-invoice-message {
     background-color: var(--background);
@@ -30,6 +43,41 @@
 }
 .Assessment .cost-estimate .estimate-invoice-message p { flex: 1; align-self: center; }
 .Assessment .cost-estimate .estimate-invoice-message .ActionButton {font-size: var(--font-subtext);}
+
+.Assessment .cost-estimate .time-inputs {
+    display: flex;
+    align-items: center;
+}
+
+.Assessment .cost-estimate .time-inputs .BlockText {
+    flex: 1;
+}
+.Assessment .cost-estimate .time-inputs .inputs {
+    flex: 4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.Assessment .cost-estimate .time-inputs .inputs .DropdownSelect {
+    padding: 2px 8px;
+}
+
+.Assessment .cost-estimate .time-inputs .TextInput {
+    width: 60px;
+}
+
+.Assessment .cost-estimate .materials-input {
+    margin-top: 8px;
+    display: flex;
+}
+
+.Assessment .cost-estimate .materials-input .BlockText {
+    flex: 1;
+}
+
+.Assessment .cost-estimate .materials-input-list {
+    flex: 4;
+}
 
 .Assessment .assessment-notes {
     flex: 2;

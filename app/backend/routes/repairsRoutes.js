@@ -32,6 +32,21 @@ router.get('/get/:id', async (req, res) => {
             return;
         }
 
+        const formatDate = (date) => {
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+
+            // Add leading zero to day and month if needed
+            day = day < 10 ? '0' + day : day;
+            month = month < 10 ? '0' + month : month;
+
+            // Format the date as dd/mm/yyyy
+            const formattedDate = `${day}/${month}/${year}`;
+
+            return formattedDate;
+        }
+
         const formatted_data = {
             status: repair[0][0].status,
             in_house: repair[0][0].in_house,
@@ -55,7 +70,7 @@ router.get('/get/:id', async (req, res) => {
             assessments: assessments[0].map(assessment => {
                 return {
                     id: assessment.id,
-                    date_created: assessment.date_created,
+                    date_created: formatDate(assessment.date_created),
                     time: assessment.time,
                     time_cost: assessment.time_cost,
                     materials: assessment.materials,

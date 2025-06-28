@@ -46,6 +46,7 @@ function Repair() {
     const [instrumentStatuses, setInstrumentStatuses] = useState([]);
     const [jobTypes, setJobTypes] = useState([]);
     const [materials, setMaterials] = useState([]);
+    const [hourlyRate, setHourlyRate] = useState(0);
 
     // #### DATABASE DATA FETCH
     useEffect(() => {
@@ -63,6 +64,10 @@ function Repair() {
 
         axios.get('/api/settings/getMaterials')
             .then(response => setMaterials(response.data))
+            .catch(error => console.log(error));
+
+        axios.get('/api/settings/getHourlyRate')
+            .then(response => setHourlyRate(response.data.hourly_rate / 100))
             .catch(error => console.log(error));
     }, [])
 
@@ -199,7 +204,7 @@ function Repair() {
             {repair.assessments && repair.assessments.length > 0 &&
             <ContentBlock className='assessment-block'>
 
-                <Assessment assessments={repair.assessments} updateAssessments={updateAssessments} jobTypes={jobTypes} materials={materials} />
+                <Assessment assessments={repair.assessments} updateAssessments={updateAssessments} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} />
 
             </ContentBlock>
             }

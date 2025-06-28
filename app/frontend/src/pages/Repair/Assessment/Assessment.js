@@ -13,6 +13,9 @@ import editLight from '../../../images/edit-icon/editLight.png';
 import editHoverLight from '../../../images/edit-icon/editHoverLight.png';
 import editDark from '../../../images/edit-icon/editDark.png';
 import editHoverDark from '../../../images/edit-icon/editHoverDark.png';
+import HoursDropdownSelect from '../../../components/Inputs/HoursDropdownSelect';
+import MinutesDropdownSelect from '../../../components/Inputs/MinutesDropdownSelect';
+import TextInput from '../../../components/Inputs/TextInput';
 
 function Assessment(props) {
 
@@ -36,7 +39,7 @@ function Assessment(props) {
             setCurrentAssessment(-1);
         }
 
-    }, [props.assessments])
+    }, [])
     
     
     // #### DATA MANAGEMENT FUNCTIONS
@@ -56,39 +59,74 @@ function Assessment(props) {
 
     const updateAssessment = () => {
         props.updateAssessments([...props.assessments, {...props.assessments[currentAssessment], notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials}]);
+        setCurrentAssessment(currentAssessment + 1);
         toggleEditMode();
+    }
+
+    const updateTime = (time) => {
+        console.log(props.hourlyRate)
+        setTempTime(time);
+        setTempTimeCost(Math.round(time / 60 * props.hourlyRate * 100) / 100);
     }
 
     return (
         <div className='Assessment'>
 
-            {currentAssessment !== -1 ? <>
+            {currentAssessment !== -1 && props.assessments[currentAssessment].id ? <>
 
             <div className='cost-estimate'>
                 <BlockTitle>Cost Estimate</BlockTitle>
-                <BlockText>As of 05/03/2025</BlockText>
+                <BlockText>As of {props.assessments.length > 1 ?
+                    <DropdownSelect className='assessment-select' value={currentAssessment} onChange={(value) => setCurrentAssessment(parseInt(value))}
+                    options={props.assessments.map((assessment, index) => {return {name: assessment.date_created, value: index}})} />
+                : '05/03/2025'}</BlockText>
+
+                {editMode ? <div className='costs'>
+                <div className='time-inputs'>
+                    <BlockText>Repairer Time</BlockText>
+                    <div className='inputs'>
+                        <HoursDropdownSelect value={Math.floor(tempTime / 60)} onChange={(value) => updateTime(parseInt(value) * 60 + tempTime % 60)} />
+                        <MinutesDropdownSelect value={tempTime % 60} onChange={(value) => updateTime(Math.floor(tempTime / 60) * 60 + parseInt(value))} />
+                        <TextInput value={`£${tempTimeCost}`} onChange={(value) => setTempTimeCost(value.slice(1).split('').filter(char => char >= '0' && char <= '9' || char == '.').join(''))} />
+                    </div>
+                </div>
+
+                <div className='materials-input'>
+                    <BlockText>Materials</BlockText>
+                    <div className='materials-input-list'>
+                        <div className='material'>
+                        </div>
+                        <DropdownSelect options={props.materials.map(materialOption => {return {name: materialOption.name, value: materialOption.id}})} />
+                    </div>
+                </div>
+
+                </div>
+                : 
                 <div className='costs'>
                     <div className='cost-item'>
                         <BlockText className='title'>Repairer Time</BlockText>
-                        <BlockText className='value'>5 Hours 30 Minutes</BlockText>
-                        <BlockText className='cost'>£250</BlockText>
+                        <BlockText className='value'>{Math.floor(props.assessments[currentAssessment].time / 60)} Hours {props.assessments[currentAssessment].time % 60} Minutes</BlockText>
+                        <BlockText className='cost'>£{parseFloat(props.assessments[currentAssessment].time_cost).toFixed(2)}</BlockText>
                     </div>
                     <div className='cost-item'>
                         <BlockText className='title'>Materials</BlockText>
-                        <BlockText className='value'>Pads x5</BlockText>
-                        <BlockText className='cost'>£15</BlockText>
-                    </div>
-                    <div className='cost-item'>
-                        <BlockText className='title'></BlockText>
-                        <BlockText className='value'>Different Pads x3</BlockText>
-                        <BlockText className='cost'>£9</BlockText>
+                        <div className='cost-contents'>
+                            <div className='cost-content'>
+                                <BlockText className='value'>Pads x5</BlockText>
+                                <BlockText className='cost'>£15</BlockText>
+                            </div>
+                            <div className='cost-content'>
+                                <BlockText className='value'>Different Pads x3</BlockText>
+                                <BlockText className='cost'>£9</BlockText>
+                            </div>
+                        </div>
                     </div>
                     <div className='cost-item'>
                         <BlockText className='title total'>Total</BlockText>
                         <BlockText className='value'></BlockText>
                         <BlockText className='cost total'>£274</BlockText>
                     </div>
-                </div>
+                </div>}
 
                 <div className='estimate-invoice-message'>
                     <p>Generate an estimate</p>
@@ -101,7 +139,7 @@ function Assessment(props) {
             <div className='assessment-notes'>
 
                 <BlockTitle>Job Type</BlockTitle>
-                <BlockText className='job-type'>{props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id).name}</BlockText>
+                <BlockText className='job-type'>{props.jobTypes.length > 0 && props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id).name}</BlockText>
 
 
                 <BlockTitle className='assessment-notes-title'>Assessment Notes</BlockTitle>

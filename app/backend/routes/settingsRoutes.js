@@ -208,6 +208,20 @@ router.delete('/deleteMaterial/:id', async (req, res) => {
 
 })
 
+router.get('/getHourlyRate', async (req, res) => {
+
+    try {
+
+        const hourly_rate = await db.promise().query('SELECT hourly_rate FROM hourly_rate;');
+
+        res.send(hourly_rate[0][0])
+
+    } catch (err) {
+        console.error('Failed to fetch materials:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
 router.put('/updateHourlyRate', async(req, res) => {
 
     try {

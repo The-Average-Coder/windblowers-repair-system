@@ -113,7 +113,7 @@
     display: flex;
     min-width: 1000px;
     background-color: var(--subcontent-border);
-    gap: 0.85px;
+    gap: 0.05rem;
 }
 
 .Calendar .day-calendar .calendar-flex-container .repairer-column {
@@ -154,7 +154,7 @@
     display: grid;
     min-width: 1000px;
     background-color: var(--subcontent-border);
-    gap: 0.07em;
+    gap: 0.05rem;
     grid-template-columns: 120px 1fr 1fr 1fr 1fr 1fr;
 }
 
