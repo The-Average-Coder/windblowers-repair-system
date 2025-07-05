@@ -123,6 +123,9 @@ router.delete('/delete/:id', async (req, res) => {
         db.query('DELETE FROM repairs WHERE id = ?;',
             [req.params.id]);
 
+        db.query('DELETE FROM assessments WHERE repair_id = ?',
+            [req.params.id]);
+
     } catch (err) {
         console.error('Failed to delete repair:', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -152,6 +155,8 @@ router.post('/assess', async (req, res) => {
         const response = await db.promise().query('INSERT INTO assessments (repair_id, date_created, time, time_cost, materials, job_type_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
             [req.body.repair_id, new Date(req.body.date_created.slice(3, 6) + req.body.date_created.slice(0, 3) + req.body.date_created.slice(6)), req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes]);
 
+        db.query('UPDATE repairs SET status = 2 WHERE id = ?;', [req.body.repair_id]);
+
         res.send(response[0])
 
     } catch (err) {
@@ -169,6 +174,37 @@ router.put('/overwriteAssessment', async (req, res) => {
 
     } catch (err) {
         console.error('Failed to update assessment:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
+router.put('/complete', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE repairs SET status = 3 WHERE id = ?;',
+            [req.body.id]);
+
+    } catch (err) {
+        console.error('Failed to update repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.put('/collected', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE repairs SET status = 4 WHERE id = ?;',
+            [req.body.id]);
+        
+        db.query('UPDATE instruments SET status_id = 1 WHERE id = ?',
+            [req.body.instrument_id]
+        )
+
+    } catch (err) {
+        console.error('Failed to update repair:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 

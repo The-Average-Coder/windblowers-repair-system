@@ -29,13 +29,13 @@ function CalendarEvent(props) {
             {props.mode === calendarModes.DAY && <>
 
             {props.detailsSettings.find(detail => detail.name === 'Instrument').dayEnabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.calendarEvent.repair.instrument.manufacturer} ${props.calendarEvent.repair.instrument.model} ${props.calendarEvent.repair.instrument.type}`}</BlockText>}
+            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument && `${props.calendarEvent.repair.instrument.manufacturer} ${props.calendarEvent.repair.instrument.model} ${props.calendarEvent.repair.instrument.type}`}</BlockText>}
 
             {props.detailsSettings.find(detail => detail.name === 'Serial Number').dayEnabled &&
-            <BlockText>{props.calendarEvent.repair && `Serial: ${props.calendarEvent.repair.instrument.serial_number}`}</BlockText>}
+            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument && `Serial: ${props.calendarEvent.repair.instrument.serial_number}`}</BlockText>}
             
             {props.detailsSettings.find(detail => detail.name === 'Instrument Status').dayEnabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.instrumentStatuses[props.calendarEvent.repair.instrument.status].status}`}</BlockText>}
+            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument && `${props.instrumentStatuses[props.calendarEvent.repair.instrument.status].status}`}</BlockText>}
             
             {props.calendarEvent.repair.in_house ?
             <BlockText>In House Repair</BlockText>

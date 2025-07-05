@@ -163,7 +163,7 @@ function RepairsSettings(props) {
             
             <div className='materials-input'>
                 {editingJobType.materials.map(material => <div className='material-input'>
-                    <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name}</BlockText>
+                    <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)) ? props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name : 'Deleted Material'}</BlockText>
                     <TextInput value={material.quantity} onChange={(value) => updateJobTypeMaterialQuantity(material.id, value)} />
                     <ActionButton onClick={() => setEditingJobType({...editingJobType, materials: editingJobType.materials.filter(otherMaterial => otherMaterial.id !== material.id)})}><img src={deleteRed} /></ActionButton>
                 </div>)}
@@ -180,7 +180,7 @@ function RepairsSettings(props) {
             </> : <>
             <BlockText>{job.name}</BlockText>
             <BlockText>{job.notes}</BlockText>
-            <div>{job.materials.map(material => <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name} <strong>x{material.quantity}</strong></BlockText>)}</div>
+            <div>{job.materials.map(material => <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)) ? props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name : 'Deleted Material'} <strong>x{material.quantity}</strong></BlockText>)}</div>
             <BlockText>{Math.floor(job.time / 60)} Hrs {job.time % 60} Mins</BlockText>
             <ActionButton onClick={() => setEditingJobType(job)}>Edit</ActionButton>
             <ActionButton onClick={() => deleteJobType(job.id)}>Delete</ActionButton>

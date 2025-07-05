@@ -155,7 +155,9 @@ function Assessment(props) {
         const updatedMaterial = newMaterials.find(material => material.id === id);
         const newQuantity = quantity.split('').filter(char => char >= '0' && char <= '9').join('');
         updatedMaterial.quantity = newQuantity;
-        updatedMaterial.cost = parseFloat(newQuantity * props.materials.find(material => material.id === parseInt(id)).price).toFixed(2);
+        if (props.materials.find(material => material.id === parseInt(id))) {
+            updatedMaterial.cost = parseFloat(newQuantity * props.materials.find(material => material.id === parseInt(id)).price).toFixed(2);
+        }
         setTempMaterials(newMaterials);
     }
 
@@ -226,7 +228,7 @@ function Assessment(props) {
                         {tempMaterials.map(material => {
                             if (parseInt(material.id) === 0) return;
                             return <div className='material'>
-                                <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name}</BlockText>
+                                <BlockText>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)) ? props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name : 'Deleted Material'}</BlockText>
                                 <TextInput className='quantity-input' value={material.quantity} onChange={(value) => updateMaterialQuantity(material.id, value)} />
                                 <TextInput className='cost-input' value={`£${material.cost}`} onChange={(value) => updateMaterialCost(material.id, value.slice(1))} />
                                 <ActionButton className='delete-material' onClick={() => removeMaterial(material.id)}><img src={deleteRed} /></ActionButton>
@@ -258,7 +260,7 @@ function Assessment(props) {
                             {props.assessments[currentAssessment].materials.map(material => {
                                 if (material.id === 0) return;
                                 return <div className='cost-content'>
-                                    <BlockText className='value'>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name} x{material.quantity}</BlockText>
+                                    <BlockText className='value'>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)) ? props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name : 'Deleted Material'} x{material.quantity}</BlockText>
                                     <BlockText className='cost'>£{parseFloat(material.cost).toFixed(2)}</BlockText>
                                 </div>
                             })}
@@ -289,7 +291,7 @@ function Assessment(props) {
                 {editMode && firstAssessment ?
                 <DropdownSelect options={props.jobTypes.map(jobType => {return {name: jobType.name, value: jobType.id}})} placeholder='Select Job Type' value={tempJobType} onChange={updateJobType} />
                 :
-                <BlockText className='job-type'>{props.jobTypes.length > 0 && props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id).name}</BlockText>
+                <BlockText className='job-type'>{props.jobTypes.length > 0 && (props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id) ? props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id).name : 'Deleted Job Type')}</BlockText>
                 }
 
                 <BlockTitle className='assessment-notes-title'>Assessment Notes</BlockTitle>

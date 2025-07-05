@@ -25,7 +25,7 @@ function MaterialsSettings(props) {
         const newMaterials = [...props.materials]
         const updatedMaterial = newMaterials.find(material => material.id === editingMaterial.id)
         updatedMaterial.name = editingMaterial.name;
-        updatedMaterial.price = editingMaterial.price;
+        updatedMaterial.price = parseFloat(editingMaterial.price).toFixed(2);
         props.updateMaterials(newMaterials)
 
         axios.put('/api/settings/updateMaterial', updatedMaterial)
@@ -49,12 +49,12 @@ function MaterialsSettings(props) {
     const addNewMaterial = () => {
         if (newMaterialName.trim() === '') return;
         
-        axios.post('/api/settings/addMaterial', {name: newMaterialName, price: newMaterialPrice})
+        axios.post('/api/settings/addMaterial', {name: newMaterialName, price: parseFloat(newMaterialPrice).toFixed(2)})
             .then(response => {
                 props.updateMaterials([...props.materials, {
                     id: response.data.insertId,
                     name: newMaterialName,
-                    price: newMaterialPrice
+                    price: parseFloat(newMaterialPrice).toFixed(2)
                 }]);
 
                 setNewMaterialName('');
@@ -73,7 +73,7 @@ function MaterialsSettings(props) {
         {props.materials ? props.materials.length === 0 && !creatingMaterial && 'No Materials' : 'Loading'}
         {props.materials && props.materials.map(material => editingMaterial.id !== undefined && editingMaterial.id === material.id ? <>
             <TextInput value={editingMaterial.name} onChange={(value) => setEditingMaterial({...editingMaterial, name: value})} />
-            <TextInput value={`£${editingMaterial.price}`} onChange={(value) => setEditingMaterial({...editingMaterial, price: value.slice(1).split('').filter(char => char >= '0' && char <= '9' || char =='.').join('')})} />
+            <TextInput value={`£${editingMaterial.price}`} onChange={(value) => setEditingMaterial({...editingMaterial, price: value.slice(1).split('').filter(char => char >= '0' && char <= '9' || char === '.').join('')})} />
             <ActionButton onClick={() => setEditingMaterial({})}>Cancel</ActionButton>
             <ActionButton onClick={saveMaterialEdit}>Save</ActionButton>
             </> : <>
@@ -85,7 +85,7 @@ function MaterialsSettings(props) {
         )}
         {creatingMaterial && <>
             <TextInput value={newMaterialName} onChange={(value) => setNewMaterialName(value)} />
-            <TextInput value={`£${newMaterialPrice}`} onChange={(value) => setNewMaterialPrice(value.slice(1).split('').filter(char => char >= '0' && char <= '9').join(''))} />
+            <TextInput value={`£${newMaterialPrice}`} onChange={(value) => setNewMaterialPrice(value.slice(1).split('').filter(char => char >= '0' && char <= '9' || char === '.').join(''))} />
             <ActionButton onClick={cancelNewMaterial}>Cancel</ActionButton>
             <ActionButton onClick={addNewMaterial}>Save</ActionButton>
         </>}

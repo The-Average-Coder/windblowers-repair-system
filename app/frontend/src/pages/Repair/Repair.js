@@ -33,6 +33,9 @@ import assessDark from '../../images/assess-icon/assessDark.png';
 import archiveLight from '../../images/archive-icon/archiveLight.png';
 import archiveDark from '../../images/archive-icon/archiveDark.png';
 
+import completeLight from '../../images/complete-icon/completeLight.png';
+import completeDark from '../../images/complete-icon/completeDark.png';
+
 import deleteRed from '../../images/delete-icon/deleteRed.png';
 
 import axios from 'axios';
@@ -142,11 +145,13 @@ function Repair() {
 
                 if (assessment.id === 0) {
                     setRepair({...repair,
+                        status: 2,
                         assessments: [newAssessment]
                     })
                 }
                 else {
                     setRepair({...repair,
+                        status: 2,
                         assessments: [...repair.assessments, newAssessment]
                     })
                 }
@@ -195,6 +200,19 @@ function Repair() {
         return formattedDate;
     }
 
+    const completeAction = () => {
+        axios.put('/api/repairs/complete', {id: id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, status: 3});
+    }
+    const collectedAction = () => {
+        axios.put('/api/repairs/collected', {id: id, instrument_id: repair.instrument.id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, status: 4, instrument: {...repair.instrument, status_id: 1}});
+    }
+
     const [customerModalOpen, setCustomerModalOpen] = useState(false);
     const [instrumentModalOpen, setInstrumentModalOpen] = useState(false);
 
@@ -206,7 +224,7 @@ function Repair() {
             
             <PageTitle>
                 Repair {id}
-                <span className={`status ${statusColors[repair.status]}`}>{statuses[repair.status]}</span>
+                <span className={`status ${statusColors[repair.status-1]}`}>{statuses[repair.status-1]}</span>
                 <ActionButton className='actions-menu-button' onClick={toggleActionsMenu}>
                     Actions
                     <img className='light' src={caretDownBlack} />
@@ -217,7 +235,11 @@ function Repair() {
                     {repair.assessments && repair.assessments.length === 0 ?
                     <ActionButton onClick={assessAction}><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Assess</ActionButton>
                     :
-                    <ActionButton><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Complete</ActionButton>
+                    repair.status === 2 ?
+                    <ActionButton onClick={completeAction}><img className='light' src={completeLight} /><img className='dark' img src={completeDark} />Complete</ActionButton>
+                    :
+                    repair.status === 3 &&
+                    <ActionButton onClick={collectedAction}><img className='light' src={completeLight} /><img className='dark' img src={completeDark} />Collected</ActionButton>
                     }
                     <ActionButton><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Archive</ActionButton>
                     <ActionButton onClick={deleteRepair} className='red'><img img src={deleteRed} />Delete</ActionButton>
