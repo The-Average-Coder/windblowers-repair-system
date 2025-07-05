@@ -60,7 +60,7 @@
     width: 24px;
     padding: 3px;
 }
-
+    
 .RepairsSettings .job-types .material-input .ActionButton:hover {
     background-color: var(--calendar-red);
 }

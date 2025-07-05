@@ -18,7 +18,7 @@ router.get('/get/:id', async (req, res) => {
                             WHERE repairs.id = ?;`,
                         [req.params.id]),
 
-        db.promise().query(`SELECT id, date_created, time, time_cost, materials, material_cost, job_type_id, notes
+        db.promise().query(`SELECT id, date_created, time, time_cost, materials, job_type_id, notes
                             FROM assessments
                             WHERE repair_id = ?;`,
                         [req.params.id])
@@ -72,9 +72,8 @@ router.get('/get/:id', async (req, res) => {
                     id: assessment.id,
                     date_created: formatDate(assessment.date_created),
                     time: assessment.time,
-                    time_cost: assessment.time_cost,
-                    materials: assessment.materials,
-                    material_cost: assessment.material_cost,
+                    time_cost: assessment.time_cost / 100,
+                    materials: assessment.materials.trim() !== '' ? assessment.materials.split(',').map(materialString => {return { id: parseInt(materialString.split('x')[0]), quantity: materialString.split('x')[1].split(':')[0], cost: materialString.split(':')[1] / 100 }}) : [],
                     job_type_id: assessment.job_type_id,
                     notes: assessment.notes
                 }
@@ -141,6 +140,35 @@ router.get('/getPreviousRepairId', async (req, res) => {
 
     } catch (err) {
         console.error('Failed to get previous repair id: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
+router.post('/assess', async (req, res) => {
+
+    try {
+
+        const response = await db.promise().query('INSERT INTO assessments (repair_id, date_created, time, time_cost, materials, job_type_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+            [req.body.repair_id, new Date(req.body.date_created.slice(3, 6) + req.body.date_created.slice(0, 3) + req.body.date_created.slice(6)), req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes]);
+
+        res.send(response[0])
+
+    } catch (err) {
+        console.error('Failed to create repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.put('/overwriteAssessment', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE assessments SET time = ?, time_cost = ?, materials = ?, notes = ? WHERE id = ?;',
+            [req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.notes, req.body.id]);
+
+    } catch (err) {
+        console.error('Failed to update assessment:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 

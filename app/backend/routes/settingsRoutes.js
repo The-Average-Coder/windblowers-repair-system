@@ -38,9 +38,9 @@ router.get('/getJobTypes', async (req, res) => {
 
     try {
 
-        const jobTypes = await db.promise().query('SELECT id, name, notes, materials, time FROM job_types;');
+        const job_types = await db.promise().query('SELECT id, name, notes, materials, time FROM job_types;');
 
-        res.send(jobTypes[0])
+        res.send(job_types[0].map(job_type => {return {...job_type, materials: job_type.materials.trim() !== '' ? job_type.materials.split(',').map(materialString => {return { id: materialString.split('x')[0], quantity: materialString.split('x')[1] }}) : []}}))
 
     } catch (err) {
         console.error('Failed to fetch job types:', err);
@@ -158,7 +158,7 @@ router.get('/getMaterials', async (req, res) => {
 
         const materials = await db.promise().query('SELECT id, name, price FROM materials;');
 
-        res.send(materials[0])
+        res.send(materials[0].map(material => {return {...material, price: material.price / 100}}))
 
     } catch (err) {
         console.error('Failed to fetch materials:', err);

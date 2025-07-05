@@ -63,8 +63,8 @@ function Repair() {
             .catch(error => console.log(error));
 
         axios.get('/api/settings/getMaterials')
-            .then(response => setMaterials(response.data))
-            .catch(error => console.log(error));
+            .then(response => setMaterials(response.data));
+            
 
         axios.get('/api/settings/getHourlyRate')
             .then(response => setHourlyRate(response.data.hourly_rate / 100))
@@ -133,8 +133,66 @@ function Repair() {
         setRepair({...repair, notes: tempNotes})
         toggleEditNotesMode();
     }
-    const updateAssessments = (value) => {
-        setRepair({...repair, assessments: value})
+    const assess = (assessment) => {
+
+        axios.post('/api/repairs/assess', {...assessment, repair_id: id})
+            .then(response => {
+
+                const newAssessment = {...assessment, id: response.data.insertId}
+
+                if (assessment.id === 0) {
+                    setRepair({...repair,
+                        assessments: [newAssessment]
+                    })
+                }
+                else {
+                    setRepair({...repair,
+                        assessments: [...repair.assessments, newAssessment]
+                    })
+                }
+
+            })
+            .catch(error => console.log(error));
+
+    }
+    const overwriteAssessment = (currentAssessmentIndex, assessment) => {
+
+        axios.put('/api/repairs/overwriteAssessment', assessment)
+            .catch(error => console.log(error));
+
+        setRepair({...repair,
+            assessments: [
+                ...repair.assessments.slice(0, currentAssessmentIndex),
+                assessment,
+                ...repair.assessments.slice(currentAssessmentIndex + 1)
+            ]
+        });
+    }
+    const cancelAssess = () => {
+        setRepair({...repair, assessments: []});
+    }
+
+    const assessAction = () => {
+        if (repair.assessments && repair.assessments.length > 0) return;
+
+        setRepair({...repair, assessments: [{id: 0, date_created: getDateCreated(), time: 0, time_cost: 0, materials: [], job_type_id: 1, notes: ''}]})
+    }
+
+    const getDateCreated = () => {
+        const date = new Date();
+
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+
+        // Add leading zero to day and month if needed
+        day = day < 10 ? '0' + day : day;
+        month = month < 10 ? '0' + month : month;
+
+        // Format the date as dd/mm/yyyy
+        const formattedDate = `${day}/${month}/${year}`;
+
+        return formattedDate;
     }
 
     const [customerModalOpen, setCustomerModalOpen] = useState(false);
@@ -156,7 +214,11 @@ function Repair() {
                 </ActionButton>
 
                 {showActionsMenu && <div className='actions-menu'>
-                    <ActionButton><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Assess</ActionButton>
+                    {repair.assessments && repair.assessments.length === 0 ?
+                    <ActionButton onClick={assessAction}><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Assess</ActionButton>
+                    :
+                    <ActionButton><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Complete</ActionButton>
+                    }
                     <ActionButton><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Archive</ActionButton>
                     <ActionButton onClick={deleteRepair} className='red'><img img src={deleteRed} />Delete</ActionButton>
                 </div>}
@@ -204,7 +266,7 @@ function Repair() {
             {repair.assessments && repair.assessments.length > 0 &&
             <ContentBlock className='assessment-block'>
 
-                <Assessment assessments={repair.assessments} updateAssessments={updateAssessments} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} />
+                <Assessment assessments={repair.assessments} assess={assess} overwriteAssessment={overwriteAssessment} cancelAssess={cancelAssess} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} />
 
             </ContentBlock>
             }

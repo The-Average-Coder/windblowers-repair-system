@@ -13,7 +13,6 @@
 .Assessment .cost-estimate .costs .cost-item {
     display: flex;
     margin: 2px 0;
-    gap: 4px;
 }
 
 .Assessment .cost-estimate .costs .cost-item .cost-contents {
@@ -22,7 +21,6 @@
 
 .Assessment .cost-estimate .costs .cost-item .cost-contents .cost-content {
     display: flex;
-    gap: 4px;
 }
 
 .Assessment .cost-estimate .costs .cost-item .title { flex: 5; }
@@ -71,18 +69,61 @@
     display: flex;
 }
 
-.Assessment .cost-estimate .materials-input .BlockText {
+.Assessment .cost-estimate .materials-input .title {
     flex: 1;
 }
 
 .Assessment .cost-estimate .materials-input-list {
     flex: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: start;
+}
+
+.Assessment .cost-estimate .materials-input-list .material {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.Assessment .cost-estimate .materials-input-list .material .quantity-input {
+    width: 30px;
+    padding: 2px 8px;
+}
+
+.Assessment .cost-estimate .materials-input-list .material .cost-input {
+    width: 60px;
+    padding: 2px 8px;
+}
+
+.Assessment .cost-estimate .materials-input-list .material .delete-material {
+    border-color: red;
+    height: 24px;
+    width: 28px;
+    padding: 3px 5px;
+}
+
+.Assessment .cost-estimate .materials-input-list .material .delete-material:hover {
+    background-color: var(--calendar-red);
+}
+
+.Assessment .cost-estimate .materials-input-list .material .delete-material img {
+    width: 16px;
+}
+
+.Assessment .cost-estimate .materials-input .DropdownSelect {
+    padding: 2px 8px;
 }
 
 .Assessment .assessment-notes {
     flex: 2;
     height: unset;
     position: relative;
+}
+
+.Assessment .assessment-notes .DropdownSelect {
+    padding: 4px 8px;
 }
 
 .Assessment .assessment-notes .TextAreaInput {
