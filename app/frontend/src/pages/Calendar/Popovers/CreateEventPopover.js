@@ -35,8 +35,9 @@ function CreateEventPopover(props) {
         description: '',
         date: props.date,
         time: '0',
+        all_day: false,
         color: '',
-        repairer: props.repairer,
+        repairer_id: props.repairer_id,
         repair: null
     })
 
@@ -65,6 +66,10 @@ function CreateEventPopover(props) {
     const updateCalendarEventMinutes = (updatedMinutes) => {
         updateCalendarEvent({...calendarEvent, time: Math.floor(calendarEvent.time / 60) * 60 + parseInt(updatedMinutes)});
     }
+    
+    const updateCalendarEventAllDay = (value) => {
+        updateCalendarEvent({...calendarEvent, all_day: value});
+    }
 
     useEffect(() => {
         eventBus.on('click', props.cancel);
@@ -89,6 +94,11 @@ function CreateEventPopover(props) {
                     <HoursDropdownSelect value={Math.floor(calendarEvent.time / 60)} onChange={updateCalendarEventHours} />
                     <MinutesDropdownSelect value={calendarEvent.time % 60} onChange={updateCalendarEventMinutes} />
                 </div>
+
+                {calendarEvent.type === 'Other Event' && <div className='all-day-checkbox'>
+                    <input type='checkbox' checked={calendarEvent.all_day} onChange={(e) => updateCalendarEventAllDay(e.target.checked)} />
+                    <label>All Day Event</label>
+                </div>}
                 
             </div>
 

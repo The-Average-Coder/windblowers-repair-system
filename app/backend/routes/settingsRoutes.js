@@ -236,6 +236,19 @@ router.put('/updateHourlyRate', async(req, res) => {
 
 })
 
+router.get('/getCalendarDetailSettings', async (req, res) => {
+    try {
+
+        const response = await db.promise().query('SELECT * FROM calendar_details_settings;',
+            [req.body.week_enabled, req.body.day_enabled, req.body.id]);
+        
+        res.send(response[0].map(setting => {return {...setting, day_enabled: Boolean(setting.day_enabled), week_enabled: Boolean(setting.week_enabled)}}));
+
+    } catch (err) {
+        console.error('Failed to get calendar settings:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
 router.put('/updateCalendarDetailSetting', async (req, res) => {
 
     try {

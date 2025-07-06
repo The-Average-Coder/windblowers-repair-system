@@ -95,9 +95,6 @@ app.use('/api/repairers', checkAuthentication, repairersRoutes);
 const repairsRoutes = require('./routes/repairsRoutes');
 app.use('/api/repairs', checkAuthentication, repairsRoutes);
 
-const assessmentsRoutes = require('./routes/assessmentsRoutes');
-app.use('/api/assessments', checkAuthentication, assessmentsRoutes);
-
 const calendarEventsRoutes = require('./routes/calendarEventsRoutes');
 app.use('/api/calendarEvents', checkAuthentication, calendarEventsRoutes);
 

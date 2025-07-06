@@ -13,18 +13,20 @@ import ContentBlock from '../../components/Containers/ContentBlock';
 import BlockTitle from '../../components/Text/BlockTitle';
 import BlockText from '../../components/Text/BlockText';
 
+import NavigationCalendar from './NavigationCalendar/NavigationCalendar';
 import CalendarEvent from './Events/CalendarEvent';
 import AddCalendarEventButton from './Events/AddCalendarEventButton';
-
 import CalendarEventPopover from './Popovers/CalendarEventPopover';
 import CreateEventPopover from './Popovers/CreateEventPopover';
 
 import './Calendar.css';
-import NavigationCalendar from './NavigationCalendar/NavigationCalendar';
+
+import axios from 'axios';
 
 function Calendar() {
 
     // #### RAW DATA FOR TESTING
+    /*
     const [calendarEvents, setCalendarEvents] = useState([
         {
             id: 1,
@@ -34,16 +36,13 @@ function Calendar() {
             date: '27-05-2025',
             time: '90',
             color: 'green',
-            repairer: 'Purple',
+            repairer_id: 1,
             repair: {
                 id: 2508004,
                 status: repairStatuses.OPEN,
                 customer: {
                     firstname: 'Josh',
-                    surname: 'Cox',
-                    email: 'joshuajosephcox@gmail.com',
-                    phone: '07796593187',
-                    address: '10 Cross Hill Close, LE12 6UJ'
+                    surname: 'Cox'
                 },
                 instrument: {
                     type: 'Flute',
@@ -52,10 +51,8 @@ function Calendar() {
                     serial_number: 'ABC123',
                     status: 1,
                 },
-                notes: 'Some assorted notes',
                 assessment: {
                     job_type: 0,
-                    notes: 'Some assessment notes'
                 }
             }
         },
@@ -67,7 +64,7 @@ function Calendar() {
             date: '28-05-2025',
             time: '120',
             color: 'purple',
-            repairer: 'Purple',
+            repairer_id: 1,
             repair: {
                 id: 2509002,
                 status: repairStatuses.OPEN,
@@ -79,10 +76,8 @@ function Calendar() {
                     serial_number: 'DEF456',
                     status: 1,
                 },
-                notes: 'Some assorted notes',
                 assessment: {
                     job_type: 1,
-                    notes: 'Some assessment notes'
                 }
             }
         },
@@ -94,16 +89,13 @@ function Calendar() {
             date: '28-05-2025',
             time: '60',
             color: 'orange',
-            repairer: 'Purple',
+            repairer_id: 1,
             repair: {
                 id: 2508004,
                 status: repairStatuses.OPEN,
                 customer: {
                     firstname: 'Josh',
-                    surname: 'Cox',
-                    email: 'joshuajosephcox@gmail.com',
-                    phone: '07796593187',
-                    address: '10 Cross Hill Close, LE12 6UJ'
+                    surname: 'Cox'
                 },
                 instrument: {
                     type: 'Flute',
@@ -112,10 +104,8 @@ function Calendar() {
                     serial_number: 'ABC123',
                     status: 1,
                 },
-                notes: 'Some assorted notes',
                 assessment: {
                     job_type: 0,
-                    notes: 'Some assessment notes'
                 }
             }
         },
@@ -127,16 +117,13 @@ function Calendar() {
             date: '28-05-2025',
             time: '150',
             color: 'blue',
-            repairer: 'Ryan',
+            repairer_id: 2,
             repair: {
                 id: 2508004,
                 status: repairStatuses.OPEN,
                 customer: {
                     firstname: 'Josh',
-                    surname: 'Cox',
-                    email: 'joshuajosephcox@gmail.com',
-                    phone: '07796593187',
-                    address: '10 Cross Hill Close, LE12 6UJ'
+                    surname: 'Cox'
                 },
                 instrument: {
                     type: 'Flute',
@@ -145,10 +132,8 @@ function Calendar() {
                     serial_number: 'ABC123',
                     status: 1,
                 },
-                notes: 'Some assorted notes',
                 assessment: {
                     job_type: 0,
-                    notes: 'Some assessment notes'
                 }
             }
         },
@@ -161,7 +146,7 @@ function Calendar() {
             time: '0',
             all_day: true,
             color: 'red',
-            repairer: 'Purple',
+            repairer_id: 1,
         },
         {
             id: 6,
@@ -172,7 +157,7 @@ function Calendar() {
             time: '0',
             all_day: true,
             color: 'yellow',
-            repairer: 'Purple',
+            repairer_id: 1,
         },
         {
             id: 7,
@@ -183,7 +168,7 @@ function Calendar() {
             time: '0',
             all_day: true,
             color: 'indigo',
-            repairer: 'Ryan',
+            repairer_id: 2,
         },
         {
             id: 8,
@@ -193,7 +178,7 @@ function Calendar() {
             date: '29-05-2025',
             time: '300',
             color: 'turquoise',
-            repairer: 'Purple',
+            repairer_id: 1,
             repair: {
                 id: 2509002,
                 status: repairStatuses.OPEN,
@@ -205,37 +190,42 @@ function Calendar() {
                     serial_number: 'DEF456',
                     status: 1,
                 },
-                notes: 'Some assorted notes',
                 assessment: {
                     job_type: 1,
-                    notes: 'Some assessment notes'
                 }
             }
         }
     ])
+    */
 
-    const [repairers, setRepairers] = useState([
-        { id: 1, name: 'Purple', hours: [8, 8, 8, 8, 4] },
-        { id: 2, name: 'Ryan', hours: [0, 8, 8, 0, 0] }
-    ])
-    
-    const [detailsSettings, setDetailsSettings] = useState([
-        { id: 0, name: 'Instrument', dayEnabled: true, weekEnabled: true },
-        { id: 1, name: 'Serial Number', dayEnabled: false, weekEnabled: false },
-        { id: 2, name: 'Instrument Status', dayEnabled: true, weekEnabled: false },
-        { id: 3, name: 'Customer', dayEnabled: false, weekEnabled: false },
-        { id: 4, name: 'Job Type', dayEnabled: true, weekEnabled: false }
-    ]);
+    const [calendarEvents, setCalendarEvents] = useState([]);
+    const [repairers, setRepairers] = useState([]);
+    const [detailsSettings, setDetailsSettings] = useState([]);
+    const [jobTypes, setJobTypes] = useState([]);
+    const [instrumentStatuses, setInstrumentStatuses] = useState([]);
 
-    const [jobTypes, setJobTypes] = useState([
-        { id: 1, name: 'Repad', notes: 'bla bla bla' },
-        { id: 2, name: 'Clean', notes: 'whish whosh whish whosh' },
-        { id: 3, name: 'Wax', notes: 'wax on wax off, wax on wax off' },
-    ]);
-    const [instrumentStatuses, setInstrumentStatuses] = useState([
-        { id: 1, status: 'Not Yet Dropped Off' },
-        { id: 2, status: 'In Workshop' }
-    ]);
+    // #### DATABASE FETCH DATA
+    useEffect(() => {
+        axios.get('/api/calendarEvents/get')
+            .then(response => {setCalendarEvents(response.data);console.log(response.data)})
+            .catch(error => console.log(error));
+        
+        axios.get('/api/repairers/get')
+            .then(response => setRepairers(response.data))
+            .catch(error => console.log(error));
+        
+        axios.get('/api/settings/getJobTypes')
+            .then(response => {setJobTypes(response.data);console.log(response.data)})
+            .catch(error => console.log(error));
+
+        axios.get('/api/settings/getInstrumentStatuses')
+            .then(response => setInstrumentStatuses(response.data))
+            .catch(error => console.log(error));
+        
+        axios.get('/api/settings/getCalendarDetailSettings')
+            .then(response => setDetailsSettings(response.data))
+            .catch(error => console.log(error));
+    }, [])
 
     
     // #### CONSTANTS
@@ -516,22 +506,31 @@ function Calendar() {
 
     // #### CALENDAR EVENT MANAGEMENT FUNCTIONS
     const createCalendarEvent = (calendarEvent) => {
+        axios.post('/api/calendarEvents/create', calendarEvent)
+            .catch(error => console.log(error));
+
         setCalendarEvents(calendarEvents.concat(calendarEvent));
         closeAddCalendarEventPopover();
     }
 
     const updateCalendarEvent = (updatedCalendarEvent) => {
+        axios.put('/api/calendarEvents/update', updatedCalendarEvent)
+            .catch(error => console.log(error));
+
         setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== updatedCalendarEvent.id).concat(updatedCalendarEvent))
     }
 
     const deleteCalendarEvent = (id) => {
+        axios.delete(`/api/calendarEvents/delete/${id}`)
+            .catch(error => console.log(error));
+
         setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== id))
         closeCalendarEventPopover();
     }
 
     const onClickCalendarEvent = (e, calendarEvent) => {
         // If double click, navigate to repair page
-        if (e.detail === 2 && calendarEvent.repair !== undefined) {
+        if (e.detail === 2 && calendarEvent.repair.id !== undefined) {
             navigate(`/repair/${calendarEvent.repair.id}`);
             return;
         }
@@ -557,11 +556,12 @@ function Calendar() {
                 return;
             }
 
-            const [repairerName, date] = event.over.id.split(' ');
+            const [repairerId, date] = event.over.id.split(' ');
             const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
-            calendarEvent.repairer = repairerName;
+            calendarEvent.repairer_id = parseInt(repairerId);
             calendarEvent.date = date
-            setCalendarEvents(calendarEvents.filter(calendarEvent => calendarEvent.id !== event.active.id).concat(calendarEvent))
+
+            updateCalendarEvent(calendarEvent)
         }
     };
 
@@ -579,11 +579,11 @@ function Calendar() {
         setPopoverCalendarEvent({});
     }
 
-    const openAddCalendarEventPopover = (e, id, date, repairer) => {
+    const openAddCalendarEventPopover = (e, id, date, repairer_id) => {
         e.stopPropagation();
 
         closeCalendarEventPopover();
-        setCreateCalendarEventPopover({id: id, date: date, repairer: repairer});
+        setCreateCalendarEventPopover({id: id, date: date, repairer_id: repairer_id});
 
         const buttonRect = e.target.closest('.AddCalendarEventButton').getBoundingClientRect();
 
@@ -688,7 +688,7 @@ function Calendar() {
                 </div>
 
                 <div className={`events-row ${repairer.hours[new Date(year, month, day).getDay() - 2] === 0 && 'disabled'}`}>
-                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === repairer.id && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                 </div>
             </div>)}
 
@@ -698,7 +698,7 @@ function Calendar() {
                 </div>
 
                 <div className='events-row'>
-                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === 0 && parseInt(calendarEvent.date.split('-')[0]) === day && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                 </div>
             </div>
 
@@ -735,7 +735,7 @@ function Calendar() {
                 const weekDay = new Date(actualYear, actualMonth, weekDate).getDay()
                 let maxTime = repairer.hours[weekDay-2] * 60;
 
-                const daysEvents = calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear)
+                const daysEvents = calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === repairer.id && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear)
 
                 let scheduledTime = 0;
                 daysEvents.forEach(event => {
@@ -757,12 +757,12 @@ function Calendar() {
 
                 const disabled = repairer.hours[new Date(actualYear, actualMonth, weekDate).getDay() - 2] === 0
 
-                return <CalendarGridBox disabled={disabled} uniqueId={`${repairer.name} ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
-                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer === repairer.name && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                return <CalendarGridBox disabled={disabled} uniqueId={`${repairer.id} ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
+                    {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === repairer.id && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
                     
                     {!disabled && <>
                     
-                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate.toString().padStart(2, '0')}-${(month+1).toString().padStart(2, '0')}-${year}`, repairer.name)} />
+                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate.toString().padStart(2, '0')}-${(month+1).toString().padStart(2, '0')}-${year}`, repairer.id)} />
                 
                     <div className='time-heat-bar'>
                         <div className='heat' style={{backgroundColor: heatCSSVariables[heatValue], flex: percentageFull}} />
@@ -788,9 +788,9 @@ function Calendar() {
                 actualYear = nextMonthAndYear[1];
             }
 
-            return <CalendarGridBox uniqueId={`misc ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
-                {calendarEvents.filter(calendarEvent => calendarEvent.repairer === 'misc' && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
-                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, 'misc')} />
+            return <CalendarGridBox uniqueId={`0 ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
+                {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === 0 && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, 0)} />
             </CalendarGridBox>
         })}
         
@@ -836,7 +836,7 @@ function Calendar() {
                     scheduledTime += parseInt(event.time);
                 else {
                     if (event.all_day)
-                        maxTime -= parseInt(repairers.find(repairer => event.repairer === repairer.name).hours[weekDay-2] * 60)
+                        maxTime -= parseInt(repairers.find(repairer => event.repairer_id === repairer.id).hours[weekDay-2] * 60)
                     else
                         scheduledTime += parseInt(event.time);
                 }
@@ -909,7 +909,7 @@ function Calendar() {
 
                         {/* Create event popover */}
                         {createCalendarEventPopover.id !== undefined && 
-                        <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairer={createCalendarEventPopover.repairer} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
+                        <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairer_id={createCalendarEventPopover.repairer_id} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
 
                     </ContentBlock>
 

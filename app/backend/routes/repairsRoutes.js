@@ -13,8 +13,8 @@ router.get('/get/:id', async (req, res) => {
                             customers.firstname, customers.surname, customers.email, customers.telephone, customers.address,
                             instruments.type, instruments.manufacturer, instruments.model, instruments.serial_number, instruments.status_id
                             FROM repairs
-                            INNER JOIN customers ON repairs.customer_id = customers.id
-                            INNER JOIN instruments ON repairs.instrument_id = instruments.id
+                            LEFT JOIN customers ON repairs.customer_id = customers.id
+                            LEFT JOIN instruments ON repairs.instrument_id = instruments.id
                             WHERE repairs.id = ?;`,
                         [req.params.id]),
 
