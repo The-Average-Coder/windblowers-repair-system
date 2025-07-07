@@ -1,10 +1,13 @@
+import { useState } from 'react';
+
 import BlockTitle from '../../../components/Text/BlockTitle';
 import BlockText from '../../../components/Text/BlockText';
 import TextInput from '../../../components/Inputs/TextInput';
+import ActionButton from '../../../components/Buttons/ActionButton';
 
 import './AccountSettings.css';
-import { useState } from 'react';
-import ActionButton from '../../../components/Buttons/ActionButton';
+
+import eventBus from '../../../utils/eventBus';
 
 function AccountSettings() {
 
@@ -16,7 +19,7 @@ function AccountSettings() {
     }
 
     const logout = () => {
-
+        eventBus.emit('logout');
     }
 
     return (

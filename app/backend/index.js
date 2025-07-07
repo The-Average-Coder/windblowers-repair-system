@@ -5,6 +5,7 @@ const cors = require('cors');
 const basicAuth = require('express-basic-auth');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcryptjs = require('bcryptjs');
 
 require('dotenv').config();
 
@@ -20,12 +21,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.cookie_parser_secret))
 
 function myAuthorizer(username, password, cb) {
+
+    const hashedPassword = bcryptjs.hashSync(password, process.env.password_hash);
+
     db.query('SELECT * FROM users', (err, result) => {
         if (!err) {
             let authenticated = false;
             result.forEach(element => {
                 const userMatches = basicAuth.safeCompare(username, element.username)
-                const passwordMatches = basicAuth.safeCompare(password, element.password)
+                const passwordMatches = basicAuth.safeCompare(hashedPassword, element.password)
         
                 if (userMatches & passwordMatches) {
                     authenticated = true;
@@ -45,13 +49,13 @@ const auth = basicAuth({
 });
 
 const checkAuthentication = (req, res, next) => {
-    next()                                                     // <---------- REMOVE THIS ONCE LOGIN IS BUILT
-    /*if (req.signedCookies.name === 'user') {
+    //next()                                                     // <---------- REMOVE THIS ONCE LOGIN IS BUILT
+    if (req.signedCookies.name === 'user') {
         next()
     }
     else {
         res.status(401).send('Unauthorised');
-    }*/
+    }
 }
 
 app.get('/authenticate', auth, (req, res) => {
@@ -77,7 +81,7 @@ app.get('/clear-cookie', (req, res) => {
     res.clearCookie('name').end();
 });
 
-//app.use(checkAuthentication);
+app.use(checkAuthentication);
 
 app.get('/api', checkAuthentication, (req, res) => {
     res.send('Hello from the API!')
