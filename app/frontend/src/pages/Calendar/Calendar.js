@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { DndContext, useSensor, useSensors, KeyboardSensor, MouseSensor, DragOverlay, useDroppable } from '@dnd-kit/core';
 
@@ -18,6 +18,7 @@ import CalendarEvent from './Events/CalendarEvent';
 import AddCalendarEventButton from './Events/AddCalendarEventButton';
 import CalendarEventPopover from './Popovers/CalendarEventPopover';
 import CreateEventPopover from './Popovers/CreateEventPopover';
+import SchedulingRepairWidget from './Widgets/SchedulingRepairWidget';
 
 import './Calendar.css';
 
@@ -207,7 +208,7 @@ function Calendar() {
     // #### DATABASE FETCH DATA
     useEffect(() => {
         axios.get('/api/calendarEvents/get')
-            .then(response => {setCalendarEvents(response.data);console.log(response.data)})
+            .then(response => setCalendarEvents(response.data))
             .catch(error => console.log(error));
         
         axios.get('/api/repairers/get')
@@ -215,7 +216,7 @@ function Calendar() {
             .catch(error => console.log(error));
         
         axios.get('/api/settings/getJobTypes')
-            .then(response => {setJobTypes(response.data);console.log(response.data)})
+            .then(response => setJobTypes(response.data))
             .catch(error => console.log(error));
 
         axios.get('/api/settings/getInstrumentStatuses')
@@ -250,6 +251,7 @@ function Calendar() {
     const [popoverPosition, setPopoverPosition] = useState([0, 0])
     const [createCalendarEventPopover, setCreateCalendarEventPopover] = useState({});
 
+    const [schedulingRepair, setSchedulingRepair] = useState({})
 
     // #### DRAG AND DROP INITIALISATION
     const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 5 }});
@@ -262,14 +264,51 @@ function Calendar() {
 
 
     // #### OTHER MISCELLANEOUS INITIALISATION 
-    const navigate = useNavigate();   
+    const navigate = useNavigate();
+    const location = useLocation(); 
     const calendarRef = useRef(null);
     const currentDate = new Date();
+
+
+    // #### SCHEDULING REPAIRS
+    useEffect(() => {
+        // Check state to see whether a specific repair is being scheduled
+        if (location.state === null) return;
+
+        setSchedulingRepair(location.state.scheduling_repair);
+        window.history.replaceState({}, '') // Clear state for reloads etc
+    }, [])
+
+    const removeSchedulingRepair = () => {
+        setSchedulingRepair({});
+    }
 
 
     // #### DRAG AND DROP EVENTS
     const handleDragOver = (event) => {
         eventBus.emit('handleDragOver', event)
+    }
+
+    const handleDragStart = (event) => {
+        setActiveEvent(calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id));
+    }
+    
+    const handleDragEnd = (event) => {
+        setPopoverCalendarEvent({});
+        setActiveEvent(null);
+
+        if (event.over) {
+            if (event.over.data.current.disabled === true) {
+                return;
+            }
+
+            const [repairerId, date] = event.over.id.split(' ');
+            const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
+            calendarEvent.repairer_id = parseInt(repairerId);
+            calendarEvent.date = date
+
+            updateCalendarEvent(calendarEvent)
+        }
     }
 
 
@@ -507,9 +546,11 @@ function Calendar() {
     // #### CALENDAR EVENT MANAGEMENT FUNCTIONS
     const createCalendarEvent = (calendarEvent) => {
         axios.post('/api/calendarEvents/create', calendarEvent)
+            .then(response => {
+                setCalendarEvents(calendarEvents.concat({...calendarEvent, id: response.data.insertId}))
+            })
             .catch(error => console.log(error));
 
-        setCalendarEvents(calendarEvents.concat(calendarEvent));
         closeAddCalendarEventPopover();
     }
 
@@ -543,28 +584,6 @@ function Calendar() {
         openCalendarEventPopover(e, calendarEvent)
     }
 
-    const handleDragStart = (event) => {
-        setActiveEvent(calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id));
-    };
-    
-    const handleDragEnd = (event) => {
-        setPopoverCalendarEvent({});
-        setActiveEvent(null);
-
-        if (event.over) {
-            if (event.over.data.current.disabled === true) {
-                return;
-            }
-
-            const [repairerId, date] = event.over.id.split(' ');
-            const calendarEvent = calendarEvents.find(calendarEvent => calendarEvent.id === event.active.id);
-            calendarEvent.repairer_id = parseInt(repairerId);
-            calendarEvent.date = date
-
-            updateCalendarEvent(calendarEvent)
-        }
-    };
-
 
     // #### CALENDAR EVENT POPOVER FUNCTIONS
     const openCalendarEventPopover = (e, calendarEvent) => {
@@ -583,7 +602,13 @@ function Calendar() {
         e.stopPropagation();
 
         closeCalendarEventPopover();
-        setCreateCalendarEventPopover({id: id, date: date, repairer_id: repairer_id});
+        const creatingCalendarEvent = {
+            id: id,
+            date: date,
+            repairer_id: repairer_id,
+            repair: schedulingRepair.id ? schedulingRepair : null
+        }
+        setCreateCalendarEventPopover(creatingCalendarEvent);
 
         const buttonRect = e.target.closest('.AddCalendarEventButton').getBoundingClientRect();
 
@@ -790,7 +815,7 @@ function Calendar() {
 
             return <CalendarGridBox uniqueId={`0 ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
                 {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === 0 && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
-                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate}-${month+1}-${year}`, 0)} />
+                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate.toString().padStart(2, '0')}-${(month+1).toString().padStart(2, '0')}-${year}`, 0)} />
             </CalendarGridBox>
         })}
         
@@ -832,6 +857,7 @@ function Calendar() {
 
             let scheduledTime = 0;
             daysEvents.forEach(event => {
+                if (event.repairer_id === 0) return;
                 if (event.type === 'Repair')
                     scheduledTime += parseInt(event.time);
                 else {
@@ -888,13 +914,19 @@ function Calendar() {
 
                 <div className='calendar-content'>
 
-                    <NavigationCalendar
-                        year={year} setYear={setYear}
-                        month={month} setMonth={setMonth} calculateMonthDates={calculateMonthDates}
-                        week={week} setWeek={setWeek} calculateWeekDates={calculateWeekDates}
-                        day={day} setDay={setDay}
-                        mode={calendarMode}
-                    />
+                    <div className='sidebar'>
+                        <NavigationCalendar
+                            year={year} setYear={setYear}
+                            month={month} setMonth={setMonth} calculateMonthDates={calculateMonthDates}
+                            week={week} setWeek={setWeek} calculateWeekDates={calculateWeekDates}
+                            day={day} setDay={setDay}
+                            mode={calendarMode}
+                        />
+                        
+                        {schedulingRepair.id &&
+                        <SchedulingRepairWidget schedulingRepair={schedulingRepair} removeSchedulingRepair={removeSchedulingRepair} />
+                        }
+                    </div>
 
                     <ContentBlock className='calendar-box' ref={calendarRef}>
 
@@ -909,7 +941,7 @@ function Calendar() {
 
                         {/* Create event popover */}
                         {createCalendarEventPopover.id !== undefined && 
-                        <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairer_id={createCalendarEventPopover.repairer_id} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
+                        <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairerId={createCalendarEventPopover.repairer_id} schedulingRepair={createCalendarEventPopover.repair} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
 
                     </ContentBlock>
 
@@ -946,23 +978,23 @@ function Calendar() {
 
                         {calendarMode === calendarModes.WEEK && <>
                         
-                        {detailsSettings.find(detail => detail.name === 'Instrument').weekEnabled &&
+                        {detailsSettings.find(detail => detail.name === 'Instrument').week_enabled &&
                         <BlockText>{activeEvent.repair && `${activeEvent.repair.instrument.manufacturer} ${activeEvent.repair.instrument.model} ${activeEvent.repair.instrument.type}`}</BlockText>}
 
-                        {detailsSettings.find(detail => detail.name === 'Serial Number').weekEnabled &&
-                        <BlockText>{activeEvent.repair && `Serial: ${activeEvent.repair.instrument.serial_number}`}</BlockText>}
+                        {detailsSettings.find(detail => detail.name === 'Serial Number').week_enabled &&
+                        <BlockText>{activeEvent.repair && activeEvent.repair.instrument.serial_number}</BlockText>}
                         
-                        {detailsSettings.find(detail => detail.name === 'Instrument Status').weekEnabled &&
-                        <BlockText>{activeEvent.repair && `${instrumentStatuses[activeEvent.repair.instrument.status].status}`}</BlockText>}
+                        {detailsSettings.find(detail => detail.name === 'Instrument Status').week_enabled &&
+                        <BlockText>{activeEvent.repair && instrumentStatuses.length > 0 && `${instrumentStatuses.find(instrumentStatus => instrumentStatus.id === activeEvent.repair.instrument.status).status}`}</BlockText>}
                         
                         {activeEvent.repair.in_house ?
                         <BlockText>In House Repair</BlockText>
                         :
-                        detailsSettings.find(detail => detail.name === 'Customer').weekEnabled &&
+                        detailsSettings.find(detail => detail.name === 'Customer').week_enabled &&
                         <BlockText>{activeEvent.repair && `${activeEvent.repair.customer.firstname} ${activeEvent.repair.customer.surname}`}</BlockText>}
 
-                        {detailsSettings.find(detail => detail.name === 'Job Type').weekEnabled &&
-                        <BlockText>{activeEvent.repair && `${jobTypes[activeEvent.repair.assessment.job_type].name}`}</BlockText>}
+                        {detailsSettings.find(detail => detail.name === 'Job Type').week_enabled &&
+                        <BlockText>{activeEvent.repair && jobTypes.length > 0 && `${jobTypes.find(jobType => jobType.id === activeEvent.repair.assessment.job_type).name}`}</BlockText>}
                         
                         </>}                        
                         <BlockText>{activeEvent.repair ? `${Math.floor(activeEvent.time / 60)} Hrs ${activeEvent.time % 60} Mins` : ''}</BlockText>

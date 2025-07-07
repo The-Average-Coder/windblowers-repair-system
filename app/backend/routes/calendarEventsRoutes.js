@@ -97,7 +97,7 @@ router.put('/update', async (req, res) => {
     try {
 
         db.query('UPDATE calendar_events SET type = ?, title = ?, description = ?, date = ?, time = ?, all_day = ?, color = ?, repairer_id = ?, repair_id = ? WHERE id = ?;',
-            [req.body.type, req.body.title, req.body.description, new Date(req.body.date.slice(3, 6) + req.body.date.slice(0, 3) + req.body.date.slice(6)), req.body.time, req.body.all_day, req.body.color, req.body.repairer_id, req.body.repair.id, req.body.id]);
+            [req.body.type, req.body.title, req.body.description, new Date(req.body.date.slice(3, 6) + req.body.date.slice(0, 3) + req.body.date.slice(6)), req.body.time, req.body.all_day, req.body.color, req.body.repairer_id, req.body.repair ? req.body.repair.id : '0', req.body.id]);
 
     } catch (err) {
         console.error('Failed to update calendar event:', err);

@@ -36,6 +36,12 @@ import archiveDark from '../../images/archive-icon/archiveDark.png';
 import completeLight from '../../images/complete-icon/completeLight.png';
 import completeDark from '../../images/complete-icon/completeDark.png';
 
+import scheduleLight from '../../images/schedule-icon/scheduleLight.png';
+import scheduleDark from '../../images/schedule-icon/scheduleDark.png';
+
+import unlockLight from '../../images/unlock-icon/unlockLight.png';
+import unlockDark from '../../images/unlock-icon/unlockDark.png';
+
 import deleteRed from '../../images/delete-icon/deleteRed.png';
 
 import axios from 'axios';
@@ -106,7 +112,7 @@ function Repair() {
         eventBus.off('click', closeActionsMenu);
     }
 
-    const deleteRepair = () => {
+    const deleteAction = () => {
         closeActionsMenu();
 
         if (prompt(`Type 'CONFIRM' to confirm deletion of repair`) !== 'CONFIRM') return;
@@ -114,6 +120,71 @@ function Repair() {
         axios.delete(`/api/repairs/delete/${id}`);
 
         navigate('/')
+    }
+
+    const archiveAction = () => {
+        axios.put('/api/repairs/archive', {id: id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, archived: true})
+    }
+    const unarchiveAction = () => {
+        axios.put('/api/repairs/unarchive', {id: id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, archived: false})
+    }
+
+    const assessAction = () => {
+        if (repair.assessments && repair.assessments.length > 0) return;
+
+        setRepair({...repair, assessments: [{id: 0, date_created: getDateCreated(), time: 0, time_cost: 0, materials: [], job_type_id: 1, notes: ''}]})
+    }
+
+    const getDateCreated = () => {
+        const date = new Date();
+
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+
+        // Add leading zero to day and month if needed
+        day = day < 10 ? '0' + day : day;
+        month = month < 10 ? '0' + month : month;
+
+        // Format the date as dd/mm/yyyy
+        const formattedDate = `${day}/${month}/${year}`;
+
+        return formattedDate;
+    }
+
+    const completeAction = () => {
+        axios.put('/api/repairs/complete', {id: id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, status: 3});
+    }
+    const collectedAction = () => {
+        axios.put('/api/repairs/collected', {id: id, instrument_id: repair.instrument.id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, status: 4, instrument: {...repair.instrument, status_id: 1}});
+    }
+    const reopenAction = () => {
+        axios.put('/api/repairs/reopen', {id: id})
+            .catch(error => console.log(error));
+        
+        setRepair({...repair, status: 2});
+    }
+
+    const scheduleAction = () => {
+        const schedulingRepair = {
+            id: id,
+            instrument: repair.instrument,
+            assessment: repair.assessments[repair.assessments.length - 1]
+        }
+
+        navigate('/', { state: { scheduling_repair: schedulingRepair } });
     }
 
 
@@ -177,42 +248,6 @@ function Repair() {
         setRepair({...repair, assessments: []});
     }
 
-    const assessAction = () => {
-        if (repair.assessments && repair.assessments.length > 0) return;
-
-        setRepair({...repair, assessments: [{id: 0, date_created: getDateCreated(), time: 0, time_cost: 0, materials: [], job_type_id: 1, notes: ''}]})
-    }
-
-    const getDateCreated = () => {
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-
-        // Add leading zero to day and month if needed
-        day = day < 10 ? '0' + day : day;
-        month = month < 10 ? '0' + month : month;
-
-        // Format the date as dd/mm/yyyy
-        const formattedDate = `${day}/${month}/${year}`;
-
-        return formattedDate;
-    }
-
-    const completeAction = () => {
-        axios.put('/api/repairs/complete', {id: id})
-            .catch(error => console.log(error));
-        
-        setRepair({...repair, status: 3});
-    }
-    const collectedAction = () => {
-        axios.put('/api/repairs/collected', {id: id, instrument_id: repair.instrument.id})
-            .catch(error => console.log(error));
-        
-        setRepair({...repair, status: 4, instrument: {...repair.instrument, status_id: 1}});
-    }
-
     const [customerModalOpen, setCustomerModalOpen] = useState(false);
     const [instrumentModalOpen, setInstrumentModalOpen] = useState(false);
 
@@ -224,7 +259,11 @@ function Repair() {
             
             <PageTitle>
                 Repair {id}
+                {repair.archived ?
+                <span className={`status archived`}>Archived</span>
+                :
                 <span className={`status ${statusColors[repair.status-1]}`}>{statuses[repair.status-1]}</span>
+                }
                 <ActionButton className='actions-menu-button' onClick={toggleActionsMenu}>
                     Actions
                     <img className='light' src={caretDownBlack} />
@@ -232,17 +271,24 @@ function Repair() {
                 </ActionButton>
 
                 {showActionsMenu && <div className='actions-menu'>
+                    
+                    {repair.archived ?
+                    <ActionButton onClick={unarchiveAction}><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Unarchive</ActionButton>
+                    : <>
                     {repair.assessments && repair.assessments.length === 0 ?
                     <ActionButton onClick={assessAction}><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Assess</ActionButton>
                     :
-                    repair.status === 2 ?
+                    repair.status === 2 ?<>
+                    <ActionButton onClick={scheduleAction}><img className='light' src={scheduleLight} /><img className='dark' img src={scheduleDark} />Schedule</ActionButton>
                     <ActionButton onClick={completeAction}><img className='light' src={completeLight} /><img className='dark' img src={completeDark} />Complete</ActionButton>
-                    :
-                    repair.status === 3 &&
+                    </>:
+                    repair.status === 3 &&<>
+                    <ActionButton onClick={reopenAction}><img className='light' src={unlockLight} /><img className='dark' img src={unlockDark} />Re-Open</ActionButton>
                     <ActionButton onClick={collectedAction}><img className='light' src={completeLight} /><img className='dark' img src={completeDark} />Collected</ActionButton>
-                    }
-                    <ActionButton><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Archive</ActionButton>
-                    <ActionButton onClick={deleteRepair} className='red'><img img src={deleteRed} />Delete</ActionButton>
+                    </>}                 
+                    <ActionButton onClick={archiveAction}><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Archive</ActionButton>
+                    </>}
+                    <ActionButton onClick={deleteAction} className='red'><img img src={deleteRed} />Delete</ActionButton>
                 </div>}
             </PageTitle>
 
@@ -277,7 +323,9 @@ function Repair() {
                     <>
                     <BlockText className='notes'>{repair.notes}</BlockText>
 
+                    {!repair.archived &&
                     <BlockTopRightButton onClick={toggleEditNotesMode} light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
+                    }
                     </>
                     }
 
@@ -288,7 +336,7 @@ function Repair() {
             {repair.assessments && repair.assessments.length > 0 &&
             <ContentBlock className='assessment-block'>
 
-                <Assessment assessments={repair.assessments} assess={assess} overwriteAssessment={overwriteAssessment} cancelAssess={cancelAssess} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} />
+                <Assessment assessments={repair.assessments} assess={assess} overwriteAssessment={overwriteAssessment} cancelAssess={cancelAssess} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} archived={repair.archived} />
 
             </ContentBlock>
             }

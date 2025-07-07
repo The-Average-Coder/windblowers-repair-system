@@ -67,6 +67,7 @@ function InstrumentModal(props) {
             {name: 'Cornet', value: 'Cornet'},
             {name: 'Trombone', value: 'Trombone'},
             {name: 'French Horn', value: 'French Horn'},
+            {name: 'Brass (Other)', value: 'Brass (Other)'}
         ]},
         {name: 'Other', value: 'Other'}
     ]

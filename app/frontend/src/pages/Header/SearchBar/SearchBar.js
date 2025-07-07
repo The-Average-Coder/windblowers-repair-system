@@ -14,37 +14,11 @@ function SearchBar() {
     const [timeoutId, setTimeoutId] = useState();
 
     // Simulated data
-    const recentSearches = {
-        repairs: [
-            {
-                id: 2508004,
-                status: repairStatuses.OPEN,
-                instrument: {
-                    type: 'Flute',
-                    manufacturer: 'Pearl',
-                    model: '505',
-                    serial_number: 'ABC123',
-                    status: 1,
-                },
-                customer: {
-                    firstname: 'Josh',
-                    surname: 'Cox',
-                    email: 'joshuajosephcox@gmail.com',
-                    phone: '07796593187',
-                    address: '10 Cross Hill Close, LE12 6UJ'
-                },
-            }
-        ],
-        customers: [
-            {
-                firstname: 'Richard',
-                surname: 'Cox',
-                email: 'richardphilipcox@gmail.com',
-                phone: '07740300368',
-                address: '10 Cross Hill Close, LE12 6UJ'
-            }
-        ]
-    };
+    const [recentSearches, setRecentSearches] = useState({
+        repairs: [],
+        customers: [],
+        instruments: []
+    });
     const allResults = {
         repairs: [
             {

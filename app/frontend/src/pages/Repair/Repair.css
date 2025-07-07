@@ -11,6 +11,8 @@
 .Repair .status.green { color: var(--green); background-color: var(--background-green); }
 .Repair .status.black { color: white; background-color: rgba(0, 0, 0, 0.8); }
 
+.Repair .status.archived { color: var(--grey); background-color: var(--background-grey); }
+
 .Repair .divider {
     width: 0.9px;
     background-color: var(--subcontent-border);

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import BlockTitle from '../../../components/Text/BlockTitle';
@@ -22,6 +22,8 @@ import closeHoverDark from '../../../images/close-icon/closeHoverDark.png';
 import titleLight from '../../../images/title-icons/titleLight.png';
 import infoLight from '../../../images/info-icons/infoLight.png';
 
+import axios from 'axios';
+
 function CalendarEventPopover(props) {
 
     const navigate = useNavigate();
@@ -30,10 +32,23 @@ function CalendarEventPopover(props) {
         { name: 'Repair', value: 'Repair' },
         { name: 'Other Event', value: 'Other Event' },
     ]
+    
+    
+    // #### STATE VARIABLES
+    const [tempRepairId, setTempRepairId] = useState()
+    const [foundRepair, setFoundRepair] = useState({})
 
+    useEffect(() => {
+        setTempRepairId(props.calendarEvent.repair.id)
+    }, [])
+    
+
+    // #### EVENT MANAGEMENT FUNCTIONS
     const updateCalendarEventType = (updatedType) => {
-        props.updateCalendarEvent({...props.calendarEvent, type: updatedType});
+        const updatedColor = updatedType === 'Other Event' ? 'green' : (props.calendarEvent.repair && props.calendarEvent.repair.id ? getEventColorFromInstrumentType(props.calendarEvent.repair.instrument.type) : 'grey');
+        props.updateCalendarEvent({...props.calendarEvent, type: updatedType, color: updatedColor});
         props.calendarEvent.type = updatedType;
+        props.calendarEvent.color = updatedColor;
     }
 
     const updateCalendarEventTitle = (updatedTitle) => {
@@ -66,6 +81,37 @@ function CalendarEventPopover(props) {
         props.calendarEvent.all_day = value;
     }
 
+    const updateTempRepairId = (value) => {
+        setTempRepairId(value);
+        setFoundRepair({});
+
+        axios.get(`/api/repairs/get/${value}`)
+            .then(response => {
+                if (response.data.id === undefined) return;
+                setFoundRepair(response.data);
+            })
+            .catch(error => console.log(error))
+    }
+
+    const getEventColorFromInstrumentType = (instrumentType) => {
+        
+        if (['Oboe', 'Cor Anglais', 'Oboe (Other)', 'Bassoon', 'Bassoon (Other)'].includes(instrumentType)) {
+            return 'purple';
+        }
+
+        if (['Trumpet', 'Cornet', 'Trombone', 'French Horn', 'Brass (Other)'].includes(instrumentType)) {
+            return 'orange'
+        }
+        
+        return 'blue';
+    }
+
+    const setRepair = () => {
+        console.log(foundRepair.instrument.type)
+        props.updateCalendarEvent({...props.calendarEvent, repair: foundRepair, color: getEventColorFromInstrumentType(foundRepair.instrument.type)});
+        setFoundRepair({});
+    }
+
     useEffect(() => {
         eventBus.on('click', props.closeFunction);
         return () => eventBus.off('click', props.closeFunction);
@@ -79,7 +125,8 @@ function CalendarEventPopover(props) {
                 <DropdownSelect options={eventOptions} placeholder={'Select Event Type'} value={props.calendarEvent.type} onChange={updateCalendarEventType} />
             
                 {props.calendarEvent.type === 'Repair' ? <>
-                <TextInput placeholder='Serial Number' value={props.calendarEvent.repair.instrument.serial_number} />
+                <TextInput placeholder='Repair ID' value={tempRepairId} onChange={updateTempRepairId} />
+                {foundRepair.id !== undefined && <button className='select-repair-button' onClick={setRepair}>{foundRepair.id}</button>}
                 </> : props.calendarEvent.type === 'Other Event' ? <>
                 <TextInput icon={titleLight} placeholder='Title' value={props.calendarEvent.title} onChange={updateCalendarEventTitle} />
                 <TextAreaInput icon={infoLight} placeholder='Description' value={props.calendarEvent.description} onChange={updateCalendarEventDescription} disableAutoResize />

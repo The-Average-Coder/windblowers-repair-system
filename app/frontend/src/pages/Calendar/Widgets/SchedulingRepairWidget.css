@@ -1,0 +1,30 @@
+.SchedulingRepairWidget {
+    position: relative;
+    background-color: var(--content-background);
+    border: 1px solid var(--content-border);
+    border-radius: 8px;
+    margin-top: 16px;
+    padding: 8px;
+}
+
+.SchedulingRepairWidget .close-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+}
+
+.SchedulingRepairWidget .close-button:hover {
+    background-color: rgb(210, 0, 0);
+}
+
+.SchedulingRepairWidget .close-button:active {
+    background-color: rgb(200, 0, 0);
+}

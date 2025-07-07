@@ -316,7 +316,9 @@ function Assessment(props) {
                 <>
                 <BlockText className='notes'>{props.assessments[currentAssessment].notes}</BlockText>
 
+                {!props.archived &&
                 <BlockTopRightButton onClick={toggleEditMode} light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
+                }
                 </>
                 }
              

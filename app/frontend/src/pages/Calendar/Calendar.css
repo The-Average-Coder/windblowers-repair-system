@@ -78,6 +78,12 @@
     background-color: var(--click-color);
 }
 
+.Calendar .sidebar {
+    margin-top: 8px;
+    margin-right: 16px;
+    align-self: baseline;
+}
+
 .Calendar .calendar-content {
     display: flex;
 }
@@ -276,6 +282,10 @@
 @media screen and (max-width: 1000px) {
     .Calendar .PageTitle .calendar-mode-toggle {
         left: 50%;
+    }
+
+    .Calendar .sidebar {
+        display: none;
     }
 }
 

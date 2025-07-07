@@ -9,7 +9,7 @@ router.get('/get/:id', async (req, res) => {
 
         const queries = [
 
-        db.promise().query(`SELECT repairs.status, repairs.in_house, repairs.notes, repairs.customer_id, repairs.instrument_id,
+        db.promise().query(`SELECT repairs.status, repairs.in_house, repairs.notes, repairs.archived, repairs.customer_id, repairs.instrument_id,
                             customers.firstname, customers.surname, customers.email, customers.telephone, customers.address,
                             instruments.type, instruments.manufacturer, instruments.model, instruments.serial_number, instruments.status_id
                             FROM repairs
@@ -48,9 +48,11 @@ router.get('/get/:id', async (req, res) => {
         }
 
         const formatted_data = {
+            id: req.params.id,
             status: repair[0][0].status,
             in_house: repair[0][0].in_house,
             notes: repair[0][0].notes,
+            archived: Boolean(repair[0][0].archived),
             customer: {
                 id: repair[0][0].customer_id,
                 firstname: repair[0][0].firstname,
@@ -124,6 +126,9 @@ router.delete('/delete/:id', async (req, res) => {
             [req.params.id]);
 
         db.query('DELETE FROM assessments WHERE repair_id = ?',
+            [req.params.id]);
+        
+        db.query('DELETE FROM calendar_events WHERE repair_id = ?',
             [req.params.id]);
 
     } catch (err) {
@@ -202,6 +207,49 @@ router.put('/collected', async (req, res) => {
         db.query('UPDATE instruments SET status_id = 1 WHERE id = ?',
             [req.body.instrument_id]
         )
+
+    } catch (err) {
+        console.error('Failed to update repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.put('/reopen', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE repairs SET status = 2 WHERE id = ?;',
+            [req.body.id]);
+
+    } catch (err) {
+        console.error('Failed to update repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+
+router.put('/archive', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE repairs SET archived = 1 WHERE id = ?;',
+            [req.body.id]);
+        
+        db.query('DELETE FROM calendar_events WHERE repair_id = ?',
+            [req.body.id]);
+
+    } catch (err) {
+        console.error('Failed to update repair:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+})
+router.put('/unarchive', async (req, res) => {
+
+    try {
+
+        db.query('UPDATE repairs SET archived = 0 WHERE id = ?;',
+            [req.body.id]);
 
     } catch (err) {
         console.error('Failed to update repair:', err);

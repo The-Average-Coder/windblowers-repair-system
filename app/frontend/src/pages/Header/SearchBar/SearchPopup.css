@@ -12,7 +12,7 @@
     padding: 4px;
 }
 
-.SearchPopup .search-filters {
+/*.SearchPopup .search-filters {
     margin: 8px;
     display: flex;
     flex-wrap: wrap;
@@ -42,12 +42,18 @@
     background: none;
     border: none;
     cursor: pointer;
+}*/
+
+.SearchPopup .no-results {
+    margin: 4px 8px;
+    font-style: italic;
+    color: var(--grey)
 }
 
 .SearchPopup .section-title {
     font-size: 14px;
-    font-weight: bold;
-    margin: 12px 8px 2px;
+    
+    margin: 8px 8px 2px;
 }
 
 .result-list,
