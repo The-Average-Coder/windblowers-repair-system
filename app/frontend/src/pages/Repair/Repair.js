@@ -8,6 +8,7 @@ import BlockText from '../../components/Text/BlockText';
 import TextAreaInput from '../../components/Inputs/TextAreaInput';
 import BlockTopRightButton from '../../components/Buttons/BlockTopRightButton';
 import ActionButton from '../../components/Buttons/ActionButton';
+import DatePicker from '../../components/Inputs/DatePicker';
 
 import InstrumentDetails from './BasicDetails/InstrumentDetails';
 import CustomerDetails from './BasicDetails/CustomerDetails';
@@ -84,6 +85,7 @@ function Repair() {
     // #### STATE VARIABLES
     const [editNotesMode, setEditNotesMode] = useState(false);
     const [tempNotes, setTempNotes] = useState('');
+    const [tempDeadline, setTempDeadline] = useState('');
     
     const [showActionsMenu, setShowActionsMenu] = useState(false);
 
@@ -181,7 +183,8 @@ function Repair() {
         const schedulingRepair = {
             id: id,
             instrument: repair.instrument,
-            assessment: repair.assessments[repair.assessments.length - 1]
+            assessment: repair.assessments[repair.assessments.length - 1],
+            deadline: repair.deadline
         }
 
         navigate('/', { state: { scheduling_repair: schedulingRepair } });
@@ -196,15 +199,16 @@ function Repair() {
         setRepair({...repair, instrument: value})
     }
     const toggleEditNotesMode = () => {
-        setTempNotes(repair.notes)
+        setTempNotes(repair.notes);
+        setTempDeadline(repair.deadline);
         setEditNotesMode(!editNotesMode);
     }
     const updateNotes = () => {
 
-        axios.put('/api/repairs/update', {...repair, id: id, notes: tempNotes})
+        axios.put('/api/repairs/update', {...repair, id: id, notes: tempNotes, deadline: tempDeadline})
             .catch(error => console.log(error));
 
-        setRepair({...repair, notes: tempNotes})
+        setRepair({...repair, notes: tempNotes, deadline: tempDeadline})
         toggleEditNotesMode();
     }
     const assess = (assessment) => {
@@ -278,14 +282,16 @@ function Repair() {
                     {repair.assessments && repair.assessments.length === 0 ?
                     <ActionButton onClick={assessAction}><img className='light' src={assessLight} /><img className='dark' img src={assessDark} />Assess</ActionButton>
                     :
-                    repair.status === 2 ?<>
+                    repair.status === 2 ? <>
                     <ActionButton onClick={scheduleAction}><img className='light' src={scheduleLight} /><img className='dark' img src={scheduleDark} />Schedule</ActionButton>
                     <ActionButton onClick={completeAction}><img className='light' src={completeLight} /><img className='dark' img src={completeDark} />Complete</ActionButton>
-                    </>:
-                    repair.status === 3 &&<>
+                    </> : <>
                     <ActionButton onClick={reopenAction}><img className='light' src={unlockLight} /><img className='dark' img src={unlockDark} />Re-Open</ActionButton>
+                    {repair.status === 3 &&
                     <ActionButton onClick={collectedAction}><img className='light' src={completeLight} /><img className='dark' img src={completeDark} />Collected</ActionButton>
-                    </>}                 
+                    }  
+                    </>
+                    }             
                     <ActionButton onClick={archiveAction}><img className='light' src={archiveLight} /><img className='dark' img src={archiveDark} />Archive</ActionButton>
                     </>}
                     <ActionButton onClick={deleteAction} className='red'><img img src={deleteRed} />Delete</ActionButton>
@@ -306,6 +312,15 @@ function Repair() {
                 </ContentBlock>
 
                 <ContentBlock className='notes-block'>
+
+                    <BlockTitle>Deadline</BlockTitle>
+
+                    {
+                    editNotesMode ?
+                    <DatePicker value={tempDeadline} onChange={(value) => setTempDeadline(value.replaceAll('-', '/'))} />
+                    :
+                    <BlockText>{repair.deadline}</BlockText>
+                    }
 
                     <BlockTitle>Notes</BlockTitle>
 

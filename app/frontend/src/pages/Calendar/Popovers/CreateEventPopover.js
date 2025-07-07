@@ -93,6 +93,10 @@ function CreateEventPopover(props) {
 
     const getEventColorFromInstrumentType = (instrumentType) => {
         
+        if (['Flute', 'Piccolo', 'Alto Flute', 'Bass Flute', 'Flute (Other)'].includes(instrumentType)) {
+            return 'turquoise';
+        }
+        
         if (['Oboe', 'Cor Anglais', 'Oboe (Other)', 'Bassoon', 'Bassoon (Other)'].includes(instrumentType)) {
             return 'purple';
         }

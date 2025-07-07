@@ -49,7 +49,6 @@ const auth = basicAuth({
 });
 
 const checkAuthentication = (req, res, next) => {
-    //next()                                                     // <---------- REMOVE THIS ONCE LOGIN IS BUILT
     if (req.signedCookies.name === 'user') {
         next()
     }

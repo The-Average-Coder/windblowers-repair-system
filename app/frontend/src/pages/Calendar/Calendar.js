@@ -571,7 +571,7 @@ function Calendar() {
 
     const onClickCalendarEvent = (e, calendarEvent) => {
         // If double click, navigate to repair page
-        if (e.detail === 2 && calendarEvent.repair.id !== undefined) {
+        if (e.detail === 2 && calendarEvent.repair !== null && calendarEvent.repair.id !== undefined) {
             navigate(`/repair/${calendarEvent.repair.id}`);
             return;
         }

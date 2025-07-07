@@ -53,7 +53,7 @@ router.get('/search/:query', async (req, res) => {
 
     try {
 
-        const searchResults = await db.promise().query('SELECT id, firstname, surname, email, telephone, address FROM customers WHERE CONCAT(firstname, " ", surname) LIKE CONCAT("%", ?, "%") LIMIT 20;',
+        const searchResults = await db.promise().query('SELECT id, firstname, surname, email, telephone, address FROM customers WHERE CONCAT(firstname, " ", surname) LIKE CONCAT("%", ?, "%") LIMIT 5;',
             [req.params.query]);
         
         res.send(searchResults[0]);

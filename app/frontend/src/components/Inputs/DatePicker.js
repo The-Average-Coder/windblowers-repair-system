@@ -9,7 +9,7 @@ function DatePicker(props) {
     const changeDate = (date) => {
         const dayMonthYear = `${date.slice(8)}-${date.slice(5, 7)}-${date.slice(0, 4)}`;
 
-        if (new Date(date).getDay() < 2) {
+        if (props.restrictedDays && new Date(date).getDay() < 2) {
             return;
         }
 

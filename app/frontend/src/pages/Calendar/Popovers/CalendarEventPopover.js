@@ -39,6 +39,7 @@ function CalendarEventPopover(props) {
     const [foundRepair, setFoundRepair] = useState({})
 
     useEffect(() => {
+        if (props.calendarEvent.repair === null) return;
         setTempRepairId(props.calendarEvent.repair.id)
     }, [])
     
@@ -95,6 +96,10 @@ function CalendarEventPopover(props) {
 
     const getEventColorFromInstrumentType = (instrumentType) => {
         
+        if (['Flute', 'Piccolo', 'Alto Flute', 'Bass Flute', 'Flute (Other)'].includes(instrumentType)) {
+            return 'turquoise';
+        }
+
         if (['Oboe', 'Cor Anglais', 'Oboe (Other)', 'Bassoon', 'Bassoon (Other)'].includes(instrumentType)) {
             return 'purple';
         }
@@ -134,7 +139,7 @@ function CalendarEventPopover(props) {
 
                 <BlockTitle className='sub-title'>Date and Time</BlockTitle>
 
-                <DatePicker value={props.calendarEvent.date} onChange={updateCalendarEventDate} />
+                <DatePicker value={props.calendarEvent.date} onChange={updateCalendarEventDate} restrictedDays />
 
                 <div className='time-inputs'>
                     <HoursDropdownSelect disabled={props.calendarEvent.all_day} value={Math.floor(props.calendarEvent.time / 60)} onChange={updateCalendarEventHours} />

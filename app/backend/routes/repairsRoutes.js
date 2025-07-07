@@ -9,7 +9,7 @@ router.get('/get/:id', async (req, res) => {
 
         const queries = [
 
-        db.promise().query(`SELECT repairs.status, repairs.in_house, repairs.notes, repairs.archived, repairs.customer_id, repairs.instrument_id,
+        db.promise().query(`SELECT repairs.status, repairs.in_house, repairs.deadline, repairs.notes, repairs.archived, repairs.customer_id, repairs.instrument_id,
                             customers.firstname, customers.surname, customers.email, customers.telephone, customers.address,
                             instruments.type, instruments.manufacturer, instruments.model, instruments.serial_number, instruments.status_id
                             FROM repairs
@@ -52,6 +52,7 @@ router.get('/get/:id', async (req, res) => {
             status: repair[0][0].status,
             in_house: repair[0][0].in_house,
             notes: repair[0][0].notes,
+            deadline: formatDate(repair[0][0].deadline),
             archived: Boolean(repair[0][0].archived),
             customer: {
                 id: repair[0][0].customer_id,
@@ -95,8 +96,8 @@ router.post('/create', async (req, res) => {
 
     try {
 
-        db.query('INSERT INTO repairs (id, status, customer_id, in_house, instrument_id, notes) VALUES (?, ?, ?, ?, ?, ?);',
-            [req.body.id, 1, req.body.customer_id, req.body.in_house, req.body.instrument_id, req.body.notes]);
+        db.query('INSERT INTO repairs (id, status, customer_id, in_house, instrument_id, notes, deadline) VALUES (?, ?, ?, ?, ?, ?, ?);',
+            [req.body.id, 1, req.body.customer_id, req.body.in_house, req.body.instrument_id, req.body.notes, new Date(req.body.deadline.slice(3, 6) + req.body.deadline.slice(0, 3) + req.body.deadline.slice(6))]);
 
     } catch (err) {
         console.error('Failed to create repair:', err);
@@ -109,7 +110,7 @@ router.put('/update', async (req, res) => {
 
     try {
 
-        db.query('UPDATE repairs SET status = ?, notes = ? WHERE id = ?;', [req.body.status, req.body.notes, req.body.id]);
+        db.query('UPDATE repairs SET status = ?, notes = ?, deadline = ? WHERE id = ?;', [req.body.status, req.body.notes, new Date(req.body.deadline.slice(3, 6) + req.body.deadline.slice(0, 3) + req.body.deadline.slice(6)), req.body.id]);
 
     } catch (err) {
         console.error('Failed to update repair:', err);
@@ -264,7 +265,7 @@ router.get('/search/:query', async (req, res) => {
                             FROM repairs
                             LEFT JOIN instruments ON repairs.instrument_id = instruments.id
                             WHERE repairs.id LIKE CONCAT("%", ?, "%")
-                            LIMIT 10;`,
+                            LIMIT 5;`,
                         [req.params.query])
     
     const formatted_data = response[0].map(result => {

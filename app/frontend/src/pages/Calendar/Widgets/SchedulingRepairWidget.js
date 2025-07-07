@@ -11,6 +11,7 @@ function SchedulingRepairWidget(props) {
             <BlockText>Repair {props.schedulingRepair.id}</BlockText>
             <BlockText>{props.schedulingRepair.instrument.manufacturer} {props.schedulingRepair.instrument.model} {props.schedulingRepair.instrument.type}</BlockText>
             <BlockText>{Math.floor(props.schedulingRepair.assessment.time / 60)} Hrs {props.schedulingRepair.assessment.time % 60} Mins Estimated</BlockText>
+            <BlockText>Deadline {props.schedulingRepair.deadline}</BlockText>
 
             <button className='close-button' onClick={props.removeSchedulingRepair}>X</button>
 

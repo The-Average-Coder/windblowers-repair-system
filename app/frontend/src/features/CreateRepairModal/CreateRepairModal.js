@@ -13,6 +13,7 @@ import './CreateRepairModal.css';
 
 import axios from 'axios';
 import moment from 'moment';
+import DatePicker from '../../components/Inputs/DatePicker';
 
 function CreateRepairModal(props) {
 
@@ -89,6 +90,7 @@ function CreateRepairModal(props) {
     const [inHouseCustomer, setInHouseCustomer] = useState(false);
     const [instrument, setInstrument] = useState({});
     const [notes, setNotes] = useState('');
+    const [deadline, setDeadline] = useState('');
 
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -176,7 +178,8 @@ function CreateRepairModal(props) {
             customer_id: customerId,
             in_house: inHouseCustomer,
             instrument_id: instrumentId,
-            notes: notes
+            notes: notes,
+            deadline: deadline
         })
 
         navigate(`/repair/${repairId}`);
@@ -225,6 +228,10 @@ function CreateRepairModal(props) {
         }
         if (instrument.status_id === undefined) {
             setErrorMessage('Status required');
+            return false;
+        }
+        if (deadline === '') {
+            setErrorMessage('Deadline required');
             return false;
         }
 
@@ -407,10 +414,12 @@ function CreateRepairModal(props) {
                 </>}
             </div>}
 
-            {/* Notes */}
+            {/* Notes and Deadline */}
             {instrument.serial_number !== undefined && (customer.surname !== undefined || inHouseCustomer) ? <div className='notes'>
                 <BlockTitle>Notes</BlockTitle>
                 <TextAreaInput value={notes} onChange={setNotes} placeholder='Notes' />
+                <BlockTitle>Deadline</BlockTitle>
+                <DatePicker value={deadline} onChange={(value) => setDeadline(value.replaceAll('-', '/'))} />
             </div> : null}
 
         </div>
