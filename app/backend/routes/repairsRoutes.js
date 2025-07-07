@@ -258,4 +258,27 @@ router.put('/unarchive', async (req, res) => {
 
 })
 
+router.get('/search/:query', async (req, res) => {
+
+    const response = await db.promise().query(`SELECT repairs.id, instruments.type, instruments.manufacturer, instruments.model
+                            FROM repairs
+                            LEFT JOIN instruments ON repairs.instrument_id = instruments.id
+                            WHERE repairs.id LIKE CONCAT("%", ?, "%")
+                            LIMIT 10;`,
+                        [req.params.query])
+    
+    const formatted_data = response[0].map(result => {
+        return {
+            id: result.id,
+            instrument: {
+                type: result.type,
+                manufacturer: result.manufacturer,
+                model: result.model,
+            }
+        }
+    });
+
+    res.send(formatted_data);
+})
+
 module.exports = router;

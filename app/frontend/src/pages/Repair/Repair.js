@@ -78,7 +78,7 @@ function Repair() {
         axios.get('/api/settings/getHourlyRate')
             .then(response => setHourlyRate(response.data.hourly_rate / 100))
             .catch(error => console.log(error));
-    }, [])
+    }, [id])
 
 
     // #### STATE VARIABLES

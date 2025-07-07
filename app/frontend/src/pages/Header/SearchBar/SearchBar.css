@@ -1,4 +1,4 @@
-.SearchBar input {
+.SearchBar .search-bar {
     color: var(--text);
     font-family: inherit;
     width: 400px;
@@ -10,12 +10,12 @@
     font-size: 15px;    
 }
 
-.SearchBar input:hover, .SearchBar input:focus {
+.SearchBar .search-bar:hover, .SearchBar .search-bar:focus {
     outline: none;
     box-shadow: 0 1px 10px var(--content-border);
 }
 
-.SearchBar input::placeholder {
+.SearchBar .search-bar::placeholder {
     color: var(--faded-text)
 }
 
@@ -24,7 +24,7 @@
 }
 
 @media screen and (max-width: 800px) {
-    .SearchBar input {
+    .SearchBar .search-bar {
         display: none;
     }
 }

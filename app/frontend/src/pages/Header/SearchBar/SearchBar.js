@@ -1,90 +1,93 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'
 
 import SearchPopup from './SearchPopup';
 
+import CustomerModal from '../../../features/CustomerModal/CustomerModal';
+import InstrumentModal from '../../../features/InstrumentModal/InstrumentModal';
+
 import './SearchBar.css';
 
-import repairStatuses from '../../../enums/repairStatuses';
+import axios from 'axios';
 
 function SearchBar() {
+
+    // #### STATE VARIABLES
+    const [recentSearches, setRecentSearches] = useState([]);
+
+    const [repairResults, setRepairResults] = useState([]);
+    const [customerResults, setCustomerResults] = useState([]);
+    const [instrumentResults, setInstrumentResults] = useState([]);
 
     const [query, setQuery] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const inputRef = useRef();
     const [timeoutId, setTimeoutId] = useState();
 
-    // Simulated data
-    const [recentSearches, setRecentSearches] = useState({
-        repairs: [],
-        customers: [],
-        instruments: []
-    });
-    const allResults = {
-        repairs: [
-            {
-                id: 2508004,
-                status: repairStatuses.OPEN,
-                instrument: {
-                    type: 'Flute',
-                    manufacturer: 'Pearl',
-                    model: '505',
-                    serial_number: 'ABC123',
-                    status: 1,
-                },
-                customer: {
-                    firstname: 'Josh',
-                    surname: 'Cox',
-                    email: 'joshuajosephcox@gmail.com',
-                    phone: '07796593187',
-                    address: '10 Cross Hill Close, LE12 6UJ'
-                },
-            },
-            {
-                id: 2509002,
-                status: repairStatuses.OPEN,
-                customer: {
-                    firstname: 'Richard',
-                    surname: 'Cox',
-                    email: 'richardphilipcox@gmail.com',
-                    phone: '07740300368',
-                    address: '10 Cross Hill Close, LE12 6UJ'
-                },
-                instrument: {
-                    type: 'Alto Saxophone',
-                    manufacturer: 'Yamaha',
-                    model: 'YAS-280',
-                    serial_number: 'DEF456',
-                    status: 1,
-                }
-            }
-        ],
-        customers: [
-            {
-                firstname: 'Josh',
-                surname: 'Cox',
-                email: 'joshuajosephcox@gmail.com',
-                phone: '07796593187',
-                address: '10 Cross Hill Close, LE12 6UJ'
-            },
-            {
-                firstname: 'Richard',
-                surname: 'Cox',
-                email: 'richardphilipcox@gmail.com',
-                phone: '07740300368',
-                address: '10 Cross Hill Close, LE12 6UJ'
-            }
-        ]
-    };
+    const [selectedCustomer, setSelectedCustomer] = useState({});
+    const [selectedInstrument, setSelectedInstrument] = useState({});
 
-    const filteredResults = query.trim() ? {
-        repairs: allResults.repairs,
-        customers: allResults.customers
-    } : { repairs: [], customers: [] };
+
+    // #### MISCELLANEOUS INITIALISATION
+    const navigate = useNavigate()
+
+
+    // #### SEARCH FUNCTIONS
+    async function searchQuery(query) {
+        setQuery(query);
+        setShowPopup(true)
+
+        if (query.trim() === '') return;
+
+        await axios.get(`/api/repairs/search/${query.trim()}`)
+            .then(response => {
+                setRepairResults(response.data || []);
+            })
+            .catch(error => console.log(error));
+        
+        await axios.get(`/api/customers/search/${query.trim()}`)
+            .then(response => {
+                setCustomerResults(response.data || []);
+            })
+            .catch(error => console.log(error));
+        
+        await axios.get(`/api/instruments/search/${query.trim()}`)
+            .then(response => {
+                setInstrumentResults(response.data || []);
+            })
+            .catch(error => console.log(error));
+    }
+
+    const selectResult = (result) => {
+        setQuery('');
+        setTimeoutId(setTimeout(() => setShowPopup(false), 100));
+        
+        setRecentSearches([result, ...recentSearches.filter(search => search.type !== result.type || search.id !== result.id)]);
+
+        if (result.type === 'repair') {
+            navigate(`/repair/${result.id}`);
+        }
+
+        else if (result.type === 'customer') {
+            axios.get(`/api/customers/get/${result.id}`)
+                .then(response => setSelectedCustomer(response.data))
+                .catch(error => console.log(error));
+        }
+
+        else if (result.type === 'instrument') {
+            axios.get(`/api/instruments/get/${result.id}`)
+                .then(response => setSelectedInstrument(response.data))
+                .catch(error => console.log(error));
+        }
+    }
 
     return (<div className='SearchBar'>
-        <input list='suggested-search-results' type='text' placeholder='Search' value={query} onChange={(e) => setQuery(e.target.value)} onFocus={() => setShowPopup(true)} onBlur={() => setTimeoutId(setTimeout(() => setShowPopup(false), 100))} ref={inputRef} />
+        <input className='search-bar' list='suggested-search-results' type='text' placeholder='Search' value={query} onChange={(e) => searchQuery(e.target.value)} onFocus={() => setShowPopup(true)} onBlur={() => setTimeoutId(setTimeout(() => setShowPopup(false), 100))} ref={inputRef} />
 
-        {showPopup && <SearchPopup query={query} results={filteredResults} recentSearches={recentSearches} onClick={() => {clearTimeout(timeoutId);inputRef.current.focus()}} />}
+        {showPopup && <SearchPopup query={query} repairResults={repairResults} customerResults={customerResults} instrumentResults={instrumentResults} recentSearches={recentSearches} onClick={() => {clearTimeout(timeoutId)}} selectResult={selectResult} />}
+    
+        {selectedCustomer.id && <CustomerModal customer={selectedCustomer} closeFunction={() => setSelectedCustomer({})} updateCustomer={setSelectedCustomer} />}
+        {selectedInstrument.id && <InstrumentModal instrument={selectedInstrument} closeFunction={() => setSelectedInstrument({})} updateInstrument={setSelectedInstrument} />}
     </div>
     );
 }

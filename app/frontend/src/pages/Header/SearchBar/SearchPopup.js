@@ -4,33 +4,19 @@ import './SearchPopup.css';
 
 function SearchPopup(props) {
 
-    /*const [filters, setFilters] = useState({
-        type: 'Repair', // 'repair' or 'customer'
-        status: 'Open', // 'assessment', 'open', etc.
-        instrument: 'Flute',
-    });*/
-
     const [focusedIndex, setFocusedIndex] = useState(0);
     const itemsRef = useRef([]);
 
     const hasQuery = props.query.trim() !== "";
 
-    const repairResults = (props.results.repairs || []).map(repair =>
-        ({ type: "repair", label: `${repair.id} ${repair.instrument.manufacturer} ${repair.instrument.model} ${repair.instrument.type}` }))
-    const customerResults = (props.results.customers || []).map(customer =>
-        ({ type: "customer", label: `${customer.firstname} ${customer.surname}` }))
-    const instrumentResults = (props.results.instruments || []).map(instrument =>
-        ({ type: 'instrument', label: `${instrument.serial_number} ${instrument.manufacturer} ${instrument.model} ${instrument.type}` }))
+    const repairResults = (props.repairResults || []).map(repair =>
+        ({ type: "repair", id: repair.id, label: `${repair.id} ${repair.instrument.manufacturer} ${repair.instrument.model} ${repair.instrument.type}` }))
+    const customerResults = (props.customerResults || []).map(customer =>
+        ({ type: "customer", id: customer.id, label: `${customer.firstname} ${customer.surname}` }))
+    const instrumentResults = (props.instrumentResults || []).map(instrument =>
+        ({ type: 'instrument', id: instrument.id, label: `${instrument.serial_number} ${instrument.manufacturer} ${instrument.model} ${instrument.type}` }))
+    
     const combinedResults = [...repairResults, ...customerResults, ...instrumentResults];
-
-    const recentSearches = [
-        ...(props.recentSearches.repairs || []).map(repair =>
-            ({ type: "repair", label: `${repair.id} ${repair.instrument.manufacturer} ${repair.instrument.model} ${repair.instrument.type}` })),
-        ...(props.recentSearches.customers || []).map(customer =>
-            ({ type: "customer", label: `${customer.firstname} ${customer.surname}` })),
-        ...(props.recentSearches.instruments || []).map(instrument =>
-        ({ type: 'instrument', label: `${instrument.serial_number} ${instrument.manufacturer} ${instrument.model} ${instrument.type}` }))
-    ]
 
     const handleKeyDown = (e) => {
         if (e.key === "ArrowDown") {
@@ -52,21 +38,12 @@ function SearchPopup(props) {
 
     return (
         <div className='SearchPopup' onClick={props.onClick}>
-            {/*<div className="search-filters">
-                {Object.entries(filters).map(([key, value]) => (
-                <span className="filter-tag">
-                    {value} <button className="remove" onClick={() => setFilters({...filters, key: null})}>×</button>
-                </span>
-                ))}
-                <button className="clear-filters" onClick={() => setFilters({})}>Clear</button>
-            </div>*/}
-
-            {!hasQuery && (recentSearches.length > 0 ? (
+            {!hasQuery && (props.recentSearches.length > 0 ? (
                 <div className="recent-section">
                 <p className="section-title">Recent Searches</p>
                 <ul className="recent-list">
-                    {recentSearches.map((text, i) => (
-                        <li key={i} >{text.label}</li>
+                    {props.recentSearches.map((item, index) => (
+                        <li onClick={() => props.selectResult(item)} key={index} >{item.label}</li>
                     ))}
                 </ul>
                 </div>
@@ -79,13 +56,13 @@ function SearchPopup(props) {
                 <div className="results-section">
                     <p className="section-title">Repairs</p>
                     <ul className="result-list">
-                        {repairResults.map((item, i) => (
+                        {repairResults.map((item, index) => (
                         <li
-                            key={i}
-                            ref={(el) => itemsRef.current[i] = el}
-                            className={focusedIndex === i ? "focused" : ""}
+                            key={index}
+                            ref={(el) => itemsRef.current[index] = el}
+                            className={focusedIndex === index ? "focused" : ""}
                         >
-                            <div className="result-main">{item.label}</div>
+                            <div onClick={() => props.selectResult(item)} className="result-main">{item.label}</div>
                         </li>
                         ))}
                     </ul>
@@ -96,13 +73,13 @@ function SearchPopup(props) {
                 <div className="results-section">
                     <p className="section-title">Customers</p>
                     <ul className="result-list">
-                        {customerResults.map((item, i) => (
+                        {customerResults.map((item, index) => (
                         <li
-                            key={i}
-                            ref={(el) => itemsRef.current[i] = el}
-                            className={focusedIndex === i + repairResults.length ? "focused" : ""}
+                            key={index}
+                            ref={(el) => itemsRef.current[index] = el}
+                            className={focusedIndex === index + repairResults.length ? "focused" : ""}
                         >
-                            <div className="result-main">{item.label}</div>
+                            <div onClick={() => props.selectResult(item)} className="result-main">{item.label}</div>
                         </li>
                         ))}
                     </ul>
@@ -113,13 +90,13 @@ function SearchPopup(props) {
                 <div className="results-section">
                     <p className="section-title">Instruments</p>
                     <ul className="result-list">
-                        {instrumentResults.map((item, i) => (
+                        {instrumentResults.map((item, index) => (
                         <li
-                            key={i}
-                            ref={(el) => itemsRef.current[i] = el}
-                            className={focusedIndex === i + repairResults.length + customerResults.length ? "focused" : ""}
+                            key={index}
+                            ref={(el) => itemsRef.current[index] = el}
+                            className={focusedIndex === index + repairResults.length + customerResults.length ? "focused" : ""}
                         >
-                            <div className="result-main">{item.label}</div>
+                            <div onClick={() => props.selectResult(item)} className="result-main">{item.label}</div>
                         </li>
                         ))}
                     </ul>
@@ -127,10 +104,7 @@ function SearchPopup(props) {
             )}
 
             {hasQuery && combinedResults.length === 0 && (
-                <div className="empty-state">
-                    <p>No results found</p>
-                    <button className="create-btn">+ Create New Repair</button>
-                </div>
+                <p className='no-results'>No Results Found</p>
             )}
         </div>
     );

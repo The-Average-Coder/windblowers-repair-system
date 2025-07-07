@@ -3,6 +3,22 @@ var db = require('../db');
 
 const router = express.Router();
 
+router.get('/get/:id', async (req, res) => {
+
+    try {
+
+        const response = await db.promise().query('SELECT * FROM instruments WHERE id = ?',
+            [req.params.id]);
+            
+        res.send(response[0][0]);
+
+    } catch (err) {
+        console.error('Failed to get instrument: ', err);
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+
+})
+
 router.put('/update', async (req, res) => {
 
     try {
