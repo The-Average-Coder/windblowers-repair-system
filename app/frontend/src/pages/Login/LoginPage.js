@@ -15,12 +15,12 @@ function LoginPage(props) {
     const attemptLogin = async (e) => {
         e.preventDefault();
         try {
-          const res = await axios.get('/authenticate', { auth: { username: 'user', password: password } });
-          if (res.data === 'user') {
-            props.login();
-          }
+            const res = await axios.get('/authenticate', { auth: { username: 'user', password: password } });
+            if (res.data === 'user') {
+                props.login();
+            }
         } catch (e) {
-          setPassword('');
+            setPassword('');
         }
     }
 
@@ -29,12 +29,12 @@ function LoginPage(props) {
 
             <img className='design-element' src={saxWaterColor} />
 
-            <div className='login-box'>
+            <form className='login-box' onSubmit={attemptLogin}>
                 <img className='brand light' src={brandRed} />
                 <p className='welcome-message'>Welcome Back</p>
                 <input type='password' placeholder='Enter Password...' value={password} onChange={(e) => setPassword(e.target.value)} />
-                <button onClick={attemptLogin}>Login</button>
-            </div>
+                <button type='submit'>Login</button>
+            </form>
 
         </div>
     )
