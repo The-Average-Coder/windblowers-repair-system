@@ -78,7 +78,7 @@ function InstrumentModal(props) {
     // #### DATABASE FETCH
     useEffect(() => {
         axios.get('/api/settings/getInstrumentStatuses')
-            .then(response => setStatusOptions([{name: 'Not Set', value: -1},
+            .then(response => setStatusOptions([{name: 'Not Set', value: 0},
                                         ...response.data.map(status => {return {name: status.status, value: status.id}})]))
             .catch(error => console.log(error));
     }, [])
@@ -185,7 +185,7 @@ function InstrumentModal(props) {
                     <DropdownSelect value={tempInstrument.status_id} onChange={updateStatus} options={statusOptions} placeholder='Status' />
                     </div>
                     :
-                    <BlockText className='detail'>{statusOptions.length > 0 && statusOptions.find(status => status.value === props.instrument.status_id).name}</BlockText>
+                    <BlockText className='detail'>{props.instrument.status_id < 1 ? 'Not Set' : statusOptions.length > 0 && statusOptions.find(status => status.value === props.instrument.status_id).name}</BlockText>
                     }
                 </span>
 

@@ -28,7 +28,7 @@ function InstrumentDetails(props) {
             
             <div>
                 <BlockTitle>Status</BlockTitle>
-                <BlockText className='detail'>{props.instrument.status_id === -1 ? 'Not Set' : props.statuses.length > 0 && props.statuses.find(status => status.id === props.instrument.status_id).status}</BlockText>
+                <BlockText className='detail'>{props.instrument.status_id < 1 ? 'Not Set' : props.statuses.length > 0 && props.statuses.find(status => status.id === props.instrument.status_id).status}</BlockText>
             </div>
 
             <BlockTopRightButton onClick={props.openModal} light={expandLight} lightHover={expandHoverLight} dark={expandDark} darkHover={expandHoverDark} />
