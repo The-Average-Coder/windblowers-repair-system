@@ -31,7 +31,6 @@ function CreateEventPopover(props) {
     ]
 
     const [calendarEvent, updateCalendarEvent] = useState({
-        id: props.id,
         type: props.schedulingRepair ? 'Repair' : '',
         title: '',
         description: '',

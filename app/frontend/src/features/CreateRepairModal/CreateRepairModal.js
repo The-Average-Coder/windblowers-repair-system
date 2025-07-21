@@ -181,6 +181,7 @@ function CreateRepairModal(props) {
             notes: notes,
             deadline: deadline
         })
+        .catch(error => console.log(error));
 
         navigate(`/repair/${repairId}`);
         props.closeFunction();

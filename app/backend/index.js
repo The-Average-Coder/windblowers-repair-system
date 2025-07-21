@@ -108,7 +108,7 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(frontEndPath, 'index.html'));
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.port;
 app.listen(PORT, () => {
     console.log('Running on port', PORT);
 });

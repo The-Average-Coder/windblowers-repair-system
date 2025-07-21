@@ -26,179 +26,7 @@ import axios from 'axios';
 
 function Calendar() {
 
-    // #### RAW DATA FOR TESTING
-    /*
-    const [calendarEvents, setCalendarEvents] = useState([
-        {
-            id: 1,
-            type: 'Repair',
-            title: '',
-            description: '',
-            date: '27-05-2025',
-            time: '90',
-            color: 'green',
-            repairer_id: 1,
-            repair: {
-                id: 2508004,
-                status: repairStatuses.OPEN,
-                customer: {
-                    firstname: 'Josh',
-                    surname: 'Cox'
-                },
-                instrument: {
-                    type: 'Flute',
-                    manufacturer: 'Pearl',
-                    model: '505',
-                    serial_number: 'ABC123',
-                    status: 1,
-                },
-                assessment: {
-                    job_type: 0,
-                }
-            }
-        },
-        {
-            id: 2,
-            type: 'Repair',
-            title: '',
-            description: '',
-            date: '28-05-2025',
-            time: '120',
-            color: 'purple',
-            repairer_id: 1,
-            repair: {
-                id: 2509002,
-                status: repairStatuses.OPEN,
-                in_house: true,
-                instrument: {
-                    type: 'Alto Saxophone',
-                    manufacturer: 'Yamaha',
-                    model: 'YAS-280',
-                    serial_number: 'DEF456',
-                    status: 1,
-                },
-                assessment: {
-                    job_type: 1,
-                }
-            }
-        },
-        {
-            id: 3,
-            type: 'Repair',
-            title: '',
-            description: '',
-            date: '28-05-2025',
-            time: '60',
-            color: 'orange',
-            repairer_id: 1,
-            repair: {
-                id: 2508004,
-                status: repairStatuses.OPEN,
-                customer: {
-                    firstname: 'Josh',
-                    surname: 'Cox'
-                },
-                instrument: {
-                    type: 'Flute',
-                    manufacturer: 'Pearl',
-                    model: '505',
-                    serial_number: 'ABC123',
-                    status: 1,
-                },
-                assessment: {
-                    job_type: 0,
-                }
-            }
-        },
-        {
-            id: 4,
-            type: 'Repair',
-            title: '',
-            description: '',
-            date: '28-05-2025',
-            time: '150',
-            color: 'blue',
-            repairer_id: 2,
-            repair: {
-                id: 2508004,
-                status: repairStatuses.OPEN,
-                customer: {
-                    firstname: 'Josh',
-                    surname: 'Cox'
-                },
-                instrument: {
-                    type: 'Flute',
-                    manufacturer: 'Pearl',
-                    model: '505',
-                    serial_number: 'ABC123',
-                    status: 1,
-                },
-                assessment: {
-                    job_type: 0,
-                }
-            }
-        },
-        {
-            id: 5,
-            type: 'Other Event',
-            title: 'Holiday',
-            description: 'A Description',
-            date: '30-05-2025',
-            time: '0',
-            all_day: true,
-            color: 'red',
-            repairer_id: 1,
-        },
-        {
-            id: 6,
-            type: 'Other Event',
-            title: 'Holiday',
-            description: 'A Description',
-            date: '31-05-2025',
-            time: '0',
-            all_day: true,
-            color: 'yellow',
-            repairer_id: 1,
-        },
-        {
-            id: 7,
-            type: 'Other Event',
-            title: 'Holiday',
-            description: 'A Description',
-            date: '29-05-2025',
-            time: '0',
-            all_day: true,
-            color: 'indigo',
-            repairer_id: 2,
-        },
-        {
-            id: 8,
-            type: 'Repair',
-            title: '',
-            description: '',
-            date: '29-05-2025',
-            time: '300',
-            color: 'turquoise',
-            repairer_id: 1,
-            repair: {
-                id: 2509002,
-                status: repairStatuses.OPEN,
-                in_house: true,
-                instrument: {
-                    type: 'Alto Saxophone',
-                    manufacturer: 'Yamaha',
-                    model: 'YAS-280',
-                    serial_number: 'DEF456',
-                    status: 1,
-                },
-                assessment: {
-                    job_type: 1,
-                }
-            }
-        }
-    ])
-    */
-
+    // #### STATE VARIABLES
     const [calendarEvents, setCalendarEvents] = useState([]);
     const [repairers, setRepairers] = useState([]);
     const [detailsSettings, setDetailsSettings] = useState([]);
@@ -598,12 +426,11 @@ function Calendar() {
         setPopoverCalendarEvent({});
     }
 
-    const openAddCalendarEventPopover = (e, id, date, repairer_id) => {
+    const openAddCalendarEventPopover = (e, date, repairer_id) => {
         e.stopPropagation();
 
         closeCalendarEventPopover();
         const creatingCalendarEvent = {
-            id: id,
             date: date,
             repairer_id: repairer_id,
             repair: schedulingRepair.id ? schedulingRepair : null
@@ -787,7 +614,7 @@ function Calendar() {
                     
                     {!disabled && <>
                     
-                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate.toString().padStart(2, '0')}-${(month+1).toString().padStart(2, '0')}-${year}`, repairer.id)} />
+                    <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, `${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`, repairer.id)} />
                 
                     <div className='time-heat-bar'>
                         <div className='heat' style={{backgroundColor: heatCSSVariables[heatValue], flex: percentageFull}} />
@@ -814,8 +641,8 @@ function Calendar() {
             }
 
             return <CalendarGridBox uniqueId={`0 ${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`}>
-                {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === 0 && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === month && parseInt(calendarEvent.date.split('-')[2]) === year && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
-                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, 1000, `${weekDate.toString().padStart(2, '0')}-${(month+1).toString().padStart(2, '0')}-${year}`, 0)} />
+                {calendarEvents.filter(calendarEvent => calendarEvent.repairer_id === 0 && parseInt(calendarEvent.date.split('-')[0]) === weekDate && parseInt(calendarEvent.date.split('-')[1])-1 === actualMonth && parseInt(calendarEvent.date.split('-')[2]) === actualYear && calendarEvent !== activeEvent).map(calendarEvent => <CalendarEvent calendarEvent={calendarEvent} mode={calendarMode} detailsSettings={detailsSettings} jobTypes={jobTypes} instrumentStatuses={instrumentStatuses} onClick={(e) => onClickCalendarEvent(e, calendarEvent)} />)}
+                <AddCalendarEventButton onClick={(e) => openAddCalendarEventPopover(e, `${weekDate.toString().padStart(2, '0')}-${(actualMonth+1).toString().padStart(2, '0')}-${actualYear}`, 0)} />
             </CalendarGridBox>
         })}
         
@@ -940,8 +767,8 @@ function Calendar() {
                         <CalendarEventPopover calendarEvent={popoverCalendarEvent} updateCalendarEvent={updateCalendarEvent} deleteCalendarEvent={() => deleteCalendarEvent(popoverCalendarEvent.id)} position={popoverPosition} closeFunction={() => setPopoverCalendarEvent({})} />}
 
                         {/* Create event popover */}
-                        {createCalendarEventPopover.id !== undefined && 
-                        <CreateEventPopover id={createCalendarEventPopover.id} date={createCalendarEventPopover.date} repairerId={createCalendarEventPopover.repairer_id} schedulingRepair={createCalendarEventPopover.repair} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
+                        {createCalendarEventPopover.date !== undefined && 
+                        <CreateEventPopover date={createCalendarEventPopover.date} repairerId={createCalendarEventPopover.repairer_id} schedulingRepair={createCalendarEventPopover.repair} createCalendarEvent={createCalendarEvent} position={popoverPosition} cancel={() => setCreateCalendarEventPopover({})} />}
 
                     </ContentBlock>
 
