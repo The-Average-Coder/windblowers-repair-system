@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ModalWindow from '../../components/Containers/ModalWindow';
 import ModalTitle from '../../components/Text/ModalTitle';
@@ -27,6 +28,20 @@ function CustomerModal(props) {
     const [editMode, setEditMode] = useState(false);
     const [tempCustomer, setTempCustomer] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
+
+    const [repairHistory, setRepairHistory] = useState([]);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        if (props.customer.id === undefined) return;
+
+        axios.get(`/api/customers/getRepairHistory/${props.customer.id}`)
+            .then(response => setRepairHistory(response.data))
+            .catch(error => console.log(error));
+
+    }, [])
 
     const toggleEditMode = () => {
         setTempCustomer(props.customer)
@@ -81,6 +96,11 @@ function CustomerModal(props) {
 
     const updateAddress = (value) => {
         setTempCustomer({...tempCustomer, address: value})
+    }
+
+    const navigateToRepair = (id) => {
+        navigate(`/repair/${id}`);
+        props.closeFunction();
     }
 
     return (
@@ -142,7 +162,14 @@ function CustomerModal(props) {
 
             <div className='repair-history'>
                 <BlockTitle>Repair History</BlockTitle>
-                <BlockText>No Repair History</BlockText>
+                {repairHistory.length > 0 ? repairHistory.map(repair => 
+                <div className='repair' onClick={() => navigateToRepair(repair.id)}>
+                    <div className='details-flex-container'>
+                        <p className='job-number'>{repair.id}</p>
+                        <p className='instrument'>{repair.instrument.manufacturer} {repair.instrument.model} {repair.instrument.type}</p>
+                    </div>
+                </div>) :
+                <BlockText>No Repair History</BlockText>}
             </div>
 
             {

@@ -28,7 +28,6 @@
 }
 .CreateRepairWindow .customer-details,
 .CreateRepairWindow .customer-details .create-new-customer-button,
-.CreateRepairWindow .instrument-details .search-results,
 .CreateRepairWindow .instrument-details .create-new-instrument-button {
     margin-top: 8px;
 }

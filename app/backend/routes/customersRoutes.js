@@ -65,4 +65,29 @@ router.get('/search/:query', async (req, res) => {
 
 })
 
+router.get('/getRepairHistory/:id', async (req, res) => {
+
+    try {
+
+        const response = await db.promise().query('SELECT repairs.id, instruments.type, instruments.manufacturer, instruments.model FROM repairs INNER JOIN instruments ON repairs.instrument_id = instruments.id WHERE customer_id = ? ORDER BY repairs.id DESC',
+            [req.params.id]);
+        
+        const formattedData = response[0].map(repair => {return {
+            id: repair.id,
+            instrument: {
+                type: repair.type,
+                manufacturer: repair.manufacturer,
+                model: repair.model
+            }
+        }})
+            
+        res.send(formattedData);
+
+    } catch (err) {
+        console.error('Failed to get customer: ', err);
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+
+})
+
 module.exports = router;

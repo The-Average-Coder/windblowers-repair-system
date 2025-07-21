@@ -60,7 +60,6 @@ function SearchBar() {
 
     const selectResult = (result) => {
         setQuery('');
-        setTimeoutId(setTimeout(() => setShowPopup(false), 100));
         
         setRecentSearches([result, ...recentSearches.filter(search => search.type !== result.type || search.id !== result.id)]);
 
@@ -79,10 +78,12 @@ function SearchBar() {
                 .then(response => setSelectedInstrument(response.data))
                 .catch(error => console.log(error));
         }
+
+        setTimeoutId(setTimeout(() => setShowPopup(false), 100));
     }
 
     return (<div className='SearchBar'>
-        <input className='search-bar' list='suggested-search-results' type='text' placeholder='Search' value={query} onChange={(e) => searchQuery(e.target.value)} onFocus={() => setShowPopup(true)} onBlur={() => setTimeoutId(setTimeout(() => setShowPopup(false), 100))} ref={inputRef} />
+        <input className='search-bar' list='suggested-search-results' type='text' placeholder='Search' value={query} onChange={(e) => searchQuery(e.target.value)} onFocus={() => setShowPopup(true)} onBlur={() => setTimeoutId(setTimeout(() => setShowPopup(false), 200))} ref={inputRef} />
 
         {showPopup && <SearchPopup query={query} repairResults={repairResults} customerResults={customerResults} instrumentResults={instrumentResults} recentSearches={recentSearches} onClick={() => {clearTimeout(timeoutId)}} selectResult={selectResult} />}
     

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ModalWindow from '../../components/Containers/ModalWindow';
 import ModalTitle from '../../components/Text/ModalTitle';
@@ -75,18 +76,29 @@ function InstrumentModal(props) {
     // #### DATA
     const [statusOptions, setStatusOptions] = useState([]);
 
+    // #### STATE VARIABLES
+    const [editMode, setEditMode] = useState(false);
+    const [tempInstrument, setTempInstrument] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const [repairHistory, setRepairHistory] = useState([]);
+
+    const navigate = useNavigate();
+
     // #### DATABASE FETCH
     useEffect(() => {
         axios.get('/api/settings/getInstrumentStatuses')
             .then(response => setStatusOptions([{name: 'Not Set', value: 0},
                                         ...response.data.map(status => {return {name: status.status, value: status.id}})]))
             .catch(error => console.log(error));
-    }, [])
+        
 
-    // #### STATE VARIABLES
-    const [editMode, setEditMode] = useState(false);
-    const [tempInstrument, setTempInstrument] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
+        if (props.instrument.id === undefined) return;
+
+        axios.get(`/api/instruments/getRepairHistory/${props.instrument.id}`)
+            .then(response => setRepairHistory(response.data))
+            .catch(error => console.log(error));
+    }, [])
 
 
     // #### EDIT FUNCTIONS
@@ -142,6 +154,11 @@ function InstrumentModal(props) {
 
     const updateStatus = (value) => {
         setTempInstrument({...tempInstrument, status_id: parseInt(value)})
+    }
+
+    const navigateToRepair = (id) => {
+        navigate(`/repair/${id}`);
+        props.closeFunction();
     }
 
     return (
@@ -201,7 +218,14 @@ function InstrumentModal(props) {
 
             <div className='repair-history'>
                 <BlockTitle>Repair History</BlockTitle>
-                <BlockText>No Repair History</BlockText>
+                {repairHistory.length > 0 ? repairHistory.map(repair => 
+                <div className='repair' onClick={() => navigateToRepair(repair.id)}>
+                    <div className='details-flex-container'>
+                        <p className='job-number'>{repair.id}</p>
+                        <p className='customer'>{repair.customer.firstname} {repair.customer.surname}</p>
+                    </div>
+                </div>) :
+                <BlockText>No Repair History</BlockText>}
             </div>
 
             {

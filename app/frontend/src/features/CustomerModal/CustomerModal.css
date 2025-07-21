@@ -63,6 +63,26 @@
     margin-top: 16px;
 }
 
+.CustomerModal .repair-history .repair {
+    transition: 0.1s;
+}
+.CustomerModal .repair-history .repair .details-flex-container {
+    margin: 0px;
+    padding: 2px 0;
+    transition: 0.1s;
+    display: flex;
+    border-radius: 4px;
+}
+.CustomerModal .repair-history .repair:hover .details-flex-container {
+    margin: 0 -8px;
+    padding: 2px 8px;
+    background-color: var(--subcontent-border);
+    cursor: pointer;
+}
+
+.CustomerModal .repair-history .repair .details-flex-container .job-number { width: 160px; }
+.CustomerModal .repair-history .repair .details-flex-container .instrument { flex: 1; }
+
 .CustomerModal .edit-button {
     right: 48px;
 }
