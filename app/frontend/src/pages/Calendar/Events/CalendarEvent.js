@@ -65,10 +65,13 @@ function CalendarEvent(props) {
                     return <BlockText>{props.calendarEvent.repair.instrument.serial_number}</BlockText>
 
                 if (detail.name === 'Instrument Status' && props.calendarEvent.repair.instrument
-                    && props.instrumentStatuses.length > 0)
+                    && props.instrumentStatuses.length > 0) {
+                    const instrumentStatus = findInstrumentStatusById(props.calendarEvent.repair.instrument.status);
+                    if (!instrumentStatus) return;
                     return <BlockText>
-                        {findInstrumentStatusById(props.calendarEvent.repair.instrument.status).status}
+                        {instrumentStatus.status}
                     </BlockText>
+                }
 
                 if (detail.name === 'Customer') {
                     if (props.calendarEvent.repair.in_house)
@@ -81,10 +84,13 @@ function CalendarEvent(props) {
                 }
 
                 if (detail.name === 'Job Type' && props.calendarEvent.repair.assessment
-                    && props.jobTypes.length > 0)
+                    && props.jobTypes.length > 0) {
+                    const jobType = findJobTypeById(props.calendarEvent.repair.assessment.job_type);
+                    if (!jobType) return;
                     return <BlockText>
-                        {findJobTypeById(props.calendarEvent.repair.assessment.job_type).name}
+                        {jobType.name}
                     </BlockText>
+                }
 
             })}
 
