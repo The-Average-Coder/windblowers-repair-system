@@ -1,0 +1,67 @@
+/* Title showing day being viewed */
+.CalendarDayView .currently-viewing-day-title {
+    color: var(--faded-text);
+    font-size: 13px;
+    text-align: center;
+}
+
+.CalendarDayView .currently-viewing-day-title span {
+    color: var(--text);
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 4px;
+    vertical-align: -2.5px;
+
+}
+
+.CalendarDayView .currently-viewing-day-title span.current-day {
+    color: var(--content-background);
+    background-color: var(--text);
+    border-radius: 6px;
+    padding: 0px 8px;
+}
+
+
+/* Calendar grid */
+.CalendarDayView .calendar-flex-container {
+    display: flex;
+    min-width: 1000px;
+    gap: 0.05rem;
+    background-color: var(--subcontent-border);
+}
+
+
+.CalendarDayView .calendar-flex-container .repairer-column {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.CalendarDayView .calendar-flex-container .repairer-column .title-row {
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 0;
+    background-color: var(--content-background);
+}
+
+.CalendarDayView .calendar-flex-container .repairer-column .events-row {
+    flex: 1;
+
+    font-size: 15px;
+    margin-top: 1px;
+    padding: 4px 5px;
+    min-height: 100px;
+    background-color: var(--content-background);
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.CalendarDayView .calendar-flex-container .repairer-column .events-row.disabled {
+    background: repeating-linear-gradient(135deg, var(--subcontent-border) 0, var(--subcontent-border) 10%, transparent 0, transparent 50%);
+    background-size: 0.5em 0.5em;
+    background-color: var(--background);
+}

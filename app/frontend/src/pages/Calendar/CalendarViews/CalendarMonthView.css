@@ -1,0 +1,50 @@
+.CalendarMonthView {
+    display: grid;
+    min-width: 1000px;
+    gap: 4px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+
+.CalendarMonthView .calendar-grid-box {
+    background-color: var(--content-background);
+    padding: 4px 5px;
+    box-sizing: border-box;
+}
+
+
+.CalendarMonthView .calendar-grid-box:not(.day-of-the-week, .repairer-name) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 80px;
+}
+
+.CalendarMonthView .day-of-the-week {
+    font-size: 15px;
+    text-align: center;
+    padding: 10px 0;
+    line-height: 20px;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.CalendarMonthView .calendar-grid-box {
+    border-radius: 4px;
+    border: 1px solid var(--content-background);
+    position: relative;
+}
+
+.CalendarMonthView .calendar-grid-box:hover { cursor: pointer; }
+
+.CalendarMonthView .calendar-grid-box.empty { background-color: var(--calendar-green); }
+.CalendarMonthView .calendar-grid-box.empty:hover { border: 1px solid var(--calendar-green-border); }
+.CalendarMonthView .calendar-grid-box.quiet { background-color: var(--calendar-yellow); }
+.CalendarMonthView .calendar-grid-box.quiet:hover { border: 1px solid var(--calendar-yellow-border); }
+.CalendarMonthView .calendar-grid-box.moderate { background-color: var(--calendar-orange); }
+.CalendarMonthView .calendar-grid-box.moderate:hover { border: 1px solid var(--calendar-orange-border); }
+.CalendarMonthView .calendar-grid-box.busy { background-color: var(--calendar-red); }
+.CalendarMonthView .calendar-grid-box.busy:hover { border: 1px solid var(--calendar-red-border); }
+
+.CalendarMonthView .calendar-grid-box.faded { opacity: 0.4; }
+.CalendarMonthView .calendar-grid-box.faded .date { color: var(--faded-text); }

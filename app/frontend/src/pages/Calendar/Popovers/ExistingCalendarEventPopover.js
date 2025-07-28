@@ -24,7 +24,7 @@ import infoLight from '../../../images/info-icons/infoLight.png';
 
 import axios from 'axios';
 
-function CalendarEventPopover(props) {
+function ExistingCalendarEventPopover(props) {
 
     const navigate = useNavigate();
 
@@ -165,4 +165,4 @@ function CalendarEventPopover(props) {
     );
 }
 
-export default CalendarEventPopover;
+export default ExistingCalendarEventPopover;

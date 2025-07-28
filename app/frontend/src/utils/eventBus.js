@@ -1,3 +1,9 @@
+/*
+  A utility used regularly in the app to allow easy communication between components
+  using an events system. The subject emits data, and any observers can perform operations
+  based on this data.
+*/
+
 const eventBus = {
   listeners: new Map(),
   lastEmitted: new Map(),
@@ -6,7 +12,7 @@ const eventBus = {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
-    this.lastEmitted.set(event, payload); // Store latest event
+    this.lastEmitted.set(event, payload);
     this.listeners.get(event).forEach((callback) => callback(payload));
   },
 
@@ -16,7 +22,7 @@ const eventBus = {
     }
     this.listeners.get(event).push(callback);
 
-    // Immediately call listener with the last emitted value (if it exists)
+    // If active, immediately call listener with the last emitted value (if it exists)
     if (this.lastEmitted.has(event) && emitMostRecent) {
       callback(this.lastEmitted.get(event));
     }

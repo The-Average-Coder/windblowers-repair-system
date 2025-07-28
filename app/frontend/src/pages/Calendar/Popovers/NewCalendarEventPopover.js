@@ -23,7 +23,7 @@ import infoLight from '../../../images/info-icons/infoLight.png';
 
 import axios from 'axios';
 
-function CreateEventPopover(props) {
+function NewCalendarEventPopover(props) {
 
     const eventOptions = [
         { name: 'Repair', value: 'Repair' },
@@ -155,4 +155,4 @@ function CreateEventPopover(props) {
     );
 }
 
-export default CreateEventPopover;
+export default NewCalendarEventPopover;

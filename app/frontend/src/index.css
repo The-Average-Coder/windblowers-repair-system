@@ -42,6 +42,8 @@
     --calendar-purple: rgb(255, 207, 255);
     --calendar-purple-border: rgb(255, 77, 255);
 
+    --calendar-highlight-color: rgb(255, 255, 213);
+
     --font-standard: 14px;
     --font-subtext: 12px;
     --font-header: 15px;
@@ -87,6 +89,8 @@ body.dark-theme {
     --calendar-indigo-border: rgb(13, 0, 199);
     --calendar-purple: rgb(104, 0, 104);
     --calendar-purple-border: rgb(167, 0, 167);
+    
+    --calendar-highlight-color: rgb(55, 50, 7);
 }
 
 body {

@@ -24,6 +24,7 @@ function NavigationCalendar(props) {
     const [year, setYear] = useState();
     const [month, setMonth] = useState();
 
+    // Drag and drop hover over navigation calendar to navigate
     const [hoveredWeek, setHoveredWeek] = useState(null);
     const [hoveredMonth, setHoveredMonth] = useState(null);
     const hoverTimeout = useRef(null);
@@ -45,45 +46,85 @@ function NavigationCalendar(props) {
     });
 
 
+    // #### UTILITY FUNCTIONS
+    const compareDates = (date1, date2) => {
+        return date1.getTime() === date2.getTime();
+    }
+
+    const getNextMonth = (year, month) => {
+        return new Date(year, month+1).getMonth();
+    }
+
+    const getYearOfNextMonth = (year, month) => {
+        return new Date(year, month+1).getFullYear();
+    }
+
+    const getPreviousMonth = (year, month) => {
+        return new Date(year, month-1).getMonth();
+    }
+
+    const getYearOfPreviousMonth = (year, month) => {
+        return new Date(year, month-1).getFullYear();
+    }
+
+    const getFirstWeekDateOfDate = (date) => {
+        const firstWeekDateDay = date.getDate() - date.getDay() + 2;
+        return new Date(date.getFullYear(), date.getMonth(), firstWeekDateDay);
+    }
+
+    const getNumberOfDaysInMonth = (firstMonthDate) => {
+        return new Date(firstMonthDate.getFullYear(), firstMonthDate.getMonth() + 1, 0).getDate();
+    }
+
+    const getFirstWeekdayOfMonth = (firstMonthDate) => {
+        return firstMonthDate.getDay();
+    }
+
+    const getLastWeekdayOfMonth = (firstMonthDate) => {
+        return new Date(firstMonthDate.getFullYear(), firstMonthDate.getMonth() + 1, 0).getDay();
+    }
+
+    /*
+        Get a date object for the day number of a month, including negative numbers
+        and numbers greater than the length of the month
+    */
+    const getDateOfMonthDay = (firstMonthDate, monthDay) => {
+        return new Date(firstMonthDate.getFullYear(), firstMonthDate.getMonth(), monthDay);
+    }
+
+    // Returns a date string in the form 'dd-mm-yyyy' from a date object
+    const getDateStringFromDate = (date) => {
+        return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+    }
+
+    // Returns a date object from a date string in the form 'dd-mm-yyyy'
+    const getDateFromDateString = (dateString) => {
+        return new Date(dateString.split('-')[2], parseInt(dateString.split('-')[1])-1, dateString.split('-')[0]);
+    }
+
+
     // #### NAVIGATION FUNCTIONS
-    const getNextMonthAndYear = () => {
-        if (month >= 11) {
-            return [0, year+1];
-        }
-        else {
-            return [month+1, year];
-        }
-    }
-
-    const getPreviousMonthAndYear = () => {
-        if (month <= 0) {
-            return [11, year-1];
-        }
-        else {
-            return [month-1, year];
-        }
-    }
-
     const moveNavigationMonthForward = () => {
-        const nextMonthAndYear = getNextMonthAndYear();
-        setMonth(nextMonthAndYear[0])
-        setYear(nextMonthAndYear[1])
+        setMonth(getNextMonth(year, month))
+        setYear(getYearOfNextMonth(year, month))
     }
 
     const moveNavigationMonthBackward = () => {
-        const previousMonthAndYear = getPreviousMonthAndYear();
-        setMonth(previousMonthAndYear[0])
-        setYear(previousMonthAndYear[1])
+        setMonth(getPreviousMonth(year, month))
+        setYear(getYearOfPreviousMonth(year, month))
     }
 
-    const handleDayClick = (day, month, year) => {
-        props.setYear(year);
-        props.setMonth(month);
-        props.setDay(day);
+    const handleDateClick = (dateClicked) => {
+        if (props.mode === calendarModes.DAY)
+            props.navigateToDay(dateClicked)
 
-        if (props.mode === calendarModes.WEEK) props.calculateWeekDates(year, month, day);
-        else if (props.mode === calendarModes.MONTH) props.calculateMonthDates(year, month)
+        else if (props.mode === calendarModes.WEEK)
+            props.navigateToWeek(getFirstWeekDateOfDate(dateClicked))
+
+        else if (props.mode === calendarModes.MONTH)
+            props.navigateToMonth(dateClicked)
     }
+
 
     // #### EVENT HOVER NAVIGATION FUNCTIONS
     const clearHover = () => {
@@ -91,6 +132,7 @@ function NavigationCalendar(props) {
             clearTimeout(hoverTimeout.current);
             hoverTimeout.current = null;
         }
+        
         setHoveredWeek(null);
         setHoveredMonth(null);
     };
@@ -109,6 +151,7 @@ function NavigationCalendar(props) {
 
             // Check if the draggable is over a valid calendar week
             if (event.over && event.over.id.startsWith("week-")) {
+                console.log(event.over.id)
                 if (hoveredWeek !== event.over.id) {
                     setHoveredWeek(event.over.id);
             
@@ -116,7 +159,7 @@ function NavigationCalendar(props) {
                     clearHover()
             
                     hoverTimeout.current = setTimeout(() => {
-                        handleDayClick(parseInt(event.over.id.split('-')[1]), parseInt(event.over.id.split('-')[2]), parseInt(event.over.id.split('-')[3]))
+                        handleDateClick(getDateFromDateString(event.over.id.slice(5)))
                     }, EVENT_DRAG_TO_NAVIGATE_TIMER);
                 }
             } else if (event.over && event.over.id.startsWith('month')) {
@@ -154,149 +197,97 @@ function NavigationCalendar(props) {
         }
     }, [month, year, props.mode])
 
-    const renderedDays = () => {
-        const firstWeekday = new Date(year, month, 1).getDay();
-        const daysInCurrentMonth = new Date(year, month+1, 0).getDate();
-        const lastWeekday = new Date(year, month, daysInCurrentMonth).getDay();
-        const daysInPreviousMonth = new Date(year, month, 0).getDate();
 
-        let day = 1;
+    // #### RENDER FUNCTIONS
+    const getRenderedDays = () => {
 
-        // Handle previous month's trailing days
-        let prevMonthDays = daysInPreviousMonth - firstWeekday + 1;
+        let dayButtons = []
 
-        const weeks = [];
+        const firstMonthDate = new Date(year, month, 1);
 
-        while (day <= daysInCurrentMonth) {
-            const weekDays = [];
+        const numberOfDaysInMonth = getNumberOfDaysInMonth(firstMonthDate);
+        const firstWeekdayOfMonth = getFirstWeekdayOfMonth(firstMonthDate);
+        const lastWeekdayOfMonth = getLastWeekdayOfMonth(firstMonthDate);
 
-            let weekFirstDay = 0;
-            let weekMonth = 0;
-            let weekYear = 0;
+        // Calculate first and last month days, filling out the first and last week with days from other months
+        const firstMonthDay = 2 - firstWeekdayOfMonth;
+        const lastMonthDay = numberOfDaysInMonth + ((6 - lastWeekdayOfMonth) % 5)
 
-            for (let i = 0; i < 7; i++) {
-                if (i === 0 || i === 1) {
-                    if (prevMonthDays <= daysInPreviousMonth) {
-                        prevMonthDays++;
+        for (let i = firstMonthDay; i <= lastMonthDay; i++) {
+
+            const monthDate = getDateOfMonthDay(firstMonthDate, i);
+
+            if (monthDate.getDay() < 2) continue; // Sunday or Monday
+
+            dayButtons.push(
+
+                <button
+                    className={
+                        `${(i < 1 || i > numberOfDaysInMonth) && 'faded'}
+                        ${compareDates(monthDate, currentDate) && 'current-day'}
+                        ${compareDates(monthDate, new Date(props.year, props.month, props.day)) && 'active'}`
                     }
-                    else {
-                        day++;
-                    }
-                    continue;
-                }; // Skip Sunday and Monday
+                    onClick={() => props.mode === calendarModes.DAY && handleDateClick(monthDate)}
+                >
+                    {monthDate.getDate()}
+                </button>
 
-                if (prevMonthDays <= daysInPreviousMonth) {
-                    // Previous month days
-                    const dayNumber = prevMonthDays;
-                    const previousMonthAndYear = getPreviousMonthAndYear();
+            )
 
-                    if (weekFirstDay === 0) {
-                        weekFirstDay = dayNumber;
-                        weekMonth = previousMonthAndYear[0]
-                        weekYear = previousMonthAndYear[1]
-                    }
-
-                    weekDays.push(
-                        <button className={
-                        `faded
-                        ${dayNumber === props.day &&
-                        previousMonthAndYear[0] === props.month &&
-                        previousMonthAndYear[1] === props.year &&
-                        'active'
-                        }`
-                        }
-                        onClick={() => props.mode === calendarModes.DAY && handleDayClick(dayNumber, previousMonthAndYear[0], previousMonthAndYear[1])}>
-                            {dayNumber}
-                        </button>
-                    );
-                    prevMonthDays++;
-                } else if (day <= daysInCurrentMonth) {
-                    // Current month days
-                    const dayNumber = day;
-
-                    if (weekFirstDay === 0) {
-                        weekFirstDay = dayNumber;
-                        weekMonth = month
-                        weekYear = year
-                    }
-
-                    weekDays.push(
-                        <button className={dayNumber === currentDate.getDate() &&
-                            month === currentDate.getMonth() &&
-                            year === currentDate.getFullYear()
-                            ? 'current-day'
-                            :
-                            dayNumber === props.day &&
-                            month === props.month &&
-                            year === props.year &&
-                            'active'
-                        }
-                        onClick={() => props.mode === calendarModes.DAY && handleDayClick(dayNumber, month, year)}>
-                            {dayNumber}
-                        </button>
-                    );
-                    day++;
-                } else if (lastWeekday !== 6 && lastWeekday >= 2) {
-                    // Next month days
-                    let nextMonthDay = day - daysInCurrentMonth;
-                    const nextMonthAndYear = getNextMonthAndYear();
-
-                    if (weekFirstDay === 0) {
-                        weekFirstDay = nextMonthDay;
-                        weekMonth = nextMonthAndYear[0]
-                        weekYear = nextMonthAndYear[1]
-                    }
-
-                    weekDays.push(
-                        <button className={
-                        `faded
-                        ${nextMonthDay === props.day &&
-                        nextMonthAndYear[0] === props.month &&
-                        nextMonthAndYear[1] === props.year &&
-                        'active'
-                        }`
-                        }
-                        onClick={() => props.mode === calendarModes.DAY && handleDayClick(nextMonthDay, nextMonthAndYear[0], nextMonthAndYear[1])}>
-                            {nextMonthDay}
-                        </button>
-                    );
-                    day++;
-                }
-            }
-
-            if (weekDays.length > 0) {
-                weeks.push(
-                    <NavigationCalendarWeek
-                        className={
-                            props.mode === calendarModes.WEEK &&
-                            weekFirstDay === props.day &&
-                            weekMonth === props.month &&
-                            weekYear === props.year
-                            ? 'active'
-                            : null
-                        }
-                        id={`week-${weekFirstDay}-${weekMonth}-${weekYear}`}
-                        onClick={() => props.mode === calendarModes.WEEK && handleDayClick(weekFirstDay, weekMonth, weekYear)}
-                    >
-                        {weekDays}
-                    </NavigationCalendarWeek>
-                );
-            }
         }
 
-        return weeks;
+        let navigationCalendarWeeks = []
+        const numberOfWeeks = parseInt(dayButtons.length / 5)
+
+        for (let i = 0; i < numberOfWeeks; i++) {
+
+            const firstWeekDate = new Date(year, month, firstMonthDay + i * 7 + 1)
+            console.log(firstWeekDate)
+
+            navigationCalendarWeeks.push(
+                <NavigationCalendarWeek
+                    className={
+                        props.mode === calendarModes.WEEK &&
+                        compareDates(firstWeekDate, new Date(props.year, props.month, props.day)) &&
+                        'active'
+                    }
+                    id={`week-${getDateStringFromDate(firstWeekDate)}`}
+                    onClick={() => props.mode === calendarModes.WEEK && handleDateClick(firstWeekDate)}
+                >
+                    {dayButtons.slice(i*5, i*5+5)}
+                </NavigationCalendarWeek>
+            );
+
+        }
+
+        return navigationCalendarWeeks;
     }
 
     return (
         <div className='NavigationCalendar'>
             
             <div className='month-navigation'>
-                <button ref={monthBackwardRef} onClick={moveNavigationMonthBackward}><img className='light' src={caretLeftLight} /><img className='dark' src={caretLeftDark} /></button>
+                <button
+                    ref={monthBackwardRef}
+                    onClick={moveNavigationMonthBackward}
+                >
+                    <img className='light' src={caretLeftLight} />
+                    <img className='dark' src={caretLeftDark} />
+                </button>
+
                 <p>{MONTHS[month]} {year}</p>
-                <button ref={monthForwardRef} onClick={moveNavigationMonthForward}><img className='light' src={caretRightLight} /><img className='dark' src={caretRightDark} /></button>
+
+                <button
+                    ref={monthForwardRef}
+                    onClick={moveNavigationMonthForward}
+                >
+                    <img className='light' src={caretRightLight} />
+                    <img className='dark' src={caretRightDark} />
+                </button>
             </div>
 
             <div className={`day-navigation ${CALENDAR_MODE_CLASS_NAMES[props.mode]}`}>
+
                 {/* Top row of grid for day of the week headers */}
                 <div className='days-of-the-week'>
                     <p>Tu</p>
@@ -307,19 +298,17 @@ function NavigationCalendar(props) {
                 </div>
 
                 <div
-                className={
-                    `month-days
-                    ${props.mode === calendarModes.MONTH &&
-                    props.month === month &&
-                    props.year === year
-                    ? 'active'
-                    : null
-                }`}
-                onClick={
-                    () => props.mode === calendarModes.MONTH && handleDayClick(1, month, year)
-                }>
+                    className={
+                        `month-days
+                        ${props.mode === calendarModes.MONTH &&
+                        props.month === month &&
+                        props.year === year
+                        ? 'active' : null}`
+                    }
+                    onClick={() => props.mode === calendarModes.MONTH && handleDateClick(new Date(year, month, 1))}
+                >
 
-                    {renderedDays()}
+                    {getRenderedDays()}
                     
                 </div>
                 
@@ -328,6 +317,11 @@ function NavigationCalendar(props) {
         </div>
     );
 }
+
+
+/*
+    Component for holding the days in each week on the navigation calendar.
+*/
 
 function NavigationCalendarWeek (props) {
     const { setNodeRef } = useDroppable({

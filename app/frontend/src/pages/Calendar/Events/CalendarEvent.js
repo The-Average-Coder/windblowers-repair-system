@@ -1,12 +1,12 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
+import calendarModes from '../../../enums/calendarModes';
+
 import BlockTitle from '../../../components/Text/BlockTitle';
 import BlockText from '../../../components/Text/BlockText';
 
 import './CalendarEvent.css';
-
-import calendarModes from '../../../enums/calendarModes';
 
 function CalendarEvent(props) {
 
@@ -17,72 +17,92 @@ function CalendarEvent(props) {
         transform: CSS.Translate.toString(transform),
     };
 
-    return (
-        <div className={`CalendarEvent ${props.calendarEvent.color}`} ref={setNodeRef} style={style} {...listeners} {...attributes} onClick={props.onClick}>
-            
-            {props.calendarEvent.type === 'Repair' ? <>
+    const findInstrumentStatusById = (id) => {
+        return props.instrumentStatuses.find(instrumentStatus => instrumentStatus.id === id);
+    }
 
-            {/* Repair Event */}
-            <BlockTitle>{props.calendarEvent.repair ? `Repair ${props.calendarEvent.repair.id}` : 'Repair Not Found'}</BlockTitle>
-            
-            {props.calendarEvent.repair && props.calendarEvent.repair.id !== undefined && props.detailsSettings.length > 0 && <>
+    const findJobTypeById = (id) => {
+        return props.jobTypes.find(jobType => jobType.id === id);
+    }
 
-            {/* Instrument */}
-            {props.mode === calendarModes.DAY && <>
+    const getEventTimeString = (time) => {
+        return `${Math.floor(time / 60)} Hrs ${time % 60} Mins`
+    }
 
-            {props.detailsSettings.find(detail => detail.name === 'Instrument').day_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument && `${props.calendarEvent.repair.instrument.manufacturer} ${props.calendarEvent.repair.instrument.model} ${props.calendarEvent.repair.instrument.type}`}</BlockText>}
+    // Function returning JSX elements for the details to be displayed on the calendar event
+    const getRenderedDetails = () => {
 
-            {props.detailsSettings.find(detail => detail.name === 'Serial Number').day_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument && props.calendarEvent.repair.instrument.serial_number}</BlockText>}
-            
-            {props.detailsSettings.find(detail => detail.name === 'Instrument Status').day_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument && props.instrumentStatuses.length > 0 && `${props.instrumentStatuses.find(instrumentStatus => instrumentStatus.id === props.calendarEvent.repair.instrument.status).status}`}</BlockText>}
-            
-            {props.calendarEvent.repair.in_house ?
-            <BlockText>In House Repair</BlockText>
-            :
-            props.detailsSettings.find(detail => detail.name === 'Customer').day_enabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.calendarEvent.repair.customer.firstname} ${props.calendarEvent.repair.customer.surname}`}</BlockText>}
-
-            {props.detailsSettings.find(detail => detail.name === 'Job Type').day_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.assessment && props.jobTypes.length > 0 && `${props.jobTypes.find(jobType => jobType.id === props.calendarEvent.repair.assessment.job_type).name}`}</BlockText>}
-            
-            </>}
-
-            {props.mode === calendarModes.WEEK && <>
-            {props.detailsSettings.find(detail => detail.name === 'Instrument').week_enabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.calendarEvent.repair.instrument.manufacturer} ${props.calendarEvent.repair.instrument.model} ${props.calendarEvent.repair.instrument.type}`}</BlockText>}
-
-            {props.detailsSettings.find(detail => detail.name === 'Serial Number').week_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.instrument.serial_number}</BlockText>}
-            
-            {props.detailsSettings.find(detail => detail.name === 'Instrument Status').week_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.instrumentStatuses.length > 0 && `${props.instrumentStatuses.find(instrumentStatus => instrumentStatus.id === props.calendarEvent.repair.instrument.status).status}`}</BlockText>}
-            
-            {props.calendarEvent.repair.in_house ?
-            <BlockText>In House Repair</BlockText>
-            :
-            props.detailsSettings.find(detail => detail.name === 'Customer').week_enabled &&
-            <BlockText>{props.calendarEvent.repair && `${props.calendarEvent.repair.customer.firstname} ${props.calendarEvent.repair.customer.surname}`}</BlockText>}
-
-            {props.detailsSettings.find(detail => detail.name === 'Job Type').week_enabled &&
-            <BlockText>{props.calendarEvent.repair && props.calendarEvent.repair.assessment && props.jobTypes.length > 0 && `${props.jobTypes.find(jobType => jobType.id === props.calendarEvent.repair.assessment.job_type).name}`}</BlockText>}
-            
-            </>}
-
-            </>}
-
-            
-            </> : <>
-
-            {/* Other Event */}
+        // If event type is 'Other Event' return title and description
+        if (props.calendarEvent.type === 'Other Event') {
+            return <>
             <BlockTitle>{props.calendarEvent.title}</BlockTitle>
-            {props.calendarEvent.description ? <BlockText>{props.calendarEvent.description} </BlockText> : null}
-            
-            </>}
+            {props.calendarEvent.description && <BlockText>{props.calendarEvent.description} </BlockText>}
+            </>
+        }
 
-            <BlockText>{props.calendarEvent.all_day ? 'All Day' : `${Math.floor(props.calendarEvent.time / 60)} Hrs ${props.calendarEvent.time % 60} Mins`}</BlockText>
+        // Check repair is defined and non-empty
+        if (!props.calendarEvent.repair || !props.calendarEvent.repair.id) return;
+
+        // Check details settings have loaded
+        if (props.detailsSettings.length === 0) return;
+
+        return <>
+        
+            <BlockTitle>Repair {props.calendarEvent.repair.id}</BlockTitle>
+
+            {props.detailsSettings.map(detail => {
+
+                // Check detail is enabled in settings
+                if (props.mode === calendarModes.DAY && !detail.day_enabled
+                    || props.mode === calendarModes.WEEK && !detail.week_enabled) return;
+
+                if (detail.name === 'Instrument' && props.calendarEvent.repair.instrument)
+                    return <BlockText>
+                        {props.calendarEvent.repair.instrument.manufacturer} {props.calendarEvent.repair.instrument.model} {props.calendarEvent.repair.instrument.type}
+                    </BlockText>
+                
+                if (detail.name === 'Serial Number' && props.calendarEvent.repair.instrument)
+                    return <BlockText>{props.calendarEvent.repair.instrument.serial_number}</BlockText>
+
+                if (detail.name === 'Instrument Status' && props.calendarEvent.repair.instrument
+                    && props.instrumentStatuses.length > 0)
+                    return <BlockText>
+                        {findInstrumentStatusById(props.calendarEvent.repair.instrument.status).status}
+                    </BlockText>
+
+                if (detail.name === 'Customer') {
+                    if (props.calendarEvent.repair.in_house)
+                        return <BlockText>In House Repair</BlockText>
+
+                    if (props.calendarEvent.repair.customer)
+                        return <BlockText>
+                            {props.calendarEvent.repair.customer.firstname} {props.calendarEvent.repair.customer.surname}
+                        </BlockText>
+                }
+
+                if (detail.name === 'Job Type' && props.calendarEvent.repair.assessment
+                    && props.jobTypes.length > 0)
+                    return <BlockText>
+                        {findJobTypeById(props.calendarEvent.repair.assessment.job_type).name}
+                    </BlockText>
+
+            })}
+
+        </>
+
+    };
+
+    return (
+        <div
+            className={`CalendarEvent ${props.calendarEvent.color}`}
+            ref={!props.overlay ? setNodeRef : null}
+            style={style} {...listeners} {...attributes} onClick={props.onClick}>
+            
+            {getRenderedDetails()}
+
+            <BlockText>
+                {props.calendarEvent.all_day ? 'All Day' : getEventTimeString(props.calendarEvent.time)}
+            </BlockText>
             
         </div>
     );

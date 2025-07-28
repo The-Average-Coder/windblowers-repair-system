@@ -14,5 +14,7 @@ A React-based repair management tool for Windblowers' instrument workshop.
 - MySQL Database
 
 ## Getting Started
-1. Run 'npm install' in both app/backend and app/frontend
-2. Run 'node index.js' in app/backend and 'npm start' in app/frontend
+1. Ensure you have a MySQL database (or equivalent) setup and import the empty database structure provided in the database directory
+2. Either disable authentication or add a password to the users table of the database
+3. Run 'npm install' in both app/backend and app/frontend
+4. Run 'node index.js' in app/backend and 'npm start' in app/frontend
