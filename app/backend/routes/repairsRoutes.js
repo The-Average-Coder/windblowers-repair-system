@@ -175,8 +175,8 @@ router.put('/overwriteAssessment', async (req, res) => {
 
     try {
 
-        db.query('UPDATE assessments SET time = ?, time_cost = ?, materials = ?, notes = ? WHERE id = ?;',
-            [req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.notes, req.body.id]);
+        db.query('UPDATE assessments SET time = ?, time_cost = ?, materials = ?, job_type_id = ?, notes = ? WHERE id = ?;',
+            [req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes, req.body.id]);
 
     } catch (err) {
         console.error('Failed to update assessment:', err);

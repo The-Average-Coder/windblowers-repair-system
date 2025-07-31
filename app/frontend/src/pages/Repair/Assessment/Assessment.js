@@ -56,6 +56,7 @@ function Assessment(props) {
     
     // #### DATA MANAGEMENT FUNCTIONS
     const toggleEditMode = () => {
+        setTempJobType(props.assessments[currentAssessment].job_type_id)
         setTempNotes(props.assessments[currentAssessment].notes);
         setTempTime(props.assessments[currentAssessment].time);
         setTempTimeCost(props.assessments[currentAssessment].time_cost);
@@ -92,10 +93,10 @@ function Assessment(props) {
 
     const overwriteAssessment = () => {
         if (tempMaterials.find(material => material.id === 0).cost === '' || parseFloat(tempMaterials.find(material => material.id === 0).cost) === 0) {
-            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials.filter(material => material.id !== 0)});
+            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], job_type_id: parseInt(tempJobType), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials.filter(material => material.id !== 0)});
         }
         else {
-            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials});
+            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], job_type_id: parseInt(tempJobType), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials});
         }
         toggleEditMode();
     }
@@ -109,12 +110,12 @@ function Assessment(props) {
             updatedMaterialsList = tempMaterials;
         }
 
+        props.assess({...props.assessments[currentAssessment], date_created: getDateCreated(), job_type_id: parseInt(tempJobType), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: updatedMaterialsList, job_type_id: parseInt(tempJobType) || 1});
+
         if (firstAssessment) {
-            props.assess({...props.assessments[currentAssessment], date_created: getDateCreated(), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: updatedMaterialsList, job_type_id: parseInt(tempJobType) || 1});
             setFirstAssessment(false);
         }
         else {
-            props.assess({...props.assessments[currentAssessment], date_created: getDateCreated(), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: updatedMaterialsList});
             setCurrentAssessment(currentAssessment + 1);
         }
 
@@ -288,7 +289,7 @@ function Assessment(props) {
             <div className='assessment-notes'>
 
                 <BlockTitle>Job Type</BlockTitle>
-                {editMode && firstAssessment ?
+                {editMode ?
                 <DropdownSelect options={props.jobTypes.map(jobType => {return {name: jobType.name, value: jobType.id}})} placeholder='Select Job Type' value={tempJobType} onChange={updateJobType} />
                 :
                 <BlockText className='job-type'>{props.jobTypes.length > 0 && (props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id) ? props.jobTypes.find(jobType => jobType.id === props.assessments[currentAssessment].job_type_id).name : 'Deleted Job Type')}</BlockText>
