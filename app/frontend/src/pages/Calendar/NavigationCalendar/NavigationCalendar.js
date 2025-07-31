@@ -153,7 +153,6 @@ function NavigationCalendar(props) {
 
             // Check if the draggable is over a valid calendar week
             if (event.over && event.over.id.startsWith("week-")) {
-                console.log(event.over.id)
                 if (hoveredWeek !== event.over.id) {
                     setHoveredWeek(event.over.id);
             
@@ -221,8 +220,6 @@ function NavigationCalendar(props) {
 
             if (monthDate.getDay() < 2) continue; // Sunday or Monday
 
-            console.log(monthDate, currentDate)
-
             dayButtons.push(
 
                 <button
@@ -246,7 +243,6 @@ function NavigationCalendar(props) {
         for (let i = 0; i < numberOfWeeks; i++) {
 
             const firstWeekDate = new Date(year, month, firstMonthDay + i * 7 + 1)
-            console.log(firstWeekDate)
 
             navigationCalendarWeeks.push(
                 <NavigationCalendarWeek

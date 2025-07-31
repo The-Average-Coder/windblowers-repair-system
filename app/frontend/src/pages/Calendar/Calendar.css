@@ -50,6 +50,25 @@
 
 }
 
+.Calendar .PageTitle .today-button {
+    position: absolute;
+    right: 80px;
+    background-color: var(--content-background);
+    border: 1px solid var(--content-border);
+    border-radius: 8px;
+    display: flex;
+    padding: 9px 12px;
+    gap: 4px;
+    margin-top: -2px;
+    font-size: 12px;
+}
+.Calendar .PageTitle .today-button:hover {
+    background-color: var(--hover-color);
+}
+.Calendar .PageTitle .today-button:active {
+    background-color: var(--click-color);
+}
+
 .Calendar .PageTitle .navigation-arrows {
     position: absolute;
     right: 0;

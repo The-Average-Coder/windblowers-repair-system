@@ -103,7 +103,7 @@ function Calendar() {
 
     // #### OTHER MISCELLANEOUS INITIALISATION 
     const navigate = useNavigate();
-    const location = useLocation(); 
+    const location = useLocation();
     const calendarRef = useRef(null);
     const currentDate = new Date();
 
@@ -127,6 +127,11 @@ function Calendar() {
 
     const getYearOfPreviousMonth = (year, month) => {
         return new Date(year, month-1).getFullYear();
+    }
+
+    const getFirstWeekDateOfDate = (date) => {
+        const firstWeekDateDay = date.getDate() - date.getDay() + 2;
+        return new Date(date.getFullYear(), date.getMonth(), firstWeekDateDay);
     }
 
 
@@ -361,6 +366,12 @@ function Calendar() {
         setMonth(date.getMonth());
         setDay(date.getDate())
     }
+
+    const navigateToToday = () => {
+        let date = currentDate;
+        if (calendarMode === calendarModes.WEEK) date = getFirstWeekDateOfDate(currentDate);
+        navigateToDay(date)
+    }
     
 
     // #### CALENDAR EVENT MANAGEMENT FUNCTIONS
@@ -414,10 +425,44 @@ function Calendar() {
         navigateToWeek(firstWeekDate)
     }, [])
 
-    const getFirstWeekDateOfDate = (date) => {
-        const firstWeekDateDay = date.getDate() - date.getDay() + 2;
-        return new Date(date.getFullYear(), date.getMonth(), firstWeekDateDay);
-    }
+
+    // #### SAVE AND LOAD SESSION
+    useEffect(() => {
+
+        // Load data
+        const raw = sessionStorage.getItem('calendarViewState');
+        console.log(raw)
+        
+        if (raw) {
+
+            const { calendarMode, year, month, day } = JSON.parse(raw);
+
+            setCalendarMode(calendarMode);
+
+            if (calendarMode === calendarModes.DAY) {
+                navigateToDay(new Date(year, month, day))
+            }
+            if (calendarMode === calendarModes.WEEK) {
+                navigateToDay(getFirstWeekDateOfDate(new Date(year, month, day)))
+            }
+            else {
+                navigateToMonth(new Date(year, month, 1))
+            }
+
+            return;
+
+        }
+
+        // If no data, then go to this week
+        const firstWeekDate = getFirstWeekDateOfDate(currentDate);
+
+        navigateToWeek(firstWeekDate)
+    }, [])
+
+    useEffect(() => {
+        const calendarState = { calendarMode, year, month, day };
+        sessionStorage.setItem('calendarViewState', JSON.stringify(calendarState));
+    }, [calendarMode, year, month, day]);
 
 
     // #### PAGE TITLE
@@ -451,6 +496,8 @@ function Calendar() {
                     <button className={calendarMode === calendarModes.WEEK && 'active'} onClick={() => updateCalendarMode(calendarModes.WEEK)}>Week</button>
                     <button className={calendarMode === calendarModes.MONTH && 'active'} onClick={() => updateCalendarMode(calendarModes.MONTH)}>Month</button>
                 </div>
+
+                <button className='today-button' onClick={navigateToToday}>Today</button>
 
                 <div className='navigation-arrows'>
                     <button onClick={navigateBack}>{'<'}</button>
