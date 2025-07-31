@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { pdf } from '@react-pdf/renderer';
+
 import BlockTitle from '../../../components/Text/BlockTitle';
 import BlockText from '../../../components/Text/BlockText';
 import ActionButton from '../../../components/Buttons/ActionButton';
@@ -18,6 +20,7 @@ import editDark from '../../../images/edit-icon/editDark.png';
 import editHoverDark from '../../../images/edit-icon/editHoverDark.png';
 
 import deleteRed from '../../../images/delete-icon/deleteRed.png';
+import Estimate from './Estimate';
 
 function Assessment(props) {
 
@@ -200,6 +203,23 @@ function Assessment(props) {
         setTempNotes(jobType.notes)
     }
 
+
+    // #### ESTIMATE GENERATION
+    let currentBlobURL = null;
+
+    const openEstimateInNewTab = async () => {
+
+        if (currentBlobURL) {
+            URL.revokeObjectURL(currentBlobURL);
+            currentBlobURL = null;
+        }
+
+        const blob = await pdf(<Estimate assessment={props.assessments[currentAssessment]} customer={props.customer} materials={props.materials} />).toBlob();
+        currentBlobURL = URL.createObjectURL(blob);
+
+        window.open(currentBlobURL, '_blank');
+    }
+
     return (
         <div className='Assessment'>
 
@@ -259,6 +279,7 @@ function Assessment(props) {
                         <div className='cost-contents'>
                             {props.assessments[currentAssessment].materials.map(material => {
                                 if (material.id === 0) return;
+
                                 return <div className='cost-content'>
                                     <BlockText className='value'>{props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)) ? props.materials.find(otherMaterial => otherMaterial.id === parseInt(material.id)).name : 'Deleted Material'} x{material.quantity}</BlockText>
                                     <BlockText className='cost'>£{parseFloat(material.cost).toFixed(2)}</BlockText>
@@ -279,7 +300,7 @@ function Assessment(props) {
 
                 <div className='estimate-invoice-message'>
                     <p>Generate an estimate</p>
-                    <ActionButton colored='true'>Download</ActionButton>
+                    <ActionButton colored='true' onClick={openEstimateInNewTab}>Download</ActionButton>
                 </div>
             </div>
 

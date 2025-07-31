@@ -351,7 +351,7 @@ function Repair() {
             {repair.assessments && repair.assessments.length > 0 &&
             <ContentBlock className='assessment-block'>
 
-                <Assessment assessments={repair.assessments} assess={assess} overwriteAssessment={overwriteAssessment} cancelAssess={cancelAssess} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} archived={repair.archived} />
+                <Assessment assessments={repair.assessments} customer={repair.customer} assess={assess} overwriteAssessment={overwriteAssessment} cancelAssess={cancelAssess} jobTypes={jobTypes} materials={materials} hourlyRate={hourlyRate} archived={repair.archived} />
 
             </ContentBlock>
             }
