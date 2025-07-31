@@ -18,7 +18,7 @@ router.get('/get/:id', async (req, res) => {
                             WHERE repairs.id = ?;`,
                         [req.params.id]),
 
-        db.promise().query(`SELECT id, date_created, time, time_cost, materials, job_type_id, notes
+        db.promise().query(`SELECT id, date_created, time, time_cost, materials, job_type_id, notes, private_notes
                             FROM assessments
                             WHERE repair_id = ?;`,
                         [req.params.id])
@@ -78,7 +78,8 @@ router.get('/get/:id', async (req, res) => {
                     time_cost: assessment.time_cost / 100,
                     materials: assessment.materials.trim() !== '' ? assessment.materials.split(',').map(materialString => {return { id: parseInt(materialString.split('x')[0]), quantity: materialString.split('x')[1].split(':')[0], cost: materialString.split(':')[1] / 100 }}) : [],
                     job_type_id: assessment.job_type_id,
-                    notes: assessment.notes
+                    notes: assessment.notes,
+                    private_notes: assessment.private_notes
                 }
             })
         }
@@ -158,8 +159,8 @@ router.post('/assess', async (req, res) => {
 
     try {
 
-        const response = await db.promise().query('INSERT INTO assessments (repair_id, date_created, time, time_cost, materials, job_type_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
-            [req.body.repair_id, new Date(req.body.date_created.slice(3, 6) + req.body.date_created.slice(0, 3) + req.body.date_created.slice(6)), req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes]);
+        const response = await db.promise().query('INSERT INTO assessments (repair_id, date_created, time, time_cost, materials, job_type_id, notes, private_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
+            [req.body.repair_id, new Date(req.body.date_created.slice(3, 6) + req.body.date_created.slice(0, 3) + req.body.date_created.slice(6)), req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes, req.body.private_notes]);
 
         db.query('UPDATE repairs SET status = 2 WHERE id = ?;', [req.body.repair_id]);
 
@@ -175,8 +176,8 @@ router.put('/overwriteAssessment', async (req, res) => {
 
     try {
 
-        db.query('UPDATE assessments SET time = ?, time_cost = ?, materials = ?, job_type_id = ?, notes = ? WHERE id = ?;',
-            [req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes, req.body.id]);
+        db.query('UPDATE assessments SET time = ?, time_cost = ?, materials = ?, job_type_id = ?, notes = ?, private_notes = ? WHERE id = ?;',
+            [req.body.time, Math.round(req.body.time_cost * 100), req.body.materials.map(material => `${material.id}x${material.quantity}:${Math.round(material.cost * 100)}`).join(','), req.body.job_type_id, req.body.notes, req.body.private_notes, req.body.id]);
 
     } catch (err) {
         console.error('Failed to update assessment:', err);

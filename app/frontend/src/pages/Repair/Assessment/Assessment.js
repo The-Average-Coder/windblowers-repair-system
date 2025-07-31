@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import BlockTitle from '../../../components/Text/BlockTitle';
 import BlockText from '../../../components/Text/BlockText';
+import CollapsibleText from '../../../components/Text/CollapsibleText';
 import ActionButton from '../../../components/Buttons/ActionButton';
 import BlockTopRightButton from '../../../components/Buttons/BlockTopRightButton';
 import DropdownSelect from '../../../components/Inputs/DropdownSelect';
@@ -26,6 +27,7 @@ function Assessment(props) {
 
     const [editMode, setEditMode] = useState(false);
     const [tempNotes, setTempNotes] = useState('');
+    const [tempPrivateNotes, setTempPrivateNotes] = useState('');
     const [tempTime, setTempTime] = useState(0);
     const [tempTimeCost, setTempTimeCost] = useState(0);
     const [tempMaterials, setTempMaterials] = useState([]);
@@ -56,8 +58,9 @@ function Assessment(props) {
     
     // #### DATA MANAGEMENT FUNCTIONS
     const toggleEditMode = () => {
-        setTempJobType(props.assessments[currentAssessment].job_type_id)
+        setTempJobType(props.assessments[currentAssessment].job_type_id);
         setTempNotes(props.assessments[currentAssessment].notes);
+        setTempPrivateNotes(props.assessments[currentAssessment].private_notes);
         setTempTime(props.assessments[currentAssessment].time);
         setTempTimeCost(props.assessments[currentAssessment].time_cost);
         if (props.assessments[currentAssessment].materials.find(material => material.id === 0) === undefined) {
@@ -72,7 +75,9 @@ function Assessment(props) {
     const switchAssessment = (id) => {
         setCurrentAssessment(parseInt(id));
         if (editMode) {
+            setTempJobType(props.assessments[id].job_type_id)
             setTempNotes(props.assessments[id].notes)
+            setTempPrivateNotes(props.assessments[id].private_notes)
             setTempTime(props.assessments[id].time)
             setTempTimeCost(props.assessments[id].time_cost)
             if (props.assessments[id].materials.find(material => material.id === 0) === undefined) {
@@ -93,10 +98,10 @@ function Assessment(props) {
 
     const overwriteAssessment = () => {
         if (tempMaterials.find(material => material.id === 0).cost === '' || parseFloat(tempMaterials.find(material => material.id === 0).cost) === 0) {
-            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], job_type_id: parseInt(tempJobType), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials.filter(material => material.id !== 0)});
+            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], job_type_id: parseInt(tempJobType), notes: tempNotes, private_notes: tempPrivateNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials.filter(material => material.id !== 0)});
         }
         else {
-            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], job_type_id: parseInt(tempJobType), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials});
+            props.overwriteAssessment(currentAssessment, {...props.assessments[currentAssessment], job_type_id: parseInt(tempJobType), notes: tempNotes, private_notes: tempPrivateNotes, time: tempTime, time_cost: tempTimeCost, materials: tempMaterials});
         }
         toggleEditMode();
     }
@@ -110,7 +115,7 @@ function Assessment(props) {
             updatedMaterialsList = tempMaterials;
         }
 
-        props.assess({...props.assessments[currentAssessment], date_created: getDateCreated(), job_type_id: parseInt(tempJobType), notes: tempNotes, time: tempTime, time_cost: tempTimeCost, materials: updatedMaterialsList, job_type_id: parseInt(tempJobType) || 1});
+        props.assess({...props.assessments[currentAssessment], date_created: getDateCreated(), job_type_id: parseInt(tempJobType), notes: tempNotes, private_notes: tempPrivateNotes, time: tempTime, time_cost: tempTimeCost, materials: updatedMaterialsList, job_type_id: parseInt(tempJobType) || 1});
 
         if (firstAssessment) {
             setFirstAssessment(false);
@@ -297,10 +302,24 @@ function Assessment(props) {
 
                 <BlockTitle className='assessment-notes-title'>Assessment Notes</BlockTitle>
                 {
-                editMode ? 
-                <>
+                editMode ?
                 <TextAreaInput value={tempNotes} onChange={setTempNotes} />
+                :
+                <BlockText className='notes'>{props.assessments[currentAssessment].notes}</BlockText>
+                }
 
+                {
+                editMode ? <>
+                <BlockTitle className='assessment-notes-title'>Additional Notes</BlockTitle>
+                <TextAreaInput value={tempPrivateNotes} onChange={setTempPrivateNotes} />
+                </>
+                :
+                <CollapsibleText title='Additional Notes'>
+                    {props.assessments[currentAssessment].private_notes}
+                </CollapsibleText>
+                }
+
+                {editMode ?
                 <div className='buttons'>
                     <ActionButton onClick={cancelEdit}>Cancel</ActionButton>
 
@@ -312,15 +331,9 @@ function Assessment(props) {
                     <ActionButton onClick={updateAssessment} colored='true'>{firstAssessment ? 'Save' : 'Update'}</ActionButton>
                     }
                 </div>
-                </>
                 :
-                <>
-                <BlockText className='notes'>{props.assessments[currentAssessment].notes}</BlockText>
-
-                {!props.archived &&
+                !props.archived &&
                 <BlockTopRightButton onClick={toggleEditMode} light={editLight} lightHover={editHoverLight} dark={editDark} darkHover={editHoverDark} />
-                }
-                </>
                 }
              
             </div>

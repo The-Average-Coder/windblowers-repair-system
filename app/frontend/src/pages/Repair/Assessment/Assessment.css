@@ -120,6 +120,7 @@
     flex: 2;
     height: unset;
     position: relative;
+    padding-bottom: 40px;
 }
 
 .Assessment .assessment-notes .DropdownSelect {
@@ -130,7 +131,6 @@
     width: 100%;
     box-sizing: border-box;
     margin-top: 4px;
-    margin-bottom: 40px;
 }
 
 .Assessment .assessment-notes .buttons {
@@ -148,6 +148,10 @@
 .Assessment .divider {
     width: 0.9px;
     background-color: var(--subcontent-border);
+}
+
+.Assessment .assessment-notes .CollapsibleText {
+    margin-top: 12px;
 }
 
 @media screen and (max-width: 1200px) {

@@ -1,0 +1,22 @@
+.CollapsibleText {
+    background-color: var(--background);
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.CollapsibleText button {
+    border: none;
+    background: none;
+    float: right;
+    padding: 3px 4px;
+    margin-top: -2px;
+    border-radius: 8px;
+}
+.CollapsibleText button:hover {
+    background-color: var(--click-color);
+}
+
+.CollapsibleText button img {
+    height: 20px;
+    vertical-align: -1px;
+}
