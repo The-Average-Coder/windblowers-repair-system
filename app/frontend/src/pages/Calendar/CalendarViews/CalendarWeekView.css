@@ -25,6 +25,10 @@
     min-height: 120px;
 }
 
+.CalendarWeekView .calendar-grid-box.current-day {
+    background-color: var(--calendar-highlight-color);
+}
+
 .CalendarWeekView .calendar-grid-box.deadline {
     background-color: var(--calendar-highlight-color);
 }
@@ -84,7 +88,7 @@
     padding: 2px 2px 2px 0;
 }
 
-.CalendarWeekView .calendar-grid-box.day-of-the-week.current-day {
+.CalendarWeekView .calendar-grid-box.day-of-the-week span.current-day {
     color: var(--content-background); 
     background-color: var(--text);
     border-radius: 6px;

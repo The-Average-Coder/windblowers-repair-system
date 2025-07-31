@@ -48,7 +48,9 @@ function NavigationCalendar(props) {
 
     // #### UTILITY FUNCTIONS
     const compareDates = (date1, date2) => {
-        return date1.getTime() === date2.getTime();
+        return date1.getFullYear() === date2.getFullYear()
+            && date1.getMonth() === date2.getMonth()
+            && date1.getDate() === date2.getDate();
     }
 
     const getNextMonth = (year, month) => {
@@ -218,6 +220,8 @@ function NavigationCalendar(props) {
             const monthDate = getDateOfMonthDay(firstMonthDate, i);
 
             if (monthDate.getDay() < 2) continue; // Sunday or Monday
+
+            console.log(monthDate, currentDate)
 
             dayButtons.push(
 
